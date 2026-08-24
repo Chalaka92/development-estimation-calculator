@@ -2,9 +2,11 @@
 
 A browser-based calculator for preparing software development and QA estimates.
 
-## Migration status
+## Application status
 
-The repository now uses a React, TypeScript and Vite application shell. The existing v16 calculator is preserved under `public/legacy/calculator-v16.html` and loaded by the React shell so the current workflow remains available while features are migrated into React components.
+The typed React calculator is now the default application. It includes project settings, development work breakdown, QA estimation, live calculations, autosave, validated import, and summary exports.
+
+The previous v16 calculator remains available as a temporary fallback under `public/legacy/calculator-v16.html` and through the `?ui=legacy` query parameter. Its `developmentEstimationV4` browser data remains separate and read-only to the React persistence layer.
 
 ## Technology
 
@@ -73,7 +75,7 @@ npm run preview
 
 ## Migration approach
 
-Functionality will move from the legacy calculator into typed React features in small, reviewable pull requests. The legacy calculator should only be removed after feature parity and end-to-end verification are complete.
+Functionality moved from the legacy calculator into typed React features through small, reviewable pull requests. The React application is now the default after feature parity and end-to-end persistence verification. The legacy calculator is retained temporarily as a fallback and should be removed only after a stable transition period.
 
 ## Domain model and calculation engine
 
@@ -106,9 +108,9 @@ The application integration layer under `src/app/` composes the domain, state, a
 
 The current v16 iframe is deliberately unchanged. The runtime is not mounted until React screens begin consuming it, avoiding a stale typed copy while edits still occur inside the legacy calculator.
 
-## React migration preview
+## React calculator and legacy fallback
 
-The first React UI slice is available with the opt-in `?ui=react` query parameter. The normal application URL continues to load the complete v16 calculator, so existing users are not moved to an incomplete screen.
+The normal application URL opens the React calculator. The legacy v16 application is available explicitly when needed:
 
 The preview currently provides project naming, risk buffer, working hours, decimal manpower/FTE, business days, autosave status, a complete development work-breakdown editor, QA estimation, and a live estimate summary. Main items and sub-items can be expanded, renamed, duplicated, and deleted. Development and QA activities support stable inline name and decimal-hour editing.
 
@@ -116,8 +118,8 @@ Summary exports are available as Markdown, CSV, and PDF and contain the live dev
 
 Each main item uses either direct estimation activities or sub-items. The UI prevents these modes from being mixed, matching the calculation engine's hierarchy and avoiding hidden or excluded hours. The preview uses the typed runtime and migrates existing v16 browser data on first use. A clear link returns to the current calculator.
 
-Example during local development:
-
 ```text
-http://localhost:5173/?ui=react
+http://localhost:5173/?ui=legacy
 ```
+
+The header provides a safe new-project workflow that requires confirmation before replacing the active estimate. All pull requests and main-branch pushes run the complete lint, type-check, test, and production-build suite in GitHub Actions.

@@ -11,6 +11,7 @@ import type {
   SaveProjectResult,
 } from '../../persistence/projectPersistence'
 import { EstimateSummaryPanel } from './EstimateSummaryPanel'
+import { DevelopmentWorkBreakdownPanel } from './DevelopmentWorkBreakdownPanel'
 import { ProjectSettingsPanel } from './ProjectSettingsPanel'
 import './ReactCalculatorPreview.css'
 
@@ -73,26 +74,17 @@ function PreviewContent({
       <div className="preview-workspace">
         <div className="preview-main-column">
           <div className="preview-intro">
-            <p className="preview-eyebrow">React migration · Stage 1</p>
-            <h1>Set the delivery assumptions.</h1>
+            <p className="preview-eyebrow">React migration · Stage 2</p>
+            <h1>Build a clear, defensible estimate.</h1>
             <p>
               This preview uses the typed project model, validated persistence,
-              and live calculation engine. Work-breakdown editing will follow in
-              the next migration slice.
+              and live calculation engine. Project settings and the complete
+              development work breakdown now stay in sync automatically.
             </p>
           </div>
 
           <ProjectSettingsPanel />
-
-          <section className="preview-upcoming" aria-labelledby="upcoming-title">
-            <span>Next</span>
-            <div>
-              <h2 id="upcoming-title">Development work breakdown</h2>
-              <p>
-                Add, group, duplicate, and estimate main items and sub-items in React.
-              </p>
-            </div>
-          </section>
+          <DevelopmentWorkBreakdownPanel />
         </div>
 
         <EstimateSummaryPanel />

@@ -171,7 +171,8 @@
 }
 
 .preview-settings + .wbs-panel,
-.wbs-panel + .qa-panel {
+.wbs-panel + .qa-panel,
+.qa-panel + .transfer-panel {
   margin-top: 22px;
 }
 
@@ -445,6 +446,93 @@
 
 .qa-add-activity {
   margin-top: 12px;
+}
+
+.transfer-panel__heading {
+  align-items: flex-start;
+}
+
+.transfer-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.transfer-group {
+  padding: 18px;
+  border: 1px solid #e0e4ed;
+  border-radius: 12px;
+  background: #fafbfc;
+}
+
+.transfer-group--editable {
+  border-color: #d8ddf6;
+  background: #f7f8ff;
+}
+
+.transfer-group h3 {
+  margin: 0;
+  color: #29344e;
+  font-size: 13px;
+}
+
+.transfer-group p {
+  min-height: 34px;
+  margin: 6px 0 14px;
+  color: #818a9d;
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+.transfer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.transfer-actions button {
+  padding: 8px 10px;
+  border: 1px solid #d6dce8;
+  border-radius: 8px;
+  color: #47516a;
+  background: #fff;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.transfer-actions button:hover:not(:disabled) {
+  border-color: #9ca8df;
+  color: #4055dc;
+}
+
+.transfer-actions button:disabled {
+  cursor: wait;
+  opacity: 0.62;
+}
+
+.transfer-actions .transfer-import-button {
+  color: #fff;
+  border-color: #4055dc;
+  background: #4055dc;
+}
+
+.transfer-message {
+  margin: 13px 0 0;
+  padding: 9px 11px;
+  border-radius: 8px;
+  font-size: 10px;
+}
+
+.transfer-message--success {
+  color: #157347;
+  background: #edf9f2;
+}
+
+.transfer-message--error {
+  color: #b42318;
+  background: #fff1f0;
 }
 
 .wbs-main-item-list,
@@ -924,5 +1012,9 @@ button.wbs-danger-action:hover {
 
   .qa-activity-row {
     grid-template-columns: 22px minmax(0, 1fr) 88px;
+  }
+
+  .transfer-grid {
+    grid-template-columns: 1fr;
   }
 }

@@ -27,6 +27,7 @@ export type QaActivityChanges = Partial<Pick<QaActivity, 'name' | 'hours'>>
 export type ScheduleChanges = Partial<EstimationSchedule>
 
 export interface ProjectActions {
+  replaceProject: (project: EstimationProject) => boolean
   renameProject: (name: string) => boolean
   updateSchedule: (changes: ScheduleChanges) => boolean
   addDevelopmentItem: (name?: string) => EntityId
@@ -182,6 +183,17 @@ export function createProjectStore(
     })
 
     const actions: ProjectActions = {
+      replaceProject: (project) => {
+        if (project === get().project) return false
+        set((state) => ({
+          project: { ...project, updatedAt: dependencies.now() },
+          revision: state.revision + 1,
+          isDirty: true,
+          lastSavedAt: null,
+        }))
+        return true
+      },
+
       renameProject: (name) =>
         commitProject((project) =>
           project.name === name ? project : { ...project, name },

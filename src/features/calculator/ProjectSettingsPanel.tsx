@@ -20,12 +20,15 @@ export function ProjectSettingsPanel() {
         <label htmlFor="project-name">Project or release name</label>
         <input
           id="project-name"
+          aria-describedby="project-name-hint"
           type="text"
           value={projectName}
           onChange={(event) => actions.renameProject(event.target.value)}
           placeholder="Untitled Estimate"
         />
-        <small>Used as the heading in summaries and future exports.</small>
+        <small id="project-name-hint">
+          Used as the heading in summaries and future exports.
+        </small>
       </div>
 
       <div className="preview-field-grid">

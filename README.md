@@ -7,6 +7,7 @@ A browser-based React application for preparing transparent software-development
 - Hierarchical development work breakdown with main items, sub-items, and activities
 - Separate QA estimation
 - Live development, QA, risk-buffer, and delivery calculations
+- Full live estimation table, copyable summary, and print-ready report
 - Decimal manpower/FTE and decimal-hour support
 - Versioned browser autosave and safe legacy-data migration
 - Editable JSON import/export with validation
@@ -66,6 +67,8 @@ docs/adr/       Architecture decision records
 ```
 
 Calculation rules belong in `src/domain/`, not React components. Browser persistence is versioned under `developmentEstimation.project.v1`; the legacy `developmentEstimationV4` key remains separate and is never overwritten by the typed persistence layer.
+
+The completed feature-parity and accessibility assessment is recorded in [docs/feature-parity-accessibility-review.md](docs/feature-parity-accessibility-review.md).
 
 ## Data and migration safety
 

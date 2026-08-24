@@ -28,9 +28,18 @@ function SummaryMetric({ label, value, emphasis = false }: SummaryMetricProps) {
 export function EstimateSummaryPanel() {
   const project = useProjectStore((state) => state.project)
   const summary = useMemo(() => calculateEstimate(project), [project])
+  const subItemCount = project.developmentItems.reduce(
+    (total, item) => total + item.subItems.length,
+    0,
+  )
 
   return (
-    <aside className="preview-summary" aria-labelledby="summary-title">
+    <aside
+      className="preview-summary"
+      aria-labelledby="summary-title"
+      aria-live="polite"
+      aria-atomic="true"
+    >
       <div className="preview-summary__heading">
         <div>
           <p className="preview-eyebrow preview-eyebrow--light">Live calculation</p>
@@ -41,10 +50,19 @@ export function EstimateSummaryPanel() {
 
       <div className="summary-metrics">
         <SummaryMetric
+          label="Main items"
+          value={formatNumber(project.developmentItems.length)}
+        />
+        <SummaryMetric label="Sub-items" value={formatNumber(subItemCount)} />
+        <SummaryMetric
           label="Development"
           value={`${formatNumber(summary.developmentHours)} h`}
         />
         <SummaryMetric label="QA" value={`${formatNumber(summary.qaHours)} h`} />
+        <SummaryMetric
+          label="Base effort"
+          value={`${formatNumber(summary.baseHours)} h`}
+        />
         <SummaryMetric
           label={`Risk buffer (${formatNumber(summary.riskBufferPercentage)}%)`}
           value={`${formatNumber(summary.riskBufferHours)} h`}

@@ -6,9 +6,29 @@
     #f3f5f9;
 }
 
+.skip-link {
+  position: fixed;
+  z-index: 60;
+  top: 10px;
+  left: 12px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  color: #fff;
+  background: #172452;
+  font-size: 13px;
+  font-weight: 800;
+  text-decoration: none;
+  transform: translateY(-160%);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
 .preview-header {
-  position: relative;
-  z-index: 2;
+  position: sticky;
+  z-index: 40;
+  top: 0;
   display: flex;
   min-height: 76px;
   align-items: center;
@@ -17,6 +37,12 @@
   border-bottom: 1px solid #e1e5ee;
   background: rgb(255 255 255 / 92%);
   backdrop-filter: blur(16px);
+  box-shadow: 0 6px 20px rgb(20 33 61 / 5%);
+}
+
+.react-preview :is(button, a, input, [tabindex]):focus-visible {
+  outline: 3px solid #f5a623;
+  outline-offset: 3px;
 }
 
 .preview-brand,
@@ -205,6 +231,10 @@
   gap: clamp(24px, 4vw, 54px);
   margin: 0 auto;
   padding: clamp(40px, 6vw, 76px) clamp(20px, 4vw, 56px);
+}
+
+#calculator-workspace {
+  scroll-margin-top: 100px;
 }
 
 .preview-main-column {
@@ -530,6 +560,90 @@
 
 .qa-add-activity {
   margin-top: 12px;
+}
+
+.qa-panel + .live-table-panel,
+.live-table-panel + .transfer-panel {
+  margin-top: 22px;
+}
+
+.live-table-panel__heading {
+  align-items: flex-start;
+}
+
+.live-table-project-name {
+  margin: 7px 0 0;
+  color: #4055dc;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.live-table-scroll {
+  overflow-x: auto;
+  border: 1px solid #e1e5ee;
+  border-radius: 12px;
+}
+
+.live-table {
+  width: 100%;
+  min-width: 620px;
+  border-collapse: collapse;
+  color: #344054;
+  font-size: 12px;
+}
+
+.live-table th,
+.live-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #e8ebf1;
+  text-align: left;
+}
+
+.live-table thead th {
+  color: #667085;
+  background: #f7f8fb;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.live-table th:first-child {
+  width: 70px;
+}
+
+.live-table th:last-child,
+.live-table td:last-child {
+  width: 120px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.live-table__main-row th,
+.live-table__main-row td {
+  color: #273450;
+  background: #fbfcff;
+  font-weight: 800;
+}
+
+.live-table__qa-row th,
+.live-table__qa-row td {
+  color: #3148d8;
+  background: #f4f6ff;
+  font-weight: 800;
+}
+
+.live-table tfoot th,
+.live-table tfoot td {
+  border-bottom: 0;
+  color: #fff;
+  background: #172452;
+  font-size: 13px;
+}
+
+.live-table__empty {
+  padding: 24px !important;
+  color: #7b8498;
+  text-align: center !important;
 }
 
 .transfer-panel__heading {
@@ -880,13 +994,72 @@ button.wbs-danger-action:hover {
 
 .preview-summary {
   position: sticky;
-  top: 28px;
+  top: 104px;
   align-self: start;
   padding: 28px;
   border-radius: 20px;
   color: #fff;
   background: linear-gradient(155deg, #172452, #111a37 72%);
   box-shadow: 0 22px 54px rgb(17 26 55 / 22%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+@media print {
+  .react-preview {
+    color: #111;
+    background: #fff;
+  }
+
+  .skip-link,
+  .preview-header,
+  .preview-warning,
+  .preview-intro,
+  .preview-settings,
+  .wbs-panel,
+  .qa-panel,
+  .transfer-panel,
+  .preview-step {
+    display: none !important;
+  }
+
+  .preview-workspace {
+    display: block;
+    max-width: none;
+    min-height: auto;
+    padding: 0;
+  }
+
+  .live-table-panel {
+    padding: 0;
+    border: 0;
+    box-shadow: none;
+  }
+
+  .live-table-scroll {
+    overflow: visible;
+  }
+
+  .live-table {
+    min-width: 0;
+  }
+
+  .preview-summary {
+    position: static;
+    margin-top: 24px;
+    break-inside: avoid;
+    box-shadow: none;
+    print-color-adjust: exact;
+  }
 }
 
 .preview-summary::after {
@@ -1050,6 +1223,18 @@ button.wbs-danger-action:hover {
   }
 
   .preview-save-status {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .preview-save-status::before {
     display: none;
   }
 

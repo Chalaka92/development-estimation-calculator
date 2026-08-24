@@ -7,8 +7,10 @@ import {
   createMarkdownSummary,
 } from '../../export/projectExport'
 import {
+  copyTextToClipboard,
   downloadBlob,
   downloadText,
+  printCurrentPage,
 } from '../../export/browserDownloads'
 import { deserializeProject } from '../../persistence/projectPersistence'
 
@@ -58,6 +60,18 @@ export function ExportImportPanel() {
       'text/csv;charset=utf-8',
     )
     setMessage({ tone: 'success', text: 'CSV summary exported.' })
+  }
+
+  const copySummary = async () => {
+    try {
+      await copyTextToClipboard(createMarkdownSummary(project))
+      setMessage({ tone: 'success', text: 'Full summary copied.' })
+    } catch (error) {
+      setMessage({
+        tone: 'error',
+        text: error instanceof Error ? error.message : 'Copy failed.',
+      })
+    }
   }
 
   const exportPdf = async () => {
@@ -123,7 +137,7 @@ export function ExportImportPanel() {
             Share summary-only files, or keep an editable validated project backup.
           </p>
         </div>
-        <span className="preview-step">04</span>
+        <span className="preview-step">05</span>
       </div>
 
       <div className="transfer-grid">
@@ -139,6 +153,12 @@ export function ExportImportPanel() {
             </button>
             <button type="button" disabled={creatingPdf} onClick={exportPdf}>
               {creatingPdf ? 'Creating PDF…' : 'PDF'}
+            </button>
+            <button type="button" onClick={copySummary}>
+              Copy full summary
+            </button>
+            <button type="button" onClick={printCurrentPage}>
+              Print report
             </button>
           </div>
         </div>

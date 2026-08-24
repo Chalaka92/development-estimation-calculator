@@ -1,9 +1,12 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
 import { useProjectStore } from '../../app/useProjectStore'
 import { createEmptyEstimationProject } from '../../domain/factories'
 
 export function NewProjectControl() {
   const [open, setOpen] = useState(false)
+  const triggerRef = useRef<HTMLButtonElement>(null)
+  const dialogRef = useRef<HTMLDivElement>(null)
+  const cancelRef = useRef<HTMLButtonElement>(null)
   const replaceProject = useProjectStore(
     (state) => state.actions.replaceProject,
   )
@@ -13,9 +16,52 @@ export function NewProjectControl() {
     setOpen(false)
   }
 
+  const closeDialog = () => setOpen(false)
+
+  useEffect(() => {
+    if (!open) return
+
+    const previousOverflow = document.body.style.overflow
+    const trigger = triggerRef.current
+    document.body.style.overflow = 'hidden'
+    cancelRef.current?.focus()
+
+    return () => {
+      document.body.style.overflow = previousOverflow
+      trigger?.focus()
+    }
+  }, [open])
+
+  const handleDialogKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'Escape') {
+      event.preventDefault()
+      closeDialog()
+      return
+    }
+
+    if (event.key !== 'Tab') return
+    const focusable = Array.from(
+      dialogRef.current?.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      ) ?? [],
+    )
+    if (focusable.length === 0) return
+
+    const first = focusable[0]
+    const last = focusable[focusable.length - 1]
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault()
+      last.focus()
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault()
+      first.focus()
+    }
+  }
+
   return (
     <>
       <button
+        ref={triggerRef}
         type="button"
         className="preview-new-project"
         onClick={() => setOpen(true)}
@@ -26,11 +72,13 @@ export function NewProjectControl() {
       {open && (
         <div className="new-project-backdrop" role="presentation">
           <div
+            ref={dialogRef}
             className="new-project-dialog"
             role="dialog"
             aria-modal="true"
             aria-labelledby="new-project-title"
             aria-describedby="new-project-description"
+            onKeyDown={handleDialogKeyDown}
           >
             <span className="new-project-dialog__mark">New</span>
             <h2 id="new-project-title">Start a new estimate?</h2>
@@ -39,7 +87,7 @@ export function NewProjectControl() {
               editable JSON backup first if you need to keep the current work.
             </p>
             <div className="new-project-dialog__actions">
-              <button type="button" onClick={() => setOpen(false)}>
+              <button ref={cancelRef} type="button" onClick={closeDialog}>
                 Keep current project
               </button>
               <button

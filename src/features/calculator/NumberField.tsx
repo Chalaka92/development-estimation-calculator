@@ -23,6 +23,7 @@ export function NumberField({
   hint,
   onCommit,
 }: NumberFieldProps) {
+  const hintId = `${id}-hint`
   const [editing, setEditing] = useState({ value, draft: String(value) })
   const draft = editing.value === value ? editing.draft : String(value)
   const setDraft = (nextDraft: string) =>
@@ -55,6 +56,7 @@ export function NumberField({
       <div className="preview-number-input">
         <input
           id={id}
+          aria-describedby={hintId}
           type="number"
           inputMode="decimal"
           min={min}
@@ -67,7 +69,7 @@ export function NumberField({
         />
         <span>{suffix}</span>
       </div>
-      <small>{hint}</small>
+      <small id={hintId}>{hint}</small>
     </div>
   )
 }

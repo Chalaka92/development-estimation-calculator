@@ -8,10 +8,15 @@ All notable user-visible changes are documented here. The format follows [Keep a
 
 - Contributor, security, issue-reporting, pull-request, dependency-update, and architecture-decision standards.
 
+### Fixed
+
+- Select the newest timestamped project when typed and legacy browser data both exist.
+- Warn when legacy data has no timestamp instead of silently hiding a possible conflict.
+- Flush pending React autosave before opening the legacy calculator, unloading, or unmounting.
+
 ### Known issues
 
-- The legacy-to-React transition still needs explicit reconciliation when both storage formats contain different revisions.
-- Pending autosave should be flushed before navigating to the legacy calculator.
+- Legacy snapshots created before modification timestamps were introduced cannot be ordered automatically when their content differs; the application now surfaces this case for review.
 
 ## [2.0.0-alpha.1] - 2026-08-25
 

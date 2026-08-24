@@ -4,8 +4,8 @@ This roadmap records direction, not a delivery commitment. Jira integration rema
 
 ## Immediate hardening
 
-- Reconcile typed and legacy browser data when both exist, so the newest project cannot be hidden during migration.
-- Flush pending autosave before navigating to the legacy calculator or leaving the page.
+- [x] Reconcile typed and legacy browser data when both exist, so the newest timestamped project is selected and an unversioned legacy conflict is surfaced.
+- [x] Flush pending autosave before navigating to the legacy calculator or leaving the page.
 - Complete a feature-parity and accessibility review before removing the legacy fallback.
 - Add a deployed preview and verify the production workflow in supported browsers.
 

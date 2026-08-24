@@ -86,6 +86,7 @@ describe('project persistence', () => {
       project,
       source: 'current',
       migrated: false,
+      lastModifiedAt: project.updatedAt,
     })
   })
 
@@ -135,6 +136,7 @@ describe('project persistence', () => {
     const storage = new MemoryStorage()
     const legacy = JSON.stringify({
       ...legacySettings(),
+      savedAt: '2026-08-24T11:30:00.000Z',
       items: legacyItems(),
       qaEstimation: [{ name: 'QA', hours: 4 }],
     })
@@ -144,6 +146,10 @@ describe('project persistence', () => {
 
     expect(result.status).toBe('loaded')
     expect(result).toMatchObject({ source: 'v16-storage', migrated: true })
+    expect(result).toMatchObject({
+      lastModifiedAt: '2026-08-24T11:30:00.000Z',
+      project: { updatedAt: '2026-08-24T11:30:00.000Z' },
+    })
     expect(storage.getItem(LEGACY_V16_STORAGE_KEY)).toBe(legacy)
     expect(storage.getItem(PROJECT_STORAGE_KEY)).toBeNull()
   })

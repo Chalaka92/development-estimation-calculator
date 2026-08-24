@@ -102,6 +102,7 @@ export const legacyV16EditableExportSchema = z.object({
 })
 
 export const legacyV16StorageSnapshotSchema = legacySettingsSchema.extend({
+  savedAt: isoDateTimeSchema.optional(),
   items: z.array(legacyWorkItemSchema),
   qaEstimation: z.array(legacyActivitySchema),
 })

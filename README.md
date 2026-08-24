@@ -65,6 +65,7 @@ npm run preview
 - `src/domain/` — framework-independent estimation types and calculations
 - `src/state/` — typed project state and immutable project actions
 - `src/persistence/` — validation, migration, storage, and recovery
+- `src/app/` — runtime bootstrap, autosave orchestration, and React store access
 - `public/legacy/calculator-v16.html` — current calculator retained during migration
 - `index.html` — Vite application entry point
 - `vite.config.ts` — build configuration
@@ -96,3 +97,11 @@ ID and time providers are injected into the store, keeping production behavior r
 Typed projects are validated with Zod and stored under the versioned `developmentEstimation.project.v1` key. The persistence layer supports serialization, safe load/save results, migration from v16 editable exports, and explicit migration from the existing `developmentEstimationV4` browser snapshot.
 
 The v16 key is read-only to the new persistence layer: it is never overwritten or removed. Invalid typed storage is moved to a timestamped recovery key when possible; if recovery storage fails, the original value remains untouched.
+
+## React application integration
+
+The application integration layer under `src/app/` composes the domain, state, and persistence modules without coupling them to the current UI. It loads a valid typed project first, falls back to a migrated v16 browser snapshot, and creates an empty project only when neither source is usable. Migration warnings remain available to future UI components instead of being silently discarded.
+
+`ProjectStoreProvider` and the typed selector hook make the vanilla Zustand store available to future React screens. The autosave controller debounces project changes, marks only successful writes as saved, keeps failed writes dirty for retry, and cancels pending work when disposed.
+
+The current v16 iframe is deliberately unchanged. The runtime is not mounted until React screens begin consuming it, avoiding a stale typed copy while edits still occur inside the legacy calculator.

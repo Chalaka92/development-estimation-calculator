@@ -1,0 +1,62 @@
+name: Bug report
+description: Report a reproducible calculator problem
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for helping improve the calculator. Do not include credentials or private estimate data.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Problem
+      description: What happened, and what did you expect instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Reproduction steps
+      placeholder: |
+        1. Open ...
+        2. Add ...
+        3. Observe ...
+    validations:
+      required: true
+  - type: dropdown
+    id: mode
+    attributes:
+      label: Application mode
+      options:
+        - React calculator
+        - Legacy calculator (?ui=legacy)
+        - Both
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and version
+      placeholder: Chrome 151 on Windows 11
+    validations:
+      required: true
+  - type: textarea
+    id: data
+    attributes:
+      label: Data and migration context
+      description: Did this involve autosave, import/export, legacy data, or a page reload? Redact private information.
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Additional evidence
+      description: Add screenshots, console errors, or other relevant details.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I searched for an existing issue.
+          required: true
+        - label: I removed secrets and private estimate data.
+          required: true

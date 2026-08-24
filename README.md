@@ -1,125 +1,94 @@
 # Development Estimation Calculator
 
-A browser-based calculator for preparing software development and QA estimates.
+A browser-based React application for preparing transparent software-development and QA estimates, calculating delivery duration, and exporting the result.
 
-## Application status
+## Features
 
-The typed React calculator is now the default application. It includes project settings, development work breakdown, QA estimation, live calculations, autosave, validated import, and summary exports.
-
-The previous v16 calculator remains available as a temporary fallback under `public/legacy/calculator-v16.html` and through the `?ui=legacy` query parameter. Its `developmentEstimationV4` browser data remains separate and read-only to the React persistence layer.
+- Hierarchical development work breakdown with main items, sub-items, and activities
+- Separate QA estimation
+- Live development, QA, risk-buffer, and delivery calculations
+- Decimal manpower/FTE and decimal-hour support
+- Versioned browser autosave and safe legacy-data migration
+- Editable JSON import/export with validation
+- Markdown, CSV, and A4 PDF summary exports
+- Temporary v16 fallback at `?ui=legacy`
 
 ## Technology
 
-- React 19
-- TypeScript
+- React 19 and TypeScript
 - Vite
+- Zustand for framework-independent project state
+- Zod for persisted/imported data validation
+- Vitest and Testing Library
 - Oxlint
 
 ## Requirements
 
-- Node.js 22 or newer
+- Node.js 22 (see `.nvmrc`)
 - npm 10 or newer
 
-## Development
+## Getting started
 
 ```bash
-npm install
+npm ci
 npm run dev
 ```
 
-Open the local URL displayed by Vite.
+Open the local URL displayed by Vite. Use `npm install` only when intentionally changing dependencies; use `npm ci` for reproducible setup and CI parity.
 
-## Quality checks
+## Commands
 
-```bash
-npm run lint
-npm run typecheck
-npm run build
-```
+| Command | Purpose |
+| --- | --- |
+| `npm run dev` | Start the development server |
+| `npm run lint` | Run Oxlint |
+| `npm run typecheck` | Run the TypeScript compiler checks |
+| `npm run test` | Run the test suite once |
+| `npm run test:watch` | Run tests in watch mode |
+| `npm run build` | Type-check and create the production build |
+| `npm run preview` | Preview the production build locally |
+| `npm run check` | Run the complete local quality gate |
 
-Run all checks with:
-
-```bash
-npm run check
-```
-
-## Production preview
-
-```bash
-npm run build
-npm run preview
-```
-
-## Current application features
-
-- Hierarchical development work breakdown
-- Separate QA estimation
-- Live totals and delivery calculations
-- Decimal manpower/FTE values
-- Risk and uncertainty buffer
-- PDF and Markdown summary exports
-- Editable-file and CSV exports
-- Browser-based autosave
+Pull requests and pushes to `main` run `npm ci` and `npm run check` in GitHub Actions.
 
 ## Repository structure
 
-- `src/` — React application shell
-- `src/domain/` — framework-independent estimation types and calculations
-- `src/state/` — typed project state and immutable project actions
-- `src/persistence/` — validation, migration, storage, and recovery
-- `src/app/` — runtime bootstrap, autosave orchestration, and React store access
-- `public/legacy/calculator-v16.html` — current calculator retained during migration
-- `index.html` — Vite application entry point
-- `vite.config.ts` — build configuration
-- `tsconfig*.json` — TypeScript configuration
-
-## Migration approach
-
-Functionality moved from the legacy calculator into typed React features through small, reviewable pull requests. The React application is now the default after feature parity and end-to-end persistence verification. The legacy calculator is retained temporarily as a fallback and should be removed only after a stable transition period.
-
-## Domain model and calculation engine
-
-The typed model and pure calculation functions live under `src/domain/`. They do not import React or browser APIs, allowing the rules to be reused by the future React screens, exports, and integrations.
-
-The calculation tests cover development totals, sub-item behavior, QA effort, risk buffer, decimal manpower, schedule fallbacks, and delivery duration.
-
-```bash
-npm run test
-npm run test:watch
+```text
+src/
+  app/          Runtime composition, autosave, and React store access
+  domain/       Framework-independent types and calculation rules
+  export/       JSON, Markdown, CSV, and PDF generation
+  features/     Calculator UI components
+  persistence/  Validation, schema migration, storage, and recovery
+  state/        Typed project store and immutable actions
+public/legacy/  Temporary v16 fallback
+docs/adr/       Architecture decision records
 ```
 
-## Project state
+Calculation rules belong in `src/domain/`, not React components. Browser persistence is versioned under `developmentEstimation.project.v1`; the legacy `developmentEstimationV4` key remains separate and is never overwritten by the typed persistence layer.
 
-The vanilla Zustand store under `src/state/` manages the typed project independently of React. Its actions cover project and schedule changes plus add, update, duplicate, and delete operations for development items, sub-items, estimation activities, and QA activities.
+## Data and migration safety
 
-ID and time providers are injected into the store, keeping production behavior reliable and tests deterministic. Every successful project change increments a revision, updates the modification timestamp, and marks the project as dirty. Missing entities produce safe no-op results.
-
-## Persistence and migration
-
-Typed projects are validated with Zod and stored under the versioned `developmentEstimation.project.v1` key. The persistence layer supports serialization, safe load/save results, migration from v16 editable exports, and explicit migration from the existing `developmentEstimationV4` browser snapshot.
-
-The v16 key is read-only to the new persistence layer: it is never overwritten or removed. Invalid typed storage is moved to a timestamped recovery key when possible; if recovery storage fails, the original value remains untouched.
-
-## React application integration
-
-The application integration layer under `src/app/` composes the domain, state, and persistence modules without coupling them to the current UI. It loads a valid typed project first, falls back to a migrated v16 browser snapshot, and creates an empty project only when neither source is usable. Migration warnings remain available to future UI components instead of being silently discarded.
-
-`ProjectStoreProvider` and the typed selector hook make the vanilla Zustand store available to future React screens. The autosave controller debounces project changes, marks only successful writes as saved, keeps failed writes dirty for retry, and cancels pending work when disposed.
-
-The current v16 iframe is deliberately unchanged. The runtime is not mounted until React screens begin consuming it, avoiding a stale typed copy while edits still occur inside the legacy calculator.
-
-## React calculator and legacy fallback
-
-The normal application URL opens the React calculator. The legacy v16 application is available explicitly when needed:
-
-The preview currently provides project naming, risk buffer, working hours, decimal manpower/FTE, business days, autosave status, a complete development work-breakdown editor, QA estimation, and a live estimate summary. Main items and sub-items can be expanded, renamed, duplicated, and deleted. Development and QA activities support stable inline name and decimal-hour editing.
-
-Summary exports are available as Markdown, CSV, and PDF and contain the live development table, QA estimate, totals, and delivery schedule. Editable JSON exports preserve the complete typed project. Imports accept validated typed projects and supported v16 files; invalid files are rejected without replacing the active project.
-
-Each main item uses either direct estimation activities or sub-items. The UI prevents these modes from being mixed, matching the calculation engine's hierarchy and avoiding hidden or excluded hours. The preview uses the typed runtime and migrates existing v16 browser data on first use. A clear link returns to the current calculator.
+The application validates imported and stored projects before replacing active data. Invalid typed storage is quarantined when possible. The legacy calculator remains available at:
 
 ```text
 http://localhost:5173/?ui=legacy
 ```
 
-The header provides a safe new-project workflow that requires confirmation before replacing the active estimate. All pull requests and main-branch pushes run the complete lint, type-check, test, and production-build suite in GitHub Actions.
+Before relying on the legacy fallback during the transition, export an editable JSON backup. The remaining legacy-to-React handoff risks are tracked in `ROADMAP.md`.
+
+## Contributing
+
+Read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request. Use the issue templates for reproducible bugs and well-scoped features. Significant technical decisions should be recorded under `docs/adr/`.
+
+## Security
+
+Do not report sensitive vulnerabilities in a public issue. Follow [SECURITY.md](SECURITY.md).
+
+## Releases and roadmap
+
+- Current package version: `2.0.0-alpha.1`
+- Completed and upcoming work: [ROADMAP.md](ROADMAP.md)
+- User-visible history: [CHANGELOG.md](CHANGELOG.md)
+
+This repository does not currently declare an open-source licence. Copyright remains with the repository owner unless a licence is added later.

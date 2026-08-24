@@ -105,3 +105,15 @@ The application integration layer under `src/app/` composes the domain, state, a
 `ProjectStoreProvider` and the typed selector hook make the vanilla Zustand store available to future React screens. The autosave controller debounces project changes, marks only successful writes as saved, keeps failed writes dirty for retry, and cancels pending work when disposed.
 
 The current v16 iframe is deliberately unchanged. The runtime is not mounted until React screens begin consuming it, avoiding a stale typed copy while edits still occur inside the legacy calculator.
+
+## React migration preview
+
+The first React UI slice is available with the opt-in `?ui=react` query parameter. The normal application URL continues to load the complete v16 calculator, so existing users are not moved to an incomplete screen.
+
+The preview currently provides project naming, risk buffer, working hours, decimal manpower/FTE, business days, autosave status, and a live estimate summary. It uses the typed runtime and migrates existing v16 browser data on first preview use. A clear link returns to the current calculator.
+
+Example during local development:
+
+```text
+http://localhost:5173/?ui=react
+```

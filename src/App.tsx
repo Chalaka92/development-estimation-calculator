@@ -1,6 +1,12 @@
 import './App.css'
+import { resolveAppMode } from './app/appMode'
+import { ReactCalculatorPreview } from './features/calculator/ReactCalculatorPreview'
 
 function App() {
+  if (resolveAppMode(globalThis.location.search) === 'react-preview') {
+    return <ReactCalculatorPreview />
+  }
+
   const legacyCalculatorUrl = `${import.meta.env.BASE_URL}legacy/calculator-v16.html`
 
   return (

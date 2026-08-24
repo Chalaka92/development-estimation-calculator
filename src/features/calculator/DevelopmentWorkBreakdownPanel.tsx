@@ -53,6 +53,7 @@ function SubItemCard({ workItemId, subItem, index }: SubItemCardProps) {
         <div className="wbs-item-actions">
           <button
             type="button"
+            aria-label={`Duplicate sub-item ${index + 1}`}
             onClick={() => actions.duplicateSubItem(workItemId, subItem.id)}
           >
             Duplicate
@@ -60,6 +61,7 @@ function SubItemCard({ workItemId, subItem, index }: SubItemCardProps) {
           <button
             type="button"
             className="wbs-danger-action"
+            aria-label={`Delete sub-item ${index + 1}`}
             onClick={() => actions.deleteSubItem(workItemId, subItem.id)}
           >
             Delete
@@ -127,6 +129,7 @@ function WorkItemCard({ item, index }: WorkItemCardProps) {
         <div className="wbs-item-actions">
           <button
             type="button"
+            aria-label={`Duplicate main item ${index + 1}`}
             onClick={() => actions.duplicateDevelopmentItem(item.id)}
           >
             Duplicate
@@ -134,6 +137,7 @@ function WorkItemCard({ item, index }: WorkItemCardProps) {
           <button
             type="button"
             className="wbs-danger-action"
+            aria-label={`Delete main item ${index + 1}`}
             onClick={() => actions.deleteDevelopmentItem(item.id)}
           >
             Delete

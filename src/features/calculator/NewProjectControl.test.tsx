@@ -47,12 +47,32 @@ describe('NewProjectControl', () => {
 
     await user.click(screen.getByRole('button', { name: 'New project' }))
     expect(screen.getByRole('dialog')).toBeTruthy()
-    await user.click(
-      screen.getByRole('button', { name: 'Keep current project' }),
-    )
+    const cancel = screen.getByRole('button', { name: 'Keep current project' })
+    expect(document.activeElement).toBe(cancel)
+    await user.click(cancel)
 
     expect(screen.queryByRole('dialog')).toBeNull()
     expect(runtime.store.getState().project).toBe(project)
+  })
+
+  it('contains keyboard focus, closes with Escape, and restores focus', async () => {
+    const user = userEvent.setup()
+    renderControl()
+    const trigger = screen.getByRole('button', { name: 'New project' })
+
+    await user.click(trigger)
+    const cancel = screen.getByRole('button', { name: 'Keep current project' })
+    const confirm = screen.getByRole('button', { name: 'Start new project' })
+    expect(document.activeElement).toBe(cancel)
+
+    await user.tab()
+    expect(document.activeElement).toBe(confirm)
+    await user.tab()
+    expect(document.activeElement).toBe(cancel)
+
+    await user.keyboard('{Escape}')
+    expect(screen.queryByRole('dialog')).toBeNull()
+    expect(document.activeElement).toBe(trigger)
   })
 
   it('replaces the active project only after confirmation', async () => {

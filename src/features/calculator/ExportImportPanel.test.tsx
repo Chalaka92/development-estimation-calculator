@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { ProjectStoreProvider } from '../../app/ProjectStoreProvider'
 import { createProjectRuntime } from '../../app/projectRuntime'
 import { createEmptyEstimationProject } from '../../domain/factories'
@@ -42,7 +42,14 @@ function fileWithText(content: string, name = 'estimate.json'): File {
   return file
 }
 
-afterEach(cleanup)
+afterEach(() => {
+  cleanup()
+  vi.restoreAllMocks()
+  Object.defineProperty(navigator, 'clipboard', {
+    configurable: true,
+    value: undefined,
+  })
+})
 
 describe('ExportImportPanel', () => {
   it('imports a validated typed project into the active store', async () => {
@@ -115,5 +122,25 @@ describe('ExportImportPanel', () => {
     expect(screen.getByRole('button', { name: 'PDF' })).toBeTruthy()
     expect(screen.getByRole('button', { name: 'Export JSON' })).toBeTruthy()
     expect(screen.getByRole('button', { name: 'Import project' })).toBeTruthy()
+    expect(screen.getByRole('button', { name: 'Copy full summary' })).toBeTruthy()
+    expect(screen.getByRole('button', { name: 'Print report' })).toBeTruthy()
+  })
+
+  it('copies the full summary and offers print parity', async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined)
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: { writeText },
+    })
+    const print = vi.spyOn(globalThis, 'print').mockImplementation(() => {})
+    renderPanel()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Copy full summary' }))
+    await waitFor(() => expect(writeText).toHaveBeenCalledOnce())
+    expect(writeText.mock.calls[0]?.[0]).toContain('# Untitled Estimate')
+    expect(screen.getByRole('status').textContent).toBe('Full summary copied.')
+
+    fireEvent.click(screen.getByRole('button', { name: 'Print report' }))
+    expect(print).toHaveBeenCalledOnce()
   })
 })

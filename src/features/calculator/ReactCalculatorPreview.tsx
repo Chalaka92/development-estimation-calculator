@@ -17,6 +17,7 @@ import { ProjectSettingsPanel } from './ProjectSettingsPanel'
 import { QaEstimationPanel } from './QaEstimationPanel'
 import { ExportImportPanel } from './ExportImportPanel'
 import { NewProjectControl } from './NewProjectControl'
+import { LiveEstimationTable } from './LiveEstimationTable'
 import './ReactCalculatorPreview.css'
 
 interface ReactCalculatorPreviewProps {
@@ -27,18 +28,27 @@ interface ReactCalculatorPreviewProps {
 function SaveStatus({ result }: { result: SaveProjectResult | null }) {
   const isDirty = useProjectStore((state) => state.isDirty)
   const lastSavedAt = useProjectStore((state) => state.lastSavedAt)
+  const failed = result?.status === 'storage-error' || result?.status === 'invalid'
+  const className = failed
+    ? 'preview-save-status preview-save-status--error'
+    : 'preview-save-status'
 
-  if (result?.status === 'storage-error' || result?.status === 'invalid') {
-    return <span className="preview-save-status preview-save-status--error">Save failed</span>
-  }
-
-  if (isDirty) {
-    return <span className="preview-save-status">Saving changes…</span>
-  }
+  const message = failed
+    ? 'Save failed'
+    : isDirty
+      ? 'Saving changes…'
+      : lastSavedAt
+        ? 'All changes saved'
+        : 'Ready'
 
   return (
-    <span className="preview-save-status">
-      {lastSavedAt ? 'All changes saved' : 'Ready'}
+    <span
+      className={className}
+      role={failed ? 'alert' : 'status'}
+      aria-live={failed ? 'assertive' : 'polite'}
+      aria-atomic="true"
+    >
+      {message}
     </span>
   )
 }
@@ -54,6 +64,9 @@ function PreviewContent({
 }) {
   return (
     <main className="react-preview">
+      <a className="skip-link" href="#calculator-workspace">
+        Skip to calculator workspace
+      </a>
       <header className="preview-header">
         <div className="preview-brand">
           <span className="preview-brand__mark">DE</span>
@@ -76,13 +89,17 @@ function PreviewContent({
       </header>
 
       {runtime.warnings.length > 0 && (
-        <div className="preview-warning" role="status">
+        <div className="preview-warning" role="alert">
           <strong>Some saved data needs attention.</strong>
           <span>{runtime.warnings.map((warning) => warning.message).join(' ')}</span>
         </div>
       )}
 
-      <div className="preview-workspace">
+      <div
+        className="preview-workspace"
+        id="calculator-workspace"
+        tabIndex={-1}
+      >
         <div className="preview-main-column">
           <div className="preview-intro">
             <p className="preview-eyebrow">Project workspace</p>
@@ -98,6 +115,7 @@ function PreviewContent({
           <ProjectSettingsPanel />
           <DevelopmentWorkBreakdownPanel />
           <QaEstimationPanel />
+          <LiveEstimationTable />
           <ExportImportPanel />
         </div>
 

@@ -69,7 +69,7 @@ describe('calculator workflow', () => {
     await user.type(qaHours, '2')
     await user.tab()
 
-    expect(screen.getByText('13.8 h')).toBeTruthy()
+    expect(screen.getAllByText('13.8 h').length).toBeGreaterThan(1)
     await waitFor(
       () => expect(loadProject(storage).status).toBe('loaded'),
       { timeout: 1_500 },
@@ -91,7 +91,7 @@ describe('calculator workflow', () => {
       ],
       qaActivities: [{ hours: 2 }],
     })
-    expect(screen.getByText('13.8 h')).toBeTruthy()
+    expect(screen.getAllByText('13.8 h').length).toBeGreaterThan(1)
   })
 
   it('flushes pending changes before opening the legacy calculator', () => {

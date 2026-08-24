@@ -96,7 +96,9 @@ describe('DevelopmentWorkBreakdownPanel', () => {
 
     const subItem = subItemName.closest('article')!
     await user.click(within(subItem).getByRole('button', { name: '+ Add activity' }))
-    await user.click(within(subItem).getByRole('button', { name: 'Duplicate' }))
+    await user.click(
+      within(subItem).getByRole('button', { name: 'Duplicate sub-item 1' }),
+    )
 
     expect(runtime.store.getState().project.developmentItems[0].subItems).toHaveLength(2)
 
@@ -111,7 +113,9 @@ describe('DevelopmentWorkBreakdownPanel', () => {
     const firstSubItem = screen
       .getByRole('textbox', { name: 'Sub-item 1 name' })
       .closest('article')!
-    await user.click(within(firstSubItem).getByRole('button', { name: 'Delete' }))
+    await user.click(
+      within(firstSubItem).getByRole('button', { name: 'Delete sub-item 1' }),
+    )
 
     expect(runtime.store.getState().project.developmentItems[0].subItems).toHaveLength(1)
   })

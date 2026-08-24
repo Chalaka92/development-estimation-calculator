@@ -7,9 +7,13 @@ All notable user-visible changes are documented here. The format follows [Keep a
 ### Added
 
 - Contributor, security, issue-reporting, pull-request, dependency-update, and architecture-decision standards.
+- Full live estimation table, copy-summary action, and print-ready report.
+- Skip navigation, accessible dialog focus management, field-help associations, and live status announcements.
 
 ### Fixed
 
+- Keep the calculator header visible at the top while the workspace scrolls.
+- Give repeated item actions unique accessible names and all interactive controls a visible keyboard focus.
 - Select the newest timestamped project when typed and legacy browser data both exist.
 - Warn when legacy data has no timestamp instead of silently hiding a possible conflict.
 - Flush pending React autosave before opening the legacy calculator, unloading, or unmounting.

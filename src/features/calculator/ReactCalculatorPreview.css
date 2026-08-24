@@ -170,7 +170,8 @@
   box-shadow: 0 16px 42px rgb(22 34 59 / 6%);
 }
 
-.preview-settings + .wbs-panel {
+.preview-settings + .wbs-panel,
+.wbs-panel + .qa-panel {
   margin-top: 22px;
 }
 
@@ -348,6 +349,102 @@
   font-size: 12px;
   font-weight: 800;
   cursor: pointer;
+}
+
+.qa-panel__heading {
+  align-items: flex-start;
+}
+
+.qa-panel__summary {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+}
+
+.qa-panel__summary > strong {
+  min-width: 58px;
+  color: #4055dc;
+  font-size: 13px;
+  text-align: right;
+}
+
+.qa-empty-state {
+  display: grid;
+  justify-items: center;
+  padding: 30px;
+  border: 1px dashed #cbd1df;
+  border-radius: 13px;
+  background: #fafbfc;
+  text-align: center;
+}
+
+.qa-empty-state h3 {
+  margin: 0 0 6px;
+  color: #25304a;
+  font-size: 15px;
+}
+
+.qa-empty-state p {
+  max-width: 500px;
+  margin: 0;
+  color: #7b8498;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.qa-empty-state button {
+  margin-top: 16px;
+  padding: 9px 13px;
+  border: 0;
+  border-radius: 8px;
+  color: #fff;
+  background: #4055dc;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.qa-activity-list {
+  display: grid;
+  gap: 5px;
+}
+
+.qa-activity-list__header,
+.qa-activity-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 96px 116px;
+  gap: 8px;
+  align-items: center;
+}
+
+.qa-activity-list__header {
+  padding: 0 4px 6px 32px;
+  color: #9aa2b3;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.qa-activity-list__header span:nth-child(2),
+.qa-activity-list__header span:nth-child(3) {
+  text-align: center;
+}
+
+.qa-activity-row {
+  grid-template-columns: 22px minmax(0, 1fr) 96px 116px;
+  min-height: 42px;
+  padding: 4px;
+  border-radius: 8px;
+}
+
+.qa-activity-row:hover {
+  background: #f7f8fb;
+}
+
+.qa-add-activity {
+  margin-top: 12px;
 }
 
 .wbs-main-item-list,
@@ -811,5 +908,21 @@ button.wbs-danger-action:hover {
   .wbs-row-actions {
     grid-column: 2 / -1;
     justify-content: flex-end;
+  }
+
+  .qa-panel__heading {
+    gap: 16px;
+  }
+
+  .qa-panel__summary > strong {
+    display: none;
+  }
+
+  .qa-activity-list__header {
+    display: none;
+  }
+
+  .qa-activity-row {
+    grid-template-columns: 22px minmax(0, 1fr) 88px;
   }
 }

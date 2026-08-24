@@ -64,6 +64,7 @@ npm run preview
 - `src/` — React application shell
 - `src/domain/` — framework-independent estimation types and calculations
 - `src/state/` — typed project state and immutable project actions
+- `src/persistence/` — validation, migration, storage, and recovery
 - `public/legacy/calculator-v16.html` — current calculator retained during migration
 - `index.html` — Vite application entry point
 - `vite.config.ts` — build configuration
@@ -89,3 +90,9 @@ npm run test:watch
 The vanilla Zustand store under `src/state/` manages the typed project independently of React. Its actions cover project and schedule changes plus add, update, duplicate, and delete operations for development items, sub-items, estimation activities, and QA activities.
 
 ID and time providers are injected into the store, keeping production behavior reliable and tests deterministic. Every successful project change increments a revision, updates the modification timestamp, and marks the project as dirty. Missing entities produce safe no-op results.
+
+## Persistence and migration
+
+Typed projects are validated with Zod and stored under the versioned `developmentEstimation.project.v1` key. The persistence layer supports serialization, safe load/save results, migration from v16 editable exports, and explicit migration from the existing `developmentEstimationV4` browser snapshot.
+
+The v16 key is read-only to the new persistence layer: it is never overwritten or removed. Invalid typed storage is moved to a timestamped recovery key when possible; if recovery storage fails, the original value remains untouched.

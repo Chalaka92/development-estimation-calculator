@@ -1,0 +1,68 @@
+export const CURRENT_ESTIMATION_SCHEMA_VERSION = 1 as const
+
+export type EntityId = string
+export type IsoDateTimeString = string
+
+export interface EstimationActivity {
+  id: EntityId
+  name: string
+  hours: number
+}
+
+export interface DevelopmentSubItem {
+  id: EntityId
+  name: string
+  estimation: ReadonlyArray<EstimationActivity>
+}
+
+export interface DevelopmentWorkItem {
+  id: EntityId
+  name: string
+  directEstimation: ReadonlyArray<EstimationActivity>
+  subItems: ReadonlyArray<DevelopmentSubItem>
+}
+
+export interface QaActivity {
+  id: EntityId
+  name: string
+  hours: number
+}
+
+export interface EstimationSchedule {
+  riskBufferPercentage: number
+  workingHoursPerPersonDay: number
+  totalManpower: number
+  businessDaysPerWeek: number
+}
+
+export interface EstimationProject {
+  id: EntityId
+  schemaVersion: typeof CURRENT_ESTIMATION_SCHEMA_VERSION
+  name: string
+  developmentItems: ReadonlyArray<DevelopmentWorkItem>
+  qaActivities: ReadonlyArray<QaActivity>
+  schedule: EstimationSchedule
+  createdAt: IsoDateTimeString
+  updatedAt: IsoDateTimeString
+}
+
+export interface EstimateSummary {
+  developmentHours: number
+  qaHours: number
+  baseHours: number
+  riskBufferPercentage: number
+  riskBufferHours: number
+  finalHours: number
+  workingHoursPerPersonDay: number
+  totalManpower: number
+  businessDaysPerWeek: number
+  personDays: number
+  deliveryWorkingDays: number
+  weeklyCapacityHours: number
+  businessWeeks: number
+}
+
+export type EstimationCalculationInput = Pick<
+  EstimationProject,
+  'developmentItems' | 'qaActivities' | 'schedule'
+>

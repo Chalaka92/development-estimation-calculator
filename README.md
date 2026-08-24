@@ -62,6 +62,7 @@ npm run preview
 ## Repository structure
 
 - `src/` — React application shell
+- `src/domain/` — framework-independent estimation types and calculations
 - `public/legacy/calculator-v16.html` — current calculator retained during migration
 - `index.html` — Vite application entry point
 - `vite.config.ts` — build configuration
@@ -70,3 +71,14 @@ npm run preview
 ## Migration approach
 
 Functionality will move from the legacy calculator into typed React features in small, reviewable pull requests. The legacy calculator should only be removed after feature parity and end-to-end verification are complete.
+
+## Domain model and calculation engine
+
+The typed model and pure calculation functions live under `src/domain/`. They do not import React or browser APIs, allowing the rules to be reused by the future React screens, exports, and integrations.
+
+The calculation tests cover development totals, sub-item behavior, QA effort, risk buffer, decimal manpower, schedule fallbacks, and delivery duration.
+
+```bash
+npm run test
+npm run test:watch
+```

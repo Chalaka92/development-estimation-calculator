@@ -13,6 +13,7 @@ import type {
 import { EstimateSummaryPanel } from './EstimateSummaryPanel'
 import { DevelopmentWorkBreakdownPanel } from './DevelopmentWorkBreakdownPanel'
 import { ProjectSettingsPanel } from './ProjectSettingsPanel'
+import { QaEstimationPanel } from './QaEstimationPanel'
 import './ReactCalculatorPreview.css'
 
 interface ReactCalculatorPreviewProps {
@@ -74,17 +75,19 @@ function PreviewContent({
       <div className="preview-workspace">
         <div className="preview-main-column">
           <div className="preview-intro">
-            <p className="preview-eyebrow">React migration · Stage 2</p>
+            <p className="preview-eyebrow">React migration · Stage 3</p>
             <h1>Build a clear, defensible estimate.</h1>
             <p>
               This preview uses the typed project model, validated persistence,
               and live calculation engine. Project settings and the complete
-              development work breakdown now stay in sync automatically.
+              development work breakdown and QA estimate now stay in sync
+              automatically.
             </p>
           </div>
 
           <ProjectSettingsPanel />
           <DevelopmentWorkBreakdownPanel />
+          <QaEstimationPanel />
         </div>
 
         <EstimateSummaryPanel />

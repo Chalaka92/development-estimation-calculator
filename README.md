@@ -110,7 +110,7 @@ The current v16 iframe is deliberately unchanged. The runtime is not mounted unt
 
 The first React UI slice is available with the opt-in `?ui=react` query parameter. The normal application URL continues to load the complete v16 calculator, so existing users are not moved to an incomplete screen.
 
-The preview currently provides project naming, risk buffer, working hours, decimal manpower/FTE, business days, autosave status, a complete development work-breakdown editor, and a live estimate summary. Main items and sub-items can be expanded, renamed, duplicated, and deleted. Estimation activities support stable inline name and decimal-hour editing.
+The preview currently provides project naming, risk buffer, working hours, decimal manpower/FTE, business days, autosave status, a complete development work-breakdown editor, QA estimation, and a live estimate summary. Main items and sub-items can be expanded, renamed, duplicated, and deleted. Development and QA activities support stable inline name and decimal-hour editing.
 
 Each main item uses either direct estimation activities or sub-items. The UI prevents these modes from being mixed, matching the calculation engine's hierarchy and avoiding hidden or excluded hours. The preview uses the typed runtime and migrates existing v16 browser data on first use. A clear link returns to the current calculator.
 

@@ -88,9 +88,19 @@ describe('NewProjectControl', () => {
       project: {
         name: 'Untitled Estimate',
         developmentItems: [],
-        qaActivities: [],
+        qaActivities: expect.arrayContaining([
+          expect.objectContaining({
+            name: 'QA Analysis / Test Planning',
+            hours: 0,
+          }),
+          expect.objectContaining({
+            name: 'UAT / Release Validation Support',
+            hours: 0,
+          }),
+        ]),
       },
     })
+    expect(runtime.store.getState().project.qaActivities).toHaveLength(6)
     expect(runtime.store.getState().project.id).not.toBe(previousId)
   })
 })

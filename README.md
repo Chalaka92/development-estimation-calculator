@@ -4,8 +4,8 @@ A browser-based React application for preparing transparent software-development
 
 ## Features
 
-- Hierarchical development work breakdown with main items, sub-items, and activities
-- Separate QA estimation
+- Hierarchical development work breakdown with legacy-aligned estimation templates for new main items and sub-items
+- Separate QA estimation prefilled with the six legacy QA activities
 - Live development, QA, risk-buffer, and delivery calculations
 - Full live estimation table, copyable summary, and print-ready report
 - Decimal manpower/FTE and decimal-hour support

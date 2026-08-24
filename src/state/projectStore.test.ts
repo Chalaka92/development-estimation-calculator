@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
+  DEFAULT_QA_ACTIVITY_NAMES,
+  STANDARD_ESTIMATION_ACTIVITY_NAMES,
   createEmptyEstimationProject,
   type EntityFactoryDependencies,
 } from '../domain/factories'
@@ -30,7 +32,10 @@ describe('project store', () => {
       schemaVersion: 1,
       name: 'Capital Trust',
       developmentItems: [],
-      qaActivities: [],
+      qaActivities: DEFAULT_QA_ACTIVITY_NAMES.map((name) => ({
+        name,
+        hours: 0,
+      })),
       schedule: {
         riskBufferPercentage: 15,
         workingHoursPerPersonDay: 8,
@@ -65,21 +70,14 @@ describe('project store', () => {
     const store = createTestStore()
     const { actions } = store.getState()
     const itemId = actions.addDevelopmentItem('Billing')
-    const directActivityId = actions.addEstimationActivity(
+    const directActivityId =
+      store.getState().project.developmentItems[0].directEstimation[0].id
+    actions.updateEstimationActivity(
       { workItemId: itemId },
-      'Implementation',
-      12,
-    )
-    const subItemId = actions.addSubItem(itemId, 'Import')
-    expect(subItemId).not.toBeNull()
-    const subActivityId = actions.addEstimationActivity(
-      { workItemId: itemId, subItemId: subItemId! },
-      'Import API',
-      8,
+      directActivityId,
+      { name: 'Implementation', hours: 12 },
     )
 
-    expect(directActivityId).not.toBeNull()
-    expect(subActivityId).not.toBeNull()
     expect(actions.updateDevelopmentItem(itemId, 'Billing Screen')).toBe(true)
 
     const duplicateId = actions.duplicateDevelopmentItem(itemId)
@@ -91,10 +89,7 @@ describe('project store', () => {
     expect(duplicate.directEstimation[0].id).not.toBe(
       source.directEstimation[0].id,
     )
-    expect(duplicate.subItems[0].id).not.toBe(source.subItems[0].id)
-    expect(duplicate.subItems[0].estimation[0].id).not.toBe(
-      source.subItems[0].estimation[0].id,
-    )
+    expect(duplicate.directEstimation).toHaveLength(8)
 
     expect(actions.deleteDevelopmentItem(itemId)).toBe(true)
     expect(store.getState().project.developmentItems).toHaveLength(1)
@@ -106,7 +101,7 @@ describe('project store', () => {
     const { actions } = store.getState()
     const itemId = actions.addDevelopmentItem('Feature')
     const subItemId = actions.addSubItem(itemId, 'Settings')!
-    actions.addEstimationActivity(
+    const activityId = actions.addEstimationActivity(
       { workItemId: itemId, subItemId },
       'Settings UI',
       5,
@@ -121,10 +116,19 @@ describe('project store', () => {
     expect(subItems[1].estimation[0].id).not.toBe(
       subItems[0].estimation[0].id,
     )
+    expect(subItems[0].estimation).toHaveLength(9)
+    expect(activityId).not.toBeNull()
     expect(actions.deleteSubItem(itemId, subItemId)).toBe(true)
     expect(
       store.getState().project.developmentItems[0].subItems,
     ).toHaveLength(1)
+
+    expect(actions.deleteSubItem(itemId, duplicateId!)).toBe(true)
+    const workItem = store.getState().project.developmentItems[0]
+    expect(workItem.subItems).toHaveLength(0)
+    expect(workItem.directEstimation.map(({ name, hours }) => ({ name, hours }))).toEqual(
+      STANDARD_ESTIMATION_ACTIVITY_NAMES.map((name) => ({ name, hours: 0 })),
+    )
   })
 
   it('manages direct and sub-item estimation activities immutably', () => {
@@ -152,8 +156,8 @@ describe('project store', () => {
     const estimation =
       store.getState().project.developmentItems[0].directEstimation
 
-    expect(duplicateId).toBe(estimation[1].id)
-    expect(estimation[1]).toMatchObject({
+    const duplicate = estimation.find((activity) => activity.id === duplicateId)
+    expect(duplicate).toMatchObject({
       name: 'Detailed Analysis (Copy)',
       hours: 4.5,
     })
@@ -171,13 +175,13 @@ describe('project store', () => {
     const duplicateId = actions.duplicateQaActivity(activityId)
     const activities = store.getState().project.qaActivities
 
-    expect(duplicateId).toBe(activities[1].id)
-    expect(activities[1]).toMatchObject({
+    const duplicate = activities.find((activity) => activity.id === duplicateId)
+    expect(duplicate).toMatchObject({
       name: 'Regression Testing (Copy)',
       hours: 7.5,
     })
     expect(actions.deleteQaActivity(activityId)).toBe(true)
-    expect(store.getState().project.qaActivities).toHaveLength(1)
+    expect(store.getState().project.qaActivities).toHaveLength(7)
   })
 
   it('does not change state for missing parents or entities', () => {

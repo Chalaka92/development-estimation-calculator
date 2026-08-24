@@ -5,7 +5,7 @@ import {
   startProjectAutosave,
   useProjectStore,
   type ProjectRuntime,
-} from '../../app'
+} from '../../app/index'
 import type {
   KeyValueStorage,
   SaveProjectResult,

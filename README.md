@@ -63,6 +63,7 @@ npm run preview
 
 - `src/` — React application shell
 - `src/domain/` — framework-independent estimation types and calculations
+- `src/state/` — typed project state and immutable project actions
 - `public/legacy/calculator-v16.html` — current calculator retained during migration
 - `index.html` — Vite application entry point
 - `vite.config.ts` — build configuration
@@ -82,3 +83,9 @@ The calculation tests cover development totals, sub-item behavior, QA effort, ri
 npm run test
 npm run test:watch
 ```
+
+## Project state
+
+The vanilla Zustand store under `src/state/` manages the typed project independently of React. Its actions cover project and schedule changes plus add, update, duplicate, and delete operations for development items, sub-items, estimation activities, and QA activities.
+
+ID and time providers are injected into the store, keeping production behavior reliable and tests deterministic. Every successful project change increments a revision, updates the modification timestamp, and marks the project as dirty. Missing entities produce safe no-op results.

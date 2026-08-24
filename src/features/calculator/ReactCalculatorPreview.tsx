@@ -15,6 +15,7 @@ import { DevelopmentWorkBreakdownPanel } from './DevelopmentWorkBreakdownPanel'
 import { ProjectSettingsPanel } from './ProjectSettingsPanel'
 import { QaEstimationPanel } from './QaEstimationPanel'
 import { ExportImportPanel } from './ExportImportPanel'
+import { NewProjectControl } from './NewProjectControl'
 import './ReactCalculatorPreview.css'
 
 interface ReactCalculatorPreviewProps {
@@ -55,13 +56,14 @@ function PreviewContent({
           <span className="preview-brand__mark">DE</span>
           <div>
             <strong>Development Estimation</strong>
-            <span>React migration preview</span>
+            <span>Typed React calculator</span>
           </div>
         </div>
         <div className="preview-header__actions">
           <SaveStatus result={saveResult} />
-          <a className="preview-legacy-link" href="./">
-            Open current calculator
+          <NewProjectControl />
+          <a className="preview-legacy-link" href="?ui=legacy">
+            Open legacy calculator
           </a>
         </div>
       </header>
@@ -76,7 +78,7 @@ function PreviewContent({
       <div className="preview-workspace">
         <div className="preview-main-column">
           <div className="preview-intro">
-            <p className="preview-eyebrow">React migration · Stage 4</p>
+            <p className="preview-eyebrow">Project workspace</p>
             <h1>Build a clear, defensible estimate.</h1>
             <p>
               This preview uses the typed project model, validated persistence,

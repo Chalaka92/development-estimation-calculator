@@ -101,6 +101,90 @@
   text-decoration: none;
 }
 
+.preview-new-project {
+  padding: 9px 12px;
+  border: 0;
+  border-radius: 9px;
+  color: #fff;
+  background: #4055dc;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.new-project-backdrop {
+  position: fixed;
+  z-index: 50;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgb(12 19 40 / 54%);
+  backdrop-filter: blur(4px);
+}
+
+.new-project-dialog {
+  width: min(100%, 430px);
+  padding: 28px;
+  border: 1px solid #e0e4ed;
+  border-radius: 17px;
+  color: #25304a;
+  background: #fff;
+  box-shadow: 0 24px 70px rgb(12 19 40 / 28%);
+}
+
+.new-project-dialog__mark {
+  display: inline-block;
+  padding: 5px 8px;
+  border-radius: 6px;
+  color: #5265dd;
+  background: #eaedff;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.new-project-dialog h2 {
+  margin: 16px 0 8px;
+  color: #172033;
+  font-size: 21px;
+  letter-spacing: -0.025em;
+}
+
+.new-project-dialog p {
+  margin: 0;
+  color: #70798d;
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.new-project-dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 24px;
+}
+
+.new-project-dialog__actions button {
+  padding: 9px 12px;
+  border: 1px solid #d8ddea;
+  border-radius: 8px;
+  color: #4c566e;
+  background: #fff;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.new-project-dialog__actions .new-project-dialog__confirm {
+  color: #fff;
+  border-color: #4055dc;
+  background: #4055dc;
+}
+
 .preview-warning {
   display: grid;
   gap: 3px;
@@ -958,6 +1042,11 @@ button.wbs-danger-action:hover {
     align-items: flex-end;
     flex-direction: column-reverse;
     gap: 8px;
+  }
+
+  .preview-new-project {
+    padding: 8px 10px;
+    font-size: 10px;
   }
 
   .preview-save-status {

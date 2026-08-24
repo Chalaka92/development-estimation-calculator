@@ -37,8 +37,8 @@ const dependencies: EntityFactoryDependencies = {
 }
 
 describe('React calculator preview', () => {
-  it('keeps the legacy calculator as the default mode', () => {
-    expect(resolveAppMode('')).toBe('legacy')
+  it('uses React by default and keeps legacy as an explicit fallback', () => {
+    expect(resolveAppMode('')).toBe('react-preview')
     expect(resolveAppMode('?ui=legacy')).toBe('legacy')
     expect(resolveAppMode('?ui=react')).toBe('react-preview')
   })

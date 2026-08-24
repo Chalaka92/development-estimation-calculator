@@ -3,6 +3,7 @@ import {
   defaultEntityFactoryDependencies,
   type EntityFactoryDependencies,
 } from '../domain/factories'
+import type { EstimationProject } from '../domain/estimation'
 import {
   loadLegacyV16Project,
   loadProject,
@@ -22,6 +23,7 @@ export type ProjectRuntimeWarningCode =
   | 'typed-storage-error'
   | 'legacy-storage-corrupt'
   | 'legacy-storage-error'
+  | 'legacy-recency-unknown'
   | 'migration-save-failed'
 
 export interface ProjectRuntimeWarning {
@@ -64,14 +66,80 @@ function migrationSaveWarning(
   return { code: 'migration-save-failed', message: result.error }
 }
 
+function projectContent(project: EstimationProject) {
+  return {
+    name: project.name,
+    schedule: project.schedule,
+    developmentItems: project.developmentItems.map((item) => ({
+      name: item.name,
+      directEstimation: item.directEstimation.map(({ name, hours }) => ({
+        name,
+        hours,
+      })),
+      subItems: item.subItems.map((subItem) => ({
+        name: subItem.name,
+        estimation: subItem.estimation.map(({ name, hours }) => ({
+          name,
+          hours,
+        })),
+      })),
+    })),
+    qaActivities: project.qaActivities.map(({ name, hours }) => ({
+      name,
+      hours,
+    })),
+  }
+}
+
+function projectsHaveEquivalentContent(
+  first: EstimationProject,
+  second: EstimationProject,
+): boolean {
+  return JSON.stringify(projectContent(first)) === JSON.stringify(projectContent(second))
+}
+
 export function createProjectRuntime(
   storage: KeyValueStorage,
   dependencies: EntityFactoryDependencies = defaultEntityFactoryDependencies,
 ): ProjectRuntime {
   const warnings: ProjectRuntimeWarning[] = []
   const typedResult = loadProject(storage, dependencies)
+  const legacyResult = loadLegacyV16Project(storage, dependencies)
+
+  const typedWarning = loadWarning(typedResult, 'typed')
+  if (typedWarning) warnings.push(typedWarning)
+  const legacyWarning = loadWarning(legacyResult, 'legacy')
+  if (legacyWarning) warnings.push(legacyWarning)
 
   if (typedResult.status === 'loaded') {
+    if (
+      legacyResult.status === 'loaded' &&
+      !projectsHaveEquivalentContent(typedResult.project, legacyResult.project)
+    ) {
+      if (legacyResult.lastModifiedAt === null) {
+        warnings.push({
+          code: 'legacy-recency-unknown',
+          message:
+            'Legacy saved data has no modification time. Open the legacy calculator to review and save it if it contains newer work.',
+        })
+      } else if (
+        Date.parse(legacyResult.lastModifiedAt) >
+        Date.parse(typedResult.lastModifiedAt ?? typedResult.project.updatedAt)
+      ) {
+        const saveWarning = migrationSaveWarning(
+          saveProject(storage, legacyResult.project),
+        )
+        if (saveWarning) warnings.push(saveWarning)
+
+        return {
+          store: createProjectStore(legacyResult.project, dependencies),
+          source: legacyResult.source,
+          migrated: true,
+          warnings,
+        }
+      }
+    }
+
     if (typedResult.migrated) {
       const warning = migrationSaveWarning(
         saveProject(storage, typedResult.project),
@@ -87,10 +155,6 @@ export function createProjectRuntime(
     }
   }
 
-  const warning = loadWarning(typedResult, 'typed')
-  if (warning) warnings.push(warning)
-
-  const legacyResult = loadLegacyV16Project(storage, dependencies)
   if (legacyResult.status === 'loaded') {
     const saveWarning = migrationSaveWarning(
       saveProject(storage, legacyResult.project),
@@ -104,9 +168,6 @@ export function createProjectRuntime(
       warnings,
     }
   }
-
-  const legacyWarning = loadWarning(legacyResult, 'legacy')
-  if (legacyWarning) warnings.push(legacyWarning)
 
   return {
     store: createProjectStore(

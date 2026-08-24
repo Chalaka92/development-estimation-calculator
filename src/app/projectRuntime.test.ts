@@ -45,8 +45,9 @@ function deterministicDependencies(): EntityFactoryDependencies {
   }
 }
 
-function legacySnapshot() {
+function legacySnapshot(savedAt?: string) {
   return JSON.stringify({
+    ...(savedAt ? { savedAt } : {}),
     projectName: 'Migrated Runtime',
     buffer: '12',
     hoursPerDay: '8',
@@ -81,7 +82,10 @@ describe('project runtime', () => {
     const dependencies = deterministicDependencies()
     const project = createEmptyEstimationProject('Typed Runtime', dependencies)
     saveProject(storage, project)
-    storage.setItem(LEGACY_V16_STORAGE_KEY, legacySnapshot())
+    storage.setItem(
+      LEGACY_V16_STORAGE_KEY,
+      legacySnapshot('2026-08-24T17:00:00.000Z'),
+    )
 
     const runtime = createProjectRuntime(storage, dependencies)
 
@@ -91,6 +95,48 @@ describe('project runtime', () => {
       warnings: [],
     })
     expect(runtime.store.getState().project).toEqual(project)
+  })
+
+  it('selects and migrates timestamped legacy data when it is newer', () => {
+    const storage = new MemoryStorage()
+    const dependencies = deterministicDependencies()
+    const project = createEmptyEstimationProject('Older Typed', dependencies)
+    saveProject(storage, project)
+    storage.setItem(
+      LEGACY_V16_STORAGE_KEY,
+      legacySnapshot('2026-08-24T19:00:00.000Z'),
+    )
+
+    const runtime = createProjectRuntime(storage, dependencies)
+
+    expect(runtime).toMatchObject({
+      source: 'v16-storage',
+      migrated: true,
+      warnings: [],
+    })
+    expect(runtime.store.getState().project).toMatchObject({
+      name: 'Migrated Runtime',
+      updatedAt: '2026-08-24T19:00:00.000Z',
+    })
+    expect(loadProject(storage)).toMatchObject({
+      status: 'loaded',
+      project: { name: 'Migrated Runtime' },
+    })
+  })
+
+  it('surfaces an unversioned legacy conflict instead of hiding it', () => {
+    const storage = new MemoryStorage()
+    const dependencies = deterministicDependencies()
+    const project = createEmptyEstimationProject('Typed Runtime', dependencies)
+    saveProject(storage, project)
+    storage.setItem(LEGACY_V16_STORAGE_KEY, legacySnapshot())
+
+    const runtime = createProjectRuntime(storage, dependencies)
+
+    expect(runtime.source).toBe('current')
+    expect(runtime.warnings).toEqual([
+      expect.objectContaining({ code: 'legacy-recency-unknown' }),
+    ])
   })
 
   it('migrates legacy v16 storage and saves a typed copy', () => {
@@ -111,6 +157,22 @@ describe('project runtime', () => {
       schedule: { totalManpower: 1.5 },
     })
     expect(loadProject(storage, dependencies).status).toBe('loaded')
+    expect(storage.getItem(LEGACY_V16_STORAGE_KEY)).toBe(legacy)
+  })
+
+  it('does not report a conflict when typed and unversioned legacy data match', () => {
+    const storage = new MemoryStorage()
+    const legacy = legacySnapshot()
+    storage.setItem(LEGACY_V16_STORAGE_KEY, legacy)
+
+    createProjectRuntime(storage, deterministicDependencies())
+    const reloadedRuntime = createProjectRuntime(
+      storage,
+      deterministicDependencies(),
+    )
+
+    expect(reloadedRuntime.source).toBe('current')
+    expect(reloadedRuntime.warnings).toEqual([])
     expect(storage.getItem(LEGACY_V16_STORAGE_KEY)).toBe(legacy)
   })
 

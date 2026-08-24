@@ -1680,6 +1680,7 @@ document.getElementById("importFile").addEventListener("change",async e=>{
 
     // Also keep the newly imported estimate as the browser's current saved state.
     localStorage.setItem("developmentEstimationV4",JSON.stringify({
+      savedAt:new Date().toISOString(),
       projectName:projectName.value,
       buffer:buffer.value,
       hoursPerDay:hoursPerDay.value,
@@ -1773,6 +1774,7 @@ document.getElementById("printReport").addEventListener("click",()=>window.print
 
 document.getElementById("save").addEventListener("click",()=>{
   localStorage.setItem("developmentEstimationV4",JSON.stringify({
+    savedAt:new Date().toISOString(),
     projectName:projectName.value,
     buffer:buffer.value,
     hoursPerDay:hoursPerDay.value,

@@ -31,6 +31,7 @@ export type DeserializeProjectResult =
       project: EstimationProject
       source: ProjectSource
       migrated: boolean
+      lastModifiedAt: string | null
     }
   | { status: 'invalid'; error: string }
 
@@ -46,6 +47,7 @@ export type LoadProjectResult =
       project: EstimationProject
       source: ProjectSource
       migrated: boolean
+      lastModifiedAt: string | null
     }
   | {
       status: 'corrupt'
@@ -108,8 +110,9 @@ function migrateLegacyProject(
   items: ReadonlyArray<LegacyV16WorkItem>,
   qaEstimation: ReadonlyArray<LegacyV16Activity>,
   dependencies: EntityFactoryDependencies,
+  lastModifiedAt: string | null = null,
 ): EstimationProject {
-  const timestamp = dependencies.now()
+  const timestamp = lastModifiedAt ?? dependencies.now()
   const qaActivities: ReadonlyArray<QaActivity> = qaEstimation.map((activity) =>
     migrateActivity(activity, dependencies),
   )
@@ -162,6 +165,7 @@ export function deserializeProject(
       project: currentResult.data,
       source: 'current',
       migrated: false,
+      lastModifiedAt: currentResult.data.updatedAt,
     }
   }
 
@@ -174,9 +178,11 @@ export function deserializeProject(
         editableResult.data.development.items,
         editableResult.data.qa.estimation,
         dependencies,
+        editableResult.data.exportedAt ?? null,
       ),
       source: 'v16-editable',
       migrated: true,
+      lastModifiedAt: editableResult.data.exportedAt ?? null,
     }
   }
 
@@ -189,9 +195,11 @@ export function deserializeProject(
         storageResult.data.items,
         storageResult.data.qaEstimation,
         dependencies,
+        storageResult.data.savedAt ?? null,
       ),
       source: 'v16-storage',
       migrated: true,
+      lastModifiedAt: storageResult.data.savedAt ?? null,
     }
   }
 
@@ -274,6 +282,7 @@ export function loadProject(
       project: result.project,
       source: result.source,
       migrated: result.migrated,
+      lastModifiedAt: result.lastModifiedAt,
     }
   }
 
@@ -309,5 +318,6 @@ export function loadLegacyV16Project(
     project: result.project,
     source: result.source,
     migrated: result.migrated,
+    lastModifiedAt: result.lastModifiedAt,
   }
 }

@@ -209,4 +209,26 @@ describe('project store', () => {
     expect(store.getState().lastSavedAt).not.toBeNull()
     expect(store.getState().project).toBe(projectBeforeSave)
   })
+
+  it('replaces the complete project for a validated import', () => {
+    const dependencies = deterministicDependencies()
+    const store = createProjectStore(
+      createEmptyEstimationProject('Current', dependencies),
+      dependencies,
+    )
+    const imported = createEmptyEstimationProject('Imported', dependencies)
+
+    expect(store.getState().actions.replaceProject(imported)).toBe(true)
+    expect(store.getState()).toMatchObject({
+      revision: 1,
+      isDirty: true,
+      lastSavedAt: null,
+      project: { id: imported.id, name: 'Imported' },
+    })
+    expect(store.getState().project.updatedAt).not.toBe(imported.updatedAt)
+    expect(store.getState().actions.replaceProject(store.getState().project)).toBe(
+      false,
+    )
+    expect(store.getState().revision).toBe(1)
+  })
 })

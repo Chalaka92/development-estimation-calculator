@@ -112,6 +112,8 @@ The first React UI slice is available with the opt-in `?ui=react` query paramete
 
 The preview currently provides project naming, risk buffer, working hours, decimal manpower/FTE, business days, autosave status, a complete development work-breakdown editor, QA estimation, and a live estimate summary. Main items and sub-items can be expanded, renamed, duplicated, and deleted. Development and QA activities support stable inline name and decimal-hour editing.
 
+Summary exports are available as Markdown, CSV, and PDF and contain the live development table, QA estimate, totals, and delivery schedule. Editable JSON exports preserve the complete typed project. Imports accept validated typed projects and supported v16 files; invalid files are rejected without replacing the active project.
+
 Each main item uses either direct estimation activities or sub-items. The UI prevents these modes from being mixed, matching the calculation engine's hierarchy and avoiding hidden or excluded hours. The preview uses the typed runtime and migrates existing v16 browser data on first use. A clear link returns to the current calculator.
 
 Example during local development:

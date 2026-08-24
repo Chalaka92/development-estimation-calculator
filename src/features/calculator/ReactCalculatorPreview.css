@@ -170,6 +170,10 @@
   box-shadow: 0 16px 42px rgb(22 34 59 / 6%);
 }
 
+.preview-settings + .wbs-panel {
+  margin-top: 22px;
+}
+
 .preview-card__heading {
   justify-content: space-between;
   margin-bottom: 28px;
@@ -285,6 +289,324 @@
 .preview-upcoming p {
   margin: 4px 0 0;
   font-size: 12px;
+}
+
+.wbs-panel__heading {
+  align-items: flex-start;
+}
+
+.wbs-heading-description {
+  margin: 7px 0 0;
+  color: #8992a5;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.wbs-empty-state {
+  display: grid;
+  justify-items: start;
+  padding: 34px;
+  border: 1px dashed #cbd1df;
+  border-radius: 14px;
+  background: #fafbfc;
+}
+
+.wbs-empty-state > span {
+  padding: 5px 8px;
+  border-radius: 6px;
+  color: #5265dd;
+  background: #eaedff;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.wbs-empty-state h3 {
+  margin: 16px 0 6px;
+  color: #25304a;
+  font-size: 16px;
+}
+
+.wbs-empty-state p {
+  max-width: 520px;
+  margin: 0;
+  color: #7b8498;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.wbs-empty-state button,
+.wbs-add-main {
+  margin-top: 20px;
+  padding: 10px 14px;
+  border: 0;
+  border-radius: 9px;
+  color: #fff;
+  background: #4055dc;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.wbs-main-item-list,
+.wbs-sub-item-list {
+  display: grid;
+  gap: 12px;
+}
+
+.wbs-main-item {
+  overflow: hidden;
+  border: 1px solid #dce1eb;
+  border-radius: 13px;
+  background: #fff;
+}
+
+.wbs-sub-item {
+  overflow: hidden;
+  border: 1px solid #e5e8ef;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.wbs-item-header {
+  display: grid;
+  grid-template-columns: 28px 26px minmax(130px, 1fr) auto auto;
+  gap: 9px;
+  align-items: center;
+  min-height: 58px;
+  padding: 9px 12px;
+  background: #f8f9fc;
+}
+
+.wbs-item-header--sub {
+  min-height: 52px;
+  background: #fbfcfe;
+}
+
+.wbs-expand-button {
+  display: grid;
+  width: 26px;
+  height: 26px;
+  place-items: center;
+  padding: 0;
+  border: 1px solid #d8ddea;
+  border-radius: 7px;
+  color: #5265dd;
+  background: #fff;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.wbs-item-number,
+.wbs-activity-index {
+  color: #8a93a6;
+  font-size: 11px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.wbs-title-input,
+.wbs-name-input {
+  min-width: 0;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  outline: none;
+  color: #29344e;
+  background: transparent;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.wbs-title-input {
+  height: 36px;
+  padding: 0 8px;
+}
+
+.wbs-name-input {
+  height: 34px;
+  padding: 0 8px;
+  font-weight: 500;
+}
+
+.wbs-title-input:hover,
+.wbs-name-input:hover {
+  border-color: #e0e4ed;
+  background: #fff;
+}
+
+.wbs-title-input:focus,
+.wbs-name-input:focus {
+  border-color: #6878e8;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgb(82 101 221 / 10%);
+}
+
+.wbs-item-hours {
+  min-width: 62px;
+  color: #4055dc;
+  font-size: 12px;
+  text-align: right;
+}
+
+.wbs-item-actions,
+.wbs-row-actions,
+.wbs-add-actions {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
+.wbs-item-actions button,
+.wbs-row-actions button,
+.wbs-add-inline {
+  padding: 6px 8px;
+  border: 1px solid #dce1eb;
+  border-radius: 7px;
+  color: #566078;
+  background: #fff;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.wbs-item-actions button:hover,
+.wbs-row-actions button:hover,
+.wbs-add-inline:hover:not(:disabled) {
+  border-color: #aeb8dd;
+  color: #4055dc;
+}
+
+button.wbs-danger-action:hover {
+  border-color: #f2b8b5;
+  color: #c4322b;
+  background: #fff7f6;
+}
+
+.wbs-item-body {
+  padding: 13px;
+  border-top: 1px solid #e8ebf1;
+}
+
+.wbs-item-body--sub {
+  padding: 11px;
+  background: #fcfcfd;
+}
+
+.wbs-sub-item-list + .wbs-add-actions,
+.wbs-activity-list + .wbs-add-actions,
+.wbs-empty-estimation + .wbs-add-actions {
+  margin-top: 12px;
+}
+
+.wbs-activity-list {
+  display: grid;
+  gap: 4px;
+}
+
+.wbs-activity-list__header,
+.wbs-activity-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 96px 116px;
+  gap: 8px;
+  align-items: center;
+}
+
+.wbs-activity-list__header {
+  padding: 0 4px 5px 32px;
+  color: #9aa2b3;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.wbs-activity-list__header span:nth-child(2),
+.wbs-activity-list__header span:nth-child(3) {
+  text-align: center;
+}
+
+.wbs-activity-row {
+  grid-template-columns: 22px minmax(0, 1fr) 96px 116px;
+  min-height: 42px;
+  padding: 4px;
+  border-radius: 8px;
+}
+
+.wbs-activity-row:hover {
+  background: #f7f8fb;
+}
+
+.wbs-hours-input {
+  position: relative;
+}
+
+.wbs-hours-input input {
+  width: 100%;
+  height: 34px;
+  padding: 0 28px 0 9px;
+  border: 1px solid #dce1eb;
+  border-radius: 7px;
+  outline: none;
+  color: #29344e;
+  background: #fff;
+  font: inherit;
+  font-size: 12px;
+  text-align: right;
+}
+
+.wbs-hours-input input:focus {
+  border-color: #6878e8;
+  box-shadow: 0 0 0 3px rgb(82 101 221 / 10%);
+}
+
+.wbs-hours-input span {
+  position: absolute;
+  top: 50%;
+  right: 9px;
+  color: #9aa2b3;
+  font-size: 10px;
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+.wbs-empty-estimation {
+  margin: 0;
+  padding: 15px;
+  border-radius: 8px;
+  color: #8a93a6;
+  background: #f8f9fb;
+  font-size: 11px;
+  text-align: center;
+}
+
+.wbs-add-inline {
+  color: #4055dc;
+  border-style: dashed;
+}
+
+.wbs-add-inline:disabled {
+  color: #a5abba;
+  background: #f6f7f9;
+  cursor: not-allowed;
+}
+
+.wbs-mode-hint {
+  margin: 9px 0 0;
+  color: #9a6b32;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.wbs-add-main {
+  width: 100%;
+  margin-top: 14px;
+  border: 1px dashed #bac2d5;
+  color: #4055dc;
+  background: #f7f8ff;
 }
 
 .preview-summary {
@@ -467,5 +789,27 @@
 
   .preview-intro h1 {
     font-size: 34px;
+  }
+
+  .wbs-item-header {
+    grid-template-columns: 28px 24px minmax(0, 1fr) auto;
+  }
+
+  .wbs-item-actions {
+    grid-column: 3 / -1;
+    justify-content: flex-end;
+  }
+
+  .wbs-activity-list__header {
+    display: none;
+  }
+
+  .wbs-activity-row {
+    grid-template-columns: 22px minmax(0, 1fr) 88px;
+  }
+
+  .wbs-row-actions {
+    grid-column: 2 / -1;
+    justify-content: flex-end;
   }
 }

@@ -51,7 +51,6 @@ describe('calculator workflow', () => {
     await user.type(projectName, 'Release Candidate')
 
     await user.click(screen.getByRole('button', { name: 'Add first main item' }))
-    await user.click(screen.getByRole('button', { name: '+ Add activity' }))
     const developmentHours = screen.getByRole('spinbutton', {
       name: 'Activity 1 hours',
     })
@@ -59,9 +58,6 @@ describe('calculator workflow', () => {
     await user.type(developmentHours, '10')
     await user.tab()
 
-    await user.click(
-      screen.getByRole('button', { name: 'Add first QA activity' }),
-    )
     const qaHours = screen.getByRole('spinbutton', {
       name: 'QA activity 1 hours',
     })
@@ -84,13 +80,12 @@ describe('calculator workflow', () => {
     expect(
       screen.getByRole('textbox', { name: 'Project or release name' }),
     ).toHaveProperty('value', 'Release Candidate')
-    expect(reloadedRuntime.store.getState().project).toMatchObject({
-      name: 'Release Candidate',
-      developmentItems: [
-        { directEstimation: [{ hours: 10 }] },
-      ],
-      qaActivities: [{ hours: 2 }],
-    })
+    const reloadedProject = reloadedRuntime.store.getState().project
+    expect(reloadedProject.name).toBe('Release Candidate')
+    expect(reloadedProject.developmentItems[0].directEstimation).toHaveLength(8)
+    expect(reloadedProject.developmentItems[0].directEstimation[0].hours).toBe(10)
+    expect(reloadedProject.qaActivities).toHaveLength(6)
+    expect(reloadedProject.qaActivities[0].hours).toBe(2)
     expect(screen.getAllByText('13.8 h').length).toBeGreaterThan(1)
   })
 

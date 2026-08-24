@@ -31,8 +31,13 @@ function dependencies(): EntityFactoryDependencies {
   }
 }
 
-function renderEditor() {
+function renderEditor({ clearQa = false } = {}) {
   const runtime = createProjectRuntime(new MemoryStorage(), dependencies())
+  if (clearQa) {
+    for (const activity of runtime.store.getState().project.qaActivities) {
+      runtime.store.getState().actions.deleteQaActivity(activity.id)
+    }
+  }
   render(
     <ProjectStoreProvider store={runtime.store}>
       <QaEstimationPanel />
@@ -45,12 +50,11 @@ function renderEditor() {
 afterEach(cleanup)
 
 describe('QaEstimationPanel', () => {
-  it('adds and edits decimal QA effort without losing input focus', async () => {
+  it('shows the legacy defaults and edits decimal QA effort without losing input focus', async () => {
     const user = userEvent.setup()
     const runtime = renderEditor()
-    await user.click(
-      screen.getByRole('button', { name: 'Add first QA activity' }),
-    )
+    expect(runtime.store.getState().project.qaActivities).toHaveLength(6)
+    expect(screen.getByDisplayValue('QA Analysis / Test Planning')).toBeTruthy()
 
     const name = screen.getByRole('textbox', { name: 'QA activity 1 name' })
     await user.clear(name)
@@ -76,21 +80,18 @@ describe('QaEstimationPanel', () => {
     const user = userEvent.setup()
     const runtime = renderEditor()
     await user.click(
-      screen.getByRole('button', { name: 'Add first QA activity' }),
-    )
-    await user.click(
       screen.getByRole('button', { name: 'Duplicate QA activity 1' }),
     )
 
-    expect(runtime.store.getState().project.qaActivities).toHaveLength(2)
+    expect(runtime.store.getState().project.qaActivities).toHaveLength(7)
     expect(runtime.store.getState().project.qaActivities[1].name).toBe(
-      'New QA Activity (Copy)',
+      'QA Analysis / Test Planning (Copy)',
     )
 
     await user.click(
       screen.getByRole('button', { name: 'Delete QA activity 1' }),
     )
-    expect(runtime.store.getState().project.qaActivities).toHaveLength(1)
+    expect(runtime.store.getState().project.qaActivities).toHaveLength(6)
   })
 
   it('collapses and restores the QA editor', async () => {
@@ -101,14 +102,21 @@ describe('QaEstimationPanel', () => {
       screen.getByRole('button', { name: 'Collapse QA estimation' }),
     )
     expect(
-      screen.queryByRole('button', { name: 'Add first QA activity' }),
+      screen.queryByRole('textbox', { name: 'QA activity 1 name' }),
     ).toBeNull()
 
     await user.click(
       screen.getByRole('button', { name: 'Expand QA estimation' }),
     )
     expect(
-      screen.getByRole('button', { name: 'Add first QA activity' }),
+      screen.getByRole('textbox', { name: 'QA activity 1 name' }),
     ).toBeTruthy()
+  })
+
+  it('uses the left-aligned QA empty state after all rows are removed', () => {
+    renderEditor({ clearQa: true })
+
+    const heading = screen.getByRole('heading', { name: 'No QA activities yet.' })
+    expect(heading.closest('.qa-empty-state')).toBeTruthy()
   })
 })

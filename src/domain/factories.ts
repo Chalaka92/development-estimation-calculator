@@ -1,8 +1,10 @@
 import {
   CURRENT_ESTIMATION_SCHEMA_VERSION,
   type EntityId,
+  type EstimationActivity,
   type EstimationProject,
   type IsoDateTimeString,
+  type QaActivity,
 } from './estimation'
 
 export interface EntityFactoryDependencies {
@@ -15,18 +17,59 @@ export const defaultEntityFactoryDependencies: EntityFactoryDependencies = {
   now: () => new Date().toISOString(),
 }
 
+export const STANDARD_ESTIMATION_ACTIVITY_NAMES = [
+  'Requirement Analysis / Investigation',
+  'Backend Development',
+  'Frontend / UI Development',
+  'Database / Migration',
+  'Unit Tests',
+  'Integration / Manual Testing',
+  'Code Review / Rework',
+  'Documentation / Deployment Support',
+] as const
+
+export const DEFAULT_QA_ACTIVITY_NAMES = [
+  'QA Analysis / Test Planning',
+  'Test Case Preparation',
+  'Functional Testing',
+  'Regression Testing',
+  'Bug Retesting / Verification',
+  'UAT / Release Validation Support',
+] as const
+
+export function createStandardEstimationActivities(
+  dependencies: EntityFactoryDependencies = defaultEntityFactoryDependencies,
+): ReadonlyArray<EstimationActivity> {
+  return STANDARD_ESTIMATION_ACTIVITY_NAMES.map((name) => ({
+    id: dependencies.createId(),
+    name,
+    hours: 0,
+  }))
+}
+
+export function createDefaultQaActivities(
+  dependencies: EntityFactoryDependencies = defaultEntityFactoryDependencies,
+): ReadonlyArray<QaActivity> {
+  return DEFAULT_QA_ACTIVITY_NAMES.map((name) => ({
+    id: dependencies.createId(),
+    name,
+    hours: 0,
+  }))
+}
+
 export function createEmptyEstimationProject(
   name = 'Untitled Estimate',
   dependencies: EntityFactoryDependencies = defaultEntityFactoryDependencies,
 ): EstimationProject {
   const timestamp = dependencies.now()
+  const id = dependencies.createId()
 
   return {
-    id: dependencies.createId(),
+    id,
     schemaVersion: CURRENT_ESTIMATION_SCHEMA_VERSION,
     name,
     developmentItems: [],
-    qaActivities: [],
+    qaActivities: createDefaultQaActivities(dependencies),
     schedule: {
       riskBufferPercentage: 15,
       workingHoursPerPersonDay: 8,

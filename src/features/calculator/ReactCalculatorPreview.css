@@ -485,12 +485,12 @@
 
 .qa-empty-state {
   display: grid;
-  justify-items: center;
+  justify-items: start;
   padding: 30px;
   border: 1px dashed #cbd1df;
   border-radius: 13px;
   background: #fafbfc;
-  text-align: center;
+  text-align: left;
 }
 
 .qa-empty-state h3 {
@@ -888,6 +888,28 @@ button.wbs-danger-action:hover {
 .wbs-activity-list {
   display: grid;
   gap: 4px;
+}
+
+.wbs-estimation-form h4 {
+  margin: 0 0 12px;
+  color: #4055dc;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.wbs-estimation-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.wbs-estimation-footer strong {
+  color: #4055dc;
+  font-size: 11px;
 }
 
 .wbs-activity-list__header,

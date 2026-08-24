@@ -9,6 +9,8 @@ All notable user-visible changes are documented here. The format follows [Keep a
 - Contributor, security, issue-reporting, pull-request, dependency-update, and architecture-decision standards.
 - Full live estimation table, copy-summary action, and print-ready report.
 - Skip navigation, accessible dialog focus management, field-help associations, and live status announcements.
+- Legacy-aligned eight-row estimation forms for new main items and sub-items.
+- The six legacy QA activities as defaults for every new project.
 
 ### Fixed
 
@@ -17,6 +19,7 @@ All notable user-visible changes are documented here. The format follows [Keep a
 - Select the newest timestamped project when typed and legacy browser data both exist.
 - Warn when legacy data has no timestamp instead of silently hiding a possible conflict.
 - Flush pending React autosave before opening the legacy calculator, unloading, or unmounting.
+- Left-align the empty QA guidance with the rest of the editor content.
 
 ### Known issues
 

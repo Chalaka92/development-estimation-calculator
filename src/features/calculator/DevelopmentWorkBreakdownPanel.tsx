@@ -76,13 +76,6 @@ function SubItemCard({ workItemId, subItem, index }: SubItemCardProps) {
             activities={subItem.estimation}
             emptyMessage="No estimation activities in this sub-item yet."
           />
-          <button
-            type="button"
-            className="wbs-add-inline"
-            onClick={() => actions.addEstimationActivity(owner)}
-          >
-            + Add activity
-          </button>
         </div>
       )}
     </article>
@@ -98,8 +91,21 @@ function WorkItemCard({ item, index }: WorkItemCardProps) {
   const [expanded, setExpanded] = useState(true)
   const actions = useProjectStore((state) => state.actions)
   const hasSubItems = item.subItems.length > 0
-  const canAddSubItem = item.directEstimation.length === 0
+  const directHasHours = calculateEstimationHours(item.directEstimation) > 0
   const directOwner = { workItemId: item.id }
+
+  const addSubItem = () => {
+    if (
+      !hasSubItems &&
+      directHasHours &&
+      !globalThis.confirm(
+        'This item already has hours in its direct estimation form. Adding sub-items will clear that direct estimation. Continue?',
+      )
+    ) {
+      return
+    }
+    actions.addSubItem(item.id)
+  }
 
   return (
     <article className="wbs-main-item">
@@ -167,33 +173,19 @@ function WorkItemCard({ item, index }: WorkItemCardProps) {
           )}
 
           <div className="wbs-add-actions">
-            {!hasSubItems && (
-              <button
-                type="button"
-                className="wbs-add-inline"
-                onClick={() => actions.addEstimationActivity(directOwner)}
-              >
-                + Add activity
-              </button>
-            )}
             <button
               type="button"
               className="wbs-add-inline"
-              disabled={!canAddSubItem}
-              title={
-                canAddSubItem
-                  ? 'Add a sub-item'
-                  : 'Remove direct activities before adding sub-items'
-              }
-              onClick={() => actions.addSubItem(item.id)}
+              title="Add a sub-item"
+              onClick={addSubItem}
             >
               + Add sub-item
             </button>
           </div>
-          {!canAddSubItem && (
+          {!hasSubItems && item.directEstimation.length > 0 && (
             <p className="wbs-mode-hint">
-              Direct activities and sub-items cannot be mixed. Remove direct
-              activities before switching this item to sub-items.
+              Adding a sub-item replaces this direct estimation form. If the
+              form contains hours, you will be asked to confirm first.
             </p>
           )}
         </div>

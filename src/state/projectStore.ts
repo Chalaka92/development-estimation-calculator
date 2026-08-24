@@ -1,5 +1,6 @@
 import { createStore, type StoreApi } from 'zustand/vanilla'
 import {
+  createStandardEstimationActivities,
   defaultEntityFactoryDependencies,
   type EntityFactoryDependencies,
 } from '../domain/factories'
@@ -215,7 +216,7 @@ export function createProjectStore(
         const item: DevelopmentWorkItem = {
           id,
           name,
-          directEstimation: [],
+          directEstimation: createStandardEstimationActivities(dependencies),
           subItems: [],
         }
         commitProject((project) => ({
@@ -276,11 +277,14 @@ export function createProjectStore(
         const subItem: DevelopmentSubItem = {
           id,
           name,
-          estimation: [],
+          estimation: createStandardEstimationActivities(dependencies),
         }
         commitProject((project) =>
           updateWorkItem(project, workItemId, (item) => ({
             ...item,
+            directEstimation: item.subItems.length === 0
+              ? []
+              : item.directEstimation,
             subItems: [...item.subItems, subItem],
           })),
         )
@@ -336,7 +340,13 @@ export function createProjectStore(
             )
             return subItems.length === item.subItems.length
               ? item
-              : { ...item, subItems }
+              : {
+                  ...item,
+                  directEstimation: subItems.length === 0
+                    ? createStandardEstimationActivities(dependencies)
+                    : item.directEstimation,
+                  subItems,
+                }
           }),
         ),
 

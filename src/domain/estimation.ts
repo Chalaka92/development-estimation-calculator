@@ -2,6 +2,7 @@ export const CURRENT_ESTIMATION_SCHEMA_VERSION = 1 as const
 
 export type EntityId = string
 export type IsoDateTimeString = string
+export type RiskLevel = 'low' | 'medium' | 'high'
 
 export interface ThreePointEstimate {
   optimisticHours: number
@@ -14,12 +15,17 @@ export interface EstimationActivity {
   name: string
   hours: number
   threePointEstimate?: ThreePointEstimate
+  role?: string
+  riskLevel?: RiskLevel
+  confidencePercentage?: number
+  notes?: string
 }
 
 export interface DevelopmentSubItem {
   id: EntityId
   name: string
   estimation: ReadonlyArray<EstimationActivity>
+  dependencyIds?: ReadonlyArray<EntityId>
 }
 
 export interface DevelopmentWorkItem {
@@ -27,6 +33,7 @@ export interface DevelopmentWorkItem {
   name: string
   directEstimation: ReadonlyArray<EstimationActivity>
   subItems: ReadonlyArray<DevelopmentSubItem>
+  dependencyIds?: ReadonlyArray<EntityId>
 }
 
 export interface QaActivity {
@@ -34,6 +41,10 @@ export interface QaActivity {
   name: string
   hours: number
   threePointEstimate?: ThreePointEstimate
+  role?: string
+  riskLevel?: RiskLevel
+  confidencePercentage?: number
+  notes?: string
 }
 
 export interface EstimationSchedule {

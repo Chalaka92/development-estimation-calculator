@@ -4,6 +4,7 @@ import type {
   EstimationActivity,
   EstimationCalculationInput,
   EstimationSchedule,
+  EstimationProject,
   QaActivity,
   ThreePointEstimate,
 } from './estimation'
@@ -78,6 +79,37 @@ export function calculateQaHours(
     (total, activity) => total + calculateActivityHours(activity),
     0,
   )
+}
+
+export interface RoleEffort {
+  role: string
+  hours: number
+}
+
+export function calculateRoleEffort(
+  project: Pick<EstimationProject, 'developmentItems' | 'qaActivities'>,
+): ReadonlyArray<RoleEffort> {
+  const totals = new Map<string, number>()
+  const add = (activity: EstimationActivity, fallbackRole = 'Unassigned') => {
+    const role = activity.role?.trim() || fallbackRole
+    totals.set(role, (totals.get(role) ?? 0) + calculateActivityHours(activity))
+  }
+
+  for (const item of project.developmentItems) {
+    if (item.subItems.length === 0) {
+      item.directEstimation.forEach((activity) => add(activity))
+    } else {
+      item.subItems.forEach((subItem) =>
+        subItem.estimation.forEach((activity) => add(activity)),
+      )
+    }
+  }
+  project.qaActivities.forEach((activity) => add(activity, 'QA'))
+
+  return [...totals.entries()]
+    .map(([role, hours]) => ({ role, hours }))
+    .filter(({ hours }) => hours !== 0)
+    .sort((first, second) => second.hours - first.hours || first.role.localeCompare(second.role))
 }
 
 function normalizeSchedule(schedule: EstimationSchedule): EstimationSchedule {

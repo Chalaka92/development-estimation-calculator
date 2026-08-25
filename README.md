@@ -12,6 +12,9 @@ Live application: [https://chalaka92.github.io/development-estimation-calculator
 - Full live estimation table, copyable summary, and print-ready report
 - Decimal manpower/FTE and decimal-hour support
 - Optional per-activity three-point estimation using the PERT expected-hours formula
+- Optional delivery role, risk, confidence, and notes for every development and QA activity
+- Acyclic dependencies between main items and sub-items, with automatic cleanup after deletion
+- Live effort totals by delivery role and planning metadata in every summary export
 - Versioned browser autosave and safe legacy-data migration
 - Multiple saved projects with search, duplication, archive, and recent-project switching
 - Reusable templates, project snapshots, comparison, restore, and automatic recovery before destructive replacement
@@ -102,6 +105,8 @@ The application validates imported and stored projects before replacing active d
 Saved projects, templates, and snapshots are currently local to the active browser and are not included in an editable project JSON export. The calculator retains the newest 25 snapshots and 20 templates.
 
 Development and QA activities use normal hours by default. A row can optionally use optimistic, most-likely, and pessimistic hours; live totals and summary exports then use `(O + 4M + P) / 6`. Editable JSON retains the original three input values.
+
+Planning details are optional. Assigned delivery roles appear in the live summary; unassigned development effort is grouped as `Unassigned`, while unassigned QA effort is grouped as `QA`. Dependency choices cannot point to the same work unit, create a cycle, or survive deletion of their target. Editable JSON, Markdown, CSV, and PDF exports retain or report this planning information.
 
 ```text
 http://localhost:5173/?ui=legacy

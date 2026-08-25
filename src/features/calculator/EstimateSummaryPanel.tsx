@@ -1,6 +1,9 @@
 import { useMemo } from 'react'
 import { useProjectStore } from '../../app/useProjectStore'
-import { calculateEstimate } from '../../domain/calculations'
+import {
+  calculateEstimate,
+  calculateRoleEffort,
+} from '../../domain/calculations'
 
 const numberFormatter = new Intl.NumberFormat('en', {
   maximumFractionDigits: 2,
@@ -28,6 +31,7 @@ function SummaryMetric({ label, value, emphasis = false }: SummaryMetricProps) {
 export function EstimateSummaryPanel() {
   const project = useProjectStore((state) => state.project)
   const summary = useMemo(() => calculateEstimate(project), [project])
+  const roleEffort = useMemo(() => calculateRoleEffort(project), [project])
   const subItemCount = project.developmentItems.reduce(
     (total, item) => total + item.subItems.length,
     0,
@@ -100,6 +104,20 @@ export function EstimateSummaryPanel() {
           </dd>
         </div>
       </dl>
+
+      {roleEffort.length > 0 && (
+        <div className="role-effort-summary">
+          <h3>Effort by role</h3>
+          <dl>
+            {roleEffort.map((entry) => (
+              <div key={entry.role}>
+                <dt>{entry.role}</dt>
+                <dd>{formatNumber(entry.hours)} h</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      )}
     </aside>
   )
 }

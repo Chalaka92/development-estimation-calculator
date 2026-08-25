@@ -15,12 +15,20 @@ const threePointEstimateSchema = z
   })
   .strict()
 
+const activityMetadataShape = {
+  role: z.string().max(80).optional(),
+  riskLevel: z.enum(['low', 'medium', 'high']).optional(),
+  confidencePercentage: finiteNumberSchema.min(0).max(100).optional(),
+  notes: z.string().max(4000).optional(),
+}
+
 const estimationActivitySchema = z
   .object({
     id: entityIdSchema,
     name: z.string(),
     hours: finiteNumberSchema,
     threePointEstimate: threePointEstimateSchema.optional(),
+    ...activityMetadataShape,
   })
   .strict()
 
@@ -29,6 +37,7 @@ const developmentSubItemSchema = z
     id: entityIdSchema,
     name: z.string(),
     estimation: z.array(estimationActivitySchema),
+    dependencyIds: z.array(entityIdSchema).optional(),
   })
   .strict()
 
@@ -38,6 +47,7 @@ const developmentWorkItemSchema = z
     name: z.string(),
     directEstimation: z.array(estimationActivitySchema),
     subItems: z.array(developmentSubItemSchema),
+    dependencyIds: z.array(entityIdSchema).optional(),
   })
   .strict()
 
@@ -47,6 +57,7 @@ const qaActivitySchema = z
     name: z.string(),
     hours: finiteNumberSchema,
     threePointEstimate: threePointEstimateSchema.optional(),
+    ...activityMetadataShape,
   })
   .strict()
 

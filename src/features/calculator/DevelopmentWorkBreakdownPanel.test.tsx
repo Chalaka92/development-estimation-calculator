@@ -183,6 +183,66 @@ describe('DevelopmentWorkBreakdownPanel', () => {
     ).toBeUndefined()
   })
 
+  it('edits planning details, summarizes role effort, and records dependencies', async () => {
+    const user = userEvent.setup()
+    const runtime = renderEditor()
+    await user.click(screen.getByRole('button', { name: 'Add first main item' }))
+    await user.click(screen.getByRole('button', { name: '+ Add main item' }))
+
+    const firstName = screen.getByRole('textbox', { name: 'Main item 1 name' })
+    const secondName = screen.getByRole('textbox', { name: 'Main item 2 name' })
+    await user.clear(firstName)
+    await user.type(firstName, 'Foundation')
+    await user.clear(secondName)
+    await user.type(secondName, 'Billing')
+
+    const secondItem = secondName.closest('article')!
+    await user.click(within(secondItem).getByRole('checkbox', { name: '1. Foundation' }))
+
+    const firstItem = firstName.closest('article')!
+    await user.click(within(firstItem).getByRole('button', {
+      name: 'Show planning details for activity 1',
+    }))
+    await user.selectOptions(
+      within(firstItem).getByRole('combobox', { name: 'Activity 1 delivery role' }),
+      'Backend',
+    )
+    await user.selectOptions(
+      within(firstItem).getByRole('combobox', { name: 'Activity 1 risk level' }),
+      'high',
+    )
+    const confidence = within(firstItem).getByRole('spinbutton', {
+      name: 'Activity 1 confidence percentage',
+    })
+    await user.clear(confidence)
+    await user.type(confidence, '80')
+    await user.tab()
+    await user.type(
+      within(firstItem).getByRole('textbox', { name: 'Activity 1 notes' }),
+      'Identity service must be available.',
+    )
+    const hours = within(firstItem).getByRole('spinbutton', {
+      name: 'Activity 1 hours',
+    })
+    await user.clear(hours)
+    await user.type(hours, '6')
+    await user.tab()
+
+    const [foundation, billing] = runtime.store.getState().project.developmentItems
+    expect(billing.dependencyIds).toEqual([foundation.id])
+    expect(foundation.directEstimation[0]).toMatchObject({
+      role: 'Backend',
+      riskLevel: 'high',
+      confidencePercentage: 80,
+      notes: 'Identity service must be available.',
+      hours: 6,
+    })
+    expect(screen.getByText('Effort by role')).toBeTruthy()
+    const roleSummary = document.querySelector<HTMLElement>('.role-effort-summary')!
+    expect(within(roleSummary).getByText('Backend')).toBeTruthy()
+    expect(within(roleSummary).getByText('6 h')).toBeTruthy()
+  })
+
   it('confirms before replacing a direct form that contains hours', async () => {
     const user = userEvent.setup()
     const runtime = renderEditor()

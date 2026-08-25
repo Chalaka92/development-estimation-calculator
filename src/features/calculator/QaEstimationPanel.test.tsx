@@ -121,6 +121,39 @@ describe('QaEstimationPanel', () => {
     })
   })
 
+  it('edits optional QA planning details', async () => {
+    const user = userEvent.setup()
+    const runtime = renderEditor()
+    await user.click(screen.getByRole('button', {
+      name: 'Show planning details for QA activity 1',
+    }))
+    await user.selectOptions(
+      screen.getByRole('combobox', { name: 'QA activity 1 delivery role' }),
+      'QA',
+    )
+    await user.selectOptions(
+      screen.getByRole('combobox', { name: 'QA activity 1 risk level' }),
+      'medium',
+    )
+    const confidence = screen.getByRole('spinbutton', {
+      name: 'QA activity 1 confidence percentage',
+    })
+    await user.clear(confidence)
+    await user.type(confidence, '90')
+    await user.tab()
+    await user.type(
+      screen.getByRole('textbox', { name: 'QA activity 1 notes' }),
+      'Regression environment required.',
+    )
+
+    expect(runtime.store.getState().project.qaActivities[0]).toMatchObject({
+      role: 'QA',
+      riskLevel: 'medium',
+      confidencePercentage: 90,
+      notes: 'Regression environment required.',
+    })
+  })
+
   it('collapses and restores the QA editor', async () => {
     const user = userEvent.setup()
     renderEditor()

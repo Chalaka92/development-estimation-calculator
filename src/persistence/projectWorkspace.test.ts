@@ -31,9 +31,9 @@ function dependencies(): EntityFactoryDependencies {
   let id = 0
   let minute = 0
   return {
-    createId: () => \`workspace-\${++id}\`,
+    createId: () => `workspace-${++id}`,
     now: () =>
-      \`2026-08-25T10:\${String(minute++).padStart(2, '0')}:00.000Z\`,
+      `2026-08-25T10:${String(minute++).padStart(2, '0')}:00.000Z`,
   }
 }
 

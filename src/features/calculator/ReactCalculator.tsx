@@ -15,7 +15,7 @@ import { CalculatorWorkspaceTabs } from './CalculatorWorkspaceTabs'
 import { EstimateSummaryPanel } from './EstimateSummaryPanel'
 import { NewProjectControl } from './NewProjectControl'
 import { synchronizeWorkspaceProject } from '../../persistence/projectWorkspace'
-import './ReactCalculatorPreview.css'
+import './ReactCalculator.css'
 
 interface ReactCalculatorProps {
   runtime?: ProjectRuntime
@@ -27,8 +27,8 @@ function SaveStatus({ result }: { result: SaveProjectResult | null }) {
   const lastSavedAt = useProjectStore((state) => state.lastSavedAt)
   const failed = result?.status === 'storage-error' || result?.status === 'invalid'
   const className = failed
-    ? 'preview-save-status preview-save-status--error'
-    : 'preview-save-status'
+    ? 'calculator-save-status calculator-save-status--error'
+    : 'calculator-save-status'
 
   const message = failed
     ? 'Save failed'
@@ -60,39 +60,39 @@ function CalculatorContent({
   storage: KeyValueStorage
 }) {
   return (
-    <main className="react-preview">
+    <main className="react-calculator">
       <a className="skip-link" href="#calculator-workspace">
         Skip to calculator workspace
       </a>
-      <header className="preview-header">
-        <div className="preview-brand">
-          <span className="preview-brand__mark">DE</span>
+      <header className="calculator-header">
+        <div className="calculator-brand">
+          <span className="calculator-brand__mark">DE</span>
           <div>
             <strong>Development Estimation</strong>
             <span>Typed React calculator · v{APP_VERSION}</span>
           </div>
         </div>
-        <div className="preview-header__actions">
+        <div className="calculator-header__actions">
           <SaveStatus result={saveResult} />
           <NewProjectControl storage={storage} />
         </div>
       </header>
 
       {runtime.warnings.length > 0 && (
-        <div className="preview-warning" role="alert">
+        <div className="calculator-warning" role="alert">
           <strong>Some saved data needs attention.</strong>
           <span>{runtime.warnings.map((warning) => warning.message).join(' ')}</span>
         </div>
       )}
 
       <div
-        className="preview-workspace"
+        className="calculator-workspace"
         id="calculator-workspace"
         tabIndex={-1}
       >
-        <div className="preview-main-column">
-          <div className="preview-intro">
-            <p className="preview-eyebrow">Project workspace</p>
+        <div className="calculator-main-column">
+          <div className="calculator-intro">
+            <p className="calculator-eyebrow">Project workspace</p>
             <h1>Build a clear, defensible estimate.</h1>
             <p>
               This calculator uses the typed project model, validated

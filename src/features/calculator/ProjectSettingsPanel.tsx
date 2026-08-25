@@ -10,7 +10,7 @@ export function ProjectSettingsPanel() {
   const actions = useProjectStore((state) => state.actions)
 
   return (
-    <Panel className="preview-settings" aria-labelledby="settings-title">
+    <Panel className="calculator-settings" aria-labelledby="settings-title">
       <PanelHeader
         eyebrow="Estimate setup"
         title="Project settings"
@@ -27,7 +27,7 @@ export function ProjectSettingsPanel() {
         }
       />
 
-      <div className="preview-field preview-field--wide">
+      <div className="calculator-field calculator-field--wide">
         <label htmlFor="project-name">Project or release name</label>
         <input
           id="project-name"
@@ -42,7 +42,7 @@ export function ProjectSettingsPanel() {
         </small>
       </div>
 
-      <div className="preview-field-grid">
+      <div className="calculator-field-grid">
         <RiskBufferField
           value={schedule.riskBufferPercentage}
           onCommit={(riskBufferPercentage) =>

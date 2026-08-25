@@ -85,7 +85,7 @@ export function NewProjectControl({
       <Button
         ref={triggerRef}
         variant="primary"
-        className="preview-new-project"
+        className="calculator-new-project"
         onClick={() => setOpen(true)}
       >
         Reset all

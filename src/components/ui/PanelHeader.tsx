@@ -23,9 +23,9 @@ export function PanelHeader({
   titleDetail,
 }: PanelHeaderProps) {
   return (
-    <div className={`ui-panel-header preview-card__heading ${className}`.trim()}>
+    <div className={`ui-panel-header calculator-card__heading ${className}`.trim()}>
       <div>
-        <p className="preview-eyebrow">{eyebrow}</p>
+        <p className="calculator-eyebrow">{eyebrow}</p>
         <h2 id={titleId}>{title}</h2>
         {titleDetail}
         {description && <p className="wbs-heading-description">{description}</p>}

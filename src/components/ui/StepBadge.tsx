@@ -3,5 +3,5 @@ interface StepBadgeProps {
 }
 
 export function StepBadge({ children }: StepBadgeProps) {
-  return <span className="ui-step preview-step">{children}</span>
+  return <span className="ui-step calculator-step">{children}</span>
 }

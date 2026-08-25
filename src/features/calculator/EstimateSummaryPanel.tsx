@@ -39,17 +39,17 @@ export function EstimateSummaryPanel() {
 
   return (
     <aside
-      className="preview-summary"
+      className="calculator-summary"
       aria-labelledby="summary-title"
       aria-live="polite"
       aria-atomic="true"
     >
-      <div className="preview-summary__heading">
+      <div className="calculator-summary__heading">
         <div>
-          <p className="preview-eyebrow preview-eyebrow--light">Live calculation</p>
+          <p className="calculator-eyebrow calculator-eyebrow--light">Live calculation</p>
           <h2 id="summary-title">Estimate summary</h2>
         </div>
-        <span className="preview-live-indicator">Live</span>
+        <span className="calculator-live-indicator">Live</span>
       </div>
 
       <div className="summary-metrics">

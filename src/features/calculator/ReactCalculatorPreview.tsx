@@ -11,16 +11,9 @@ import type {
   KeyValueStorage,
   SaveProjectResult,
 } from '../../persistence/projectPersistence'
+import { CalculatorWorkspaceTabs } from './CalculatorWorkspaceTabs'
 import { EstimateSummaryPanel } from './EstimateSummaryPanel'
-import { DevelopmentWorkBreakdownPanel } from './DevelopmentWorkBreakdownPanel'
-import { ProjectSettingsPanel } from './ProjectSettingsPanel'
-import { QaEstimationPanel } from './QaEstimationPanel'
-import { ExportImportPanel } from './ExportImportPanel'
 import { NewProjectControl } from './NewProjectControl'
-import { LiveEstimationTable } from './LiveEstimationTable'
-import { ProjectHistoryPanel } from './ProjectHistoryPanel'
-import { ProjectWorkspacePanel } from './ProjectWorkspacePanel'
-import { WorkItemGenerationPanel } from './WorkItemGenerationPanel'
 import { synchronizeWorkspaceProject } from '../../persistence/projectWorkspace'
 import './ReactCalculatorPreview.css'
 
@@ -113,19 +106,12 @@ function PreviewContent({
             <p>
               This preview uses the typed project model, validated persistence,
               and live calculation engine. Project settings and the complete
-              development, QA, sharing, and editable project data now stay in
-              sync automatically.
+              development, QA, review, export, and history sections now stay in
+              sync automatically without crowding one view.
             </p>
           </div>
 
-          <ProjectSettingsPanel />
-          <ProjectWorkspacePanel storage={storage} />
-          <DevelopmentWorkBreakdownPanel />
-          <QaEstimationPanel />
-          <LiveEstimationTable />
-          <WorkItemGenerationPanel />
-          <ExportImportPanel storage={storage} />
-          <ProjectHistoryPanel storage={storage} />
+          <CalculatorWorkspaceTabs storage={storage} />
         </div>
 
         <EstimateSummaryPanel />

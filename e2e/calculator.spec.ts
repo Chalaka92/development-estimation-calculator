@@ -1,4 +1,8 @@
-import { expect, test } from '@playwright/test'
+import { expect, test, type Page } from '@playwright/test'
+
+async function openWorkspaceTab(page: Page, name: string) {
+  await page.getByRole('tab', { name, exact: true }).click()
+}
 
 test.beforeEach(async ({ page }) => {
   await page.goto('./')
@@ -10,6 +14,7 @@ test('@smoke loads the production calculator and legacy defaults', async ({
   await expect(
     page.getByRole('heading', { name: 'Build a clear, defensible estimate.' }),
   ).toBeVisible()
+  await openWorkspaceTab(page, 'QA')
   await expect(page.getByLabel('QA activity 1 name')).toHaveValue(
     'QA Analysis / Test Planning',
   )
@@ -26,6 +31,7 @@ test('creates, calculates, autosaves, and restores a complete estimate', async (
   page,
 }) => {
   await page.getByLabel('Project or release name').fill('Browser Verification')
+  await openWorkspaceTab(page, 'Development')
   await page.getByRole('button', { name: 'Add first main item' }).click()
 
   await expect(
@@ -37,6 +43,7 @@ test('creates, calculates, autosaves, and restores a complete estimate', async (
 
   await page.getByLabel('Activity 1 hours', { exact: true }).fill('10')
   await page.getByLabel('Activity 1 hours', { exact: true }).press('Tab')
+  await openWorkspaceTab(page, 'QA')
   await page.getByLabel('QA activity 1 hours').fill('2')
   await page.getByLabel('QA activity 1 hours').press('Tab')
 
@@ -50,14 +57,17 @@ test('creates, calculates, autosaves, and restores a complete estimate', async (
   await expect(page.getByLabel('Project or release name')).toHaveValue(
     'Browser Verification',
   )
+  await openWorkspaceTab(page, 'Development')
   await expect(page.getByLabel('Activity 1 hours', { exact: true })).toHaveValue(
     '10',
   )
+  await openWorkspaceTab(page, 'QA')
   await expect(page.getByLabel('QA activity 1 hours')).toHaveValue('2')
   await expect(page.locator('.preview-summary')).toContainText('13.8 h')
 })
 
 test('creates a legacy estimation form for a new sub-item', async ({ page }) => {
+  await openWorkspaceTab(page, 'Development')
   await page.getByRole('button', { name: 'Add first main item' }).click()
   await page.getByLabel('Activity 1 hours', { exact: true }).fill('1')
   await page.getByLabel('Activity 1 hours', { exact: true }).press('Tab')
@@ -78,6 +88,7 @@ test('creates a legacy estimation form for a new sub-item', async ({ page }) => 
 test('calculates and restores an optional three-point estimate', async ({
   page,
 }) => {
+  await openWorkspaceTab(page, 'Development')
   await page.getByRole('button', { name: 'Add first main item' }).click()
   await page.getByRole('button', {
     name: 'Use three-point estimate for activity 1',
@@ -100,6 +111,7 @@ test('calculates and restores an optional three-point estimate', async ({
   )
 
   await page.reload()
+  await openWorkspaceTab(page, 'Development')
   await expect(page.getByLabel('Activity 1 optimistic hours')).toHaveValue('4')
   await expect(page.getByLabel('Activity 1 most likely hours')).toHaveValue('10')
   await expect(page.getByLabel('Activity 1 pessimistic hours')).toHaveValue('16')
@@ -107,6 +119,7 @@ test('calculates and restores an optional three-point estimate', async ({
 })
 
 test('records delivery metadata and dependencies across reloads', async ({ page }) => {
+  await openWorkspaceTab(page, 'Development')
   await page.getByRole('button', { name: 'Add first main item' }).click()
   await page.getByRole('button', { name: '+ Add main item' }).click()
   await page.getByLabel('Main item 1 name').fill('Foundation')
@@ -133,6 +146,7 @@ test('records delivery metadata and dependencies across reloads', async ({ page 
   )
 
   await page.reload()
+  await openWorkspaceTab(page, 'Development')
   await expect(page.getByLabel('Main item 2 name')).toHaveValue('Billing')
   const restoredBilling = page.getByLabel('Main item 2 name').locator('xpath=ancestor::article[1]')
   await expect(restoredBilling.getByRole('checkbox', { name: '1. Foundation' })).toBeChecked()
@@ -148,10 +162,13 @@ test('records delivery metadata and dependencies across reloads', async ({ page 
 })
 
 test('previews and exports provider-neutral work items', async ({ page }) => {
+  await openWorkspaceTab(page, 'Development')
   await page.getByRole('button', { name: 'Add first main item' }).click()
   await page.getByLabel('Main item 1 name').fill('Billing')
   await page.getByLabel('Activity 1 hours', { exact: true }).fill('5')
   await page.getByLabel('Activity 1 hours', { exact: true }).press('Tab')
+
+  await openWorkspaceTab(page, 'Export & Jira')
 
   const panel = page.locator('.work-item-panel')
   await expect(panel.locator('.work-item-toolbar')).toContainText('1 of 1 items')
@@ -191,10 +208,13 @@ test('previews and exports provider-neutral work items', async ({ page }) => {
 })
 
 test('exports a hierarchy-ready Jira CSV', async ({ page }) => {
+  await openWorkspaceTab(page, 'Development')
   await page.getByRole('button', { name: 'Add first main item' }).click()
   await page.getByLabel('Main item 1 name').fill('Billing')
   await page.getByLabel('Activity 1 hours', { exact: true }).fill('1.5')
   await page.getByLabel('Activity 1 hours', { exact: true }).press('Tab')
+
+  await openWorkspaceTab(page, 'Export & Jira')
 
   const panel = page.locator('.work-item-panel')
   await panel.getByRole('checkbox', {
@@ -225,6 +245,7 @@ test('exports a hierarchy-ready Jira CSV', async ({ page }) => {
 
 test('exports and reimports an editable project', async ({ page }) => {
   await page.getByLabel('Project or release name').fill('Browser Export')
+  await openWorkspaceTab(page, 'Export & Jira')
   const downloadPromise = page.waitForEvent('download')
   await page.getByRole('button', { name: 'Export JSON' }).click()
   const download = await downloadPromise
@@ -232,12 +253,15 @@ test('exports and reimports an editable project', async ({ page }) => {
 
   const downloadPath = await download.path()
   expect(downloadPath).not.toBeNull()
+  await openWorkspaceTab(page, 'Project')
   await page.getByLabel('Project or release name').fill('Changed Project')
+  await openWorkspaceTab(page, 'Export & Jira')
   await page.getByLabel('Import editable estimate').setInputFiles(downloadPath!)
 
   await expect(page.getByRole('status').last()).toContainText(
     'Project imported successfully.',
   )
+  await openWorkspaceTab(page, 'Project')
   await expect(page.getByLabel('Project or release name')).toHaveValue(
     'Browser Export',
   )
@@ -250,15 +274,20 @@ test('resets individual sections and the complete project safely', async ({
   await page.getByLabel('Risk buffer').selectOption('custom')
   await page.getByLabel('Custom risk buffer').fill('28')
   await page.getByLabel('Custom risk buffer').press('Tab')
+  await openWorkspaceTab(page, 'Development')
   await page.getByRole('button', { name: 'Add first main item' }).click()
+  await openWorkspaceTab(page, 'QA')
   await page.getByLabel('QA activity 1 hours').fill('9')
   await page.getByLabel('QA activity 1 hours').press('Tab')
 
+  await openWorkspaceTab(page, 'Development')
   page.once('dialog', (dialog) => dialog.accept())
   await page.getByRole('button', { name: 'Reset development work breakdown' }).click()
   await expect(page.getByRole('button', { name: 'Add first main item' })).toBeVisible()
+  await openWorkspaceTab(page, 'Project')
   await expect(page.getByLabel('Project or release name')).toHaveValue('Reset Test')
 
+  await openWorkspaceTab(page, 'QA')
   page.once('dialog', (dialog) => dialog.accept())
   await page.getByRole('button', { name: 'Reset QA estimation' }).click()
   await expect(page.getByLabel('QA activity 1 hours')).toHaveValue('0')
@@ -266,6 +295,7 @@ test('resets individual sections and the complete project safely', async ({
     'QA Analysis / Test Planning',
   )
 
+  await openWorkspaceTab(page, 'Project')
   page.once('dialog', (dialog) => dialog.accept())
   await page.getByRole('button', { name: 'Reset project settings' }).click()
   await expect(page.getByLabel('Project or release name')).toHaveValue(
@@ -283,6 +313,7 @@ test('resets individual sections and the complete project safely', async ({
   await expect(page.getByLabel('Project or release name')).toHaveValue(
     'Untitled Estimate',
   )
+  await openWorkspaceTab(page, 'History')
   await expect(
     page.getByRole('option', { name: /Recovery: Before full reset/ }),
   ).toHaveCount(1)
@@ -290,23 +321,29 @@ test('resets individual sections and the complete project safely', async ({
 
 test('saves, compares, restores, and reuses project versions', async ({ page }) => {
   await page.getByLabel('Project or release name').fill('History Test')
+  await openWorkspaceTab(page, 'Development')
   await page.getByRole('button', { name: 'Add first main item' }).click()
   await page.getByLabel('Activity 1 hours', { exact: true }).fill('10')
   await page.getByLabel('Activity 1 hours', { exact: true }).press('Tab')
 
+  await openWorkspaceTab(page, 'History')
   await page.getByLabel('Snapshot name').fill('Baseline')
   await page.getByRole('button', { name: 'Save snapshot' }).click()
   await expect(page.getByRole('option', { name: /Baseline/ })).toHaveCount(1)
 
+  await openWorkspaceTab(page, 'Development')
   await page.getByLabel('Activity 1 hours', { exact: true }).fill('18')
   await page.getByLabel('Activity 1 hours', { exact: true }).press('Tab')
+  await openWorkspaceTab(page, 'History')
   await expect(
     page.locator('.history-comparison__row').filter({ hasText: 'Development' }),
   ).toContainText('+8 h')
 
   page.once('dialog', (dialog) => dialog.accept())
   await page.getByRole('button', { name: 'Restore selected' }).click()
+  await openWorkspaceTab(page, 'Development')
   await expect(page.getByLabel('Activity 1 hours', { exact: true })).toHaveValue('10')
+  await openWorkspaceTab(page, 'History')
   await expect(
     page.getByRole('option', { name: /Recovery: Before snapshot restore/ }),
   ).toHaveCount(1)
@@ -316,9 +353,11 @@ test('saves, compares, restores, and reuses project versions', async ({ page }) 
   await expect(page.getByText('Reusable Billing')).toBeVisible()
   page.once('dialog', (dialog) => dialog.accept())
   await page.getByRole('button', { name: 'Apply' }).click()
+  await openWorkspaceTab(page, 'Project')
   await expect(page.getByLabel('Project or release name')).toHaveValue(
     'Reusable Billing',
   )
+  await openWorkspaceTab(page, 'Development')
   await expect(page.getByLabel('Activity 1 hours', { exact: true })).toHaveValue('0')
 })
 

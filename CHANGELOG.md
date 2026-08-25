@@ -11,6 +11,8 @@ All notable user-visible changes are documented here. The format follows [Keep a
 - Skip navigation, accessible dialog focus management, field-help associations, and live status announcements.
 - Legacy-aligned eight-row estimation forms for new main items and sub-items.
 - The six legacy QA activities as defaults for every new project.
+- GitHub Pages deployment with a smoke test against the published application.
+- Playwright coverage for critical workflows in Chromium, Firefox, and WebKit.
 
 ### Fixed
 

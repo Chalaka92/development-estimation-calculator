@@ -15,6 +15,8 @@ Thank you for improving the Development Estimation Calculator.
 nvm use
 npm ci
 npm run check
+npx playwright install chromium firefox webkit
+npm run test:e2e
 ```
 
 ## Branches and commits
@@ -41,6 +43,7 @@ Run the complete gate before opening a pull request:
 
 ```bash
 npm run check
+npm run test:e2e
 ```
 
 Then confirm:

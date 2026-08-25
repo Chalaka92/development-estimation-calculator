@@ -10,7 +10,7 @@ import {
   saveProject,
   type KeyValueStorage,
 } from '../../persistence/projectPersistence'
-import { ReactCalculatorPreview } from './ReactCalculatorPreview'
+import { ReactCalculator } from './ReactCalculator'
 
 class MemoryStorage implements KeyValueStorage {
   readonly values = new Map<string, string>()
@@ -31,12 +31,12 @@ class MemoryStorage implements KeyValueStorage {
 const dependencies: EntityFactoryDependencies = {
   createId: (() => {
     let id = 0
-    return () => `preview-${++id}`
+    return () => `calculator-${++id}`
   })(),
   now: () => '2026-08-24T19:00:00.000Z',
 }
 
-describe('React calculator preview', () => {
+describe('React calculator', () => {
   it('renders typed settings and calculated totals without a legacy UI entry point', () => {
     const storage = new MemoryStorage()
     const emptyProject = createEmptyEstimationProject(
@@ -63,7 +63,7 @@ describe('React calculator preview', () => {
     const runtime = createProjectRuntime(storage, dependencies)
 
     const markup = renderToStaticMarkup(
-      <ReactCalculatorPreview runtime={runtime} storage={storage} />,
+      <ReactCalculator runtime={runtime} storage={storage} />,
     )
 
     expect(markup).toContain('Capital Trust Release')

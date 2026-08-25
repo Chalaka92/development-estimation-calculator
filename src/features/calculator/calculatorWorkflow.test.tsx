@@ -9,7 +9,7 @@ import {
   loadProject,
   type KeyValueStorage,
 } from '../../persistence/projectPersistence'
-import { ReactCalculatorPreview } from './ReactCalculatorPreview'
+import { ReactCalculator } from './ReactCalculator'
 
 class MemoryStorage implements KeyValueStorage {
   readonly values = new Map<string, string>()
@@ -41,7 +41,7 @@ describe('calculator workflow', () => {
     const storage = new MemoryStorage()
     const firstRuntime = createProjectRuntime(storage, dependencies())
     const firstRender = render(
-      <ReactCalculatorPreview runtime={firstRuntime} storage={storage} />,
+      <ReactCalculator runtime={firstRuntime} storage={storage} />,
     )
 
     const projectName = screen.getByRole('textbox', {
@@ -76,7 +76,7 @@ describe('calculator workflow', () => {
     firstRender.unmount()
     const reloadedRuntime = createProjectRuntime(storage, dependencies())
     render(
-      <ReactCalculatorPreview runtime={reloadedRuntime} storage={storage} />,
+      <ReactCalculator runtime={reloadedRuntime} storage={storage} />,
     )
 
     expect(
@@ -94,7 +94,7 @@ describe('calculator workflow', () => {
   it('flushes pending changes when the page is leaving', () => {
     const storage = new MemoryStorage()
     const runtime = createProjectRuntime(storage, dependencies())
-    render(<ReactCalculatorPreview runtime={runtime} storage={storage} />)
+    render(<ReactCalculator runtime={runtime} storage={storage} />)
     runtime.store.getState().actions.renameProject('Saved Before Unload')
 
     globalThis.dispatchEvent(new Event('beforeunload'))

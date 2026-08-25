@@ -1,8 +1,8 @@
 import './App.css'
-import { ReactCalculatorPreview } from './features/calculator/ReactCalculatorPreview'
+import { ReactCalculator } from './features/calculator/ReactCalculator'
 
 function App() {
-  return <ReactCalculatorPreview />
+  return <ReactCalculator />
 }
 
 export default App

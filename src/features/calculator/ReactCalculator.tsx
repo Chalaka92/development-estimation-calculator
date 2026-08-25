@@ -17,7 +17,7 @@ import { NewProjectControl } from './NewProjectControl'
 import { synchronizeWorkspaceProject } from '../../persistence/projectWorkspace'
 import './ReactCalculatorPreview.css'
 
-interface ReactCalculatorPreviewProps {
+interface ReactCalculatorProps {
   runtime?: ProjectRuntime
   storage?: KeyValueStorage
 }
@@ -50,7 +50,7 @@ function SaveStatus({ result }: { result: SaveProjectResult | null }) {
   )
 }
 
-function PreviewContent({
+function CalculatorContent({
   runtime,
   saveResult,
   storage,
@@ -111,10 +111,10 @@ function PreviewContent({
   )
 }
 
-export function ReactCalculatorPreview({
+export function ReactCalculator({
   runtime: suppliedRuntime,
   storage,
-}: ReactCalculatorPreviewProps) {
+}: ReactCalculatorProps) {
   const runtime = suppliedRuntime ?? getBrowserProjectRuntime()
   const projectStorage = storage ?? globalThis.localStorage
   const [saveResult, setSaveResult] = useState<SaveProjectResult | null>(null)
@@ -142,7 +142,7 @@ export function ReactCalculatorPreview({
 
   return (
     <ProjectStoreProvider store={runtime.store}>
-      <PreviewContent
+      <CalculatorContent
         runtime={runtime}
         saveResult={saveResult}
         storage={projectStorage}

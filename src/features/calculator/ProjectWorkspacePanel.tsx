@@ -117,7 +117,7 @@ export function ProjectWorkspacePanel({
     markSaved()
     setMessage({
       tone: 'success',
-      text: \`Created and opened “\${name}”.\`,
+      text: `Created and opened “${name}”.`,
     })
   }
 
@@ -139,7 +139,7 @@ export function ProjectWorkspacePanel({
     markSaved()
     setMessage({
       tone: 'success',
-      text: \`Opened “\${activated.value.name}”.\`,
+      text: `Opened “${activated.value.name}”.`,
     })
   }
 
@@ -166,7 +166,7 @@ export function ProjectWorkspacePanel({
     }
     setMessage({
       tone: 'success',
-      text: \`Created “\${result.value.project.name}”.\`,
+      text: `Created “${result.value.project.name}”.`,
     })
   }
 
@@ -175,7 +175,7 @@ export function ProjectWorkspacePanel({
     archived: boolean,
     name: string,
   ) => {
-    if (archived && !globalThis.confirm(\`Archive “\${name}”?\`)) return
+    if (archived && !globalThis.confirm(`Archive “${name}”?`)) return
     const result = setWorkspaceProjectArchived(storage, projectId, archived)
     if (result.status !== 'success') {
       setMessage({ tone: 'error', text: result.error })
@@ -190,7 +190,7 @@ export function ProjectWorkspacePanel({
   const removeProject = (projectId: string, name: string) => {
     if (
       !globalThis.confirm(
-        \`Permanently delete “\${name}” from this browser?\`,
+        `Permanently delete “${name}” from this browser?`,
       )
     ) {
       return
@@ -342,7 +342,7 @@ export function ProjectWorkspacePanel({
 
       {message && (
         <p
-          className={\`workspace-message workspace-message--\${message.tone}\`}
+          className={`workspace-message workspace-message--${message.tone}`}
           role={message.tone === 'error' ? 'alert' : 'status'}
         >
           {message.text}

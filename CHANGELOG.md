@@ -4,7 +4,16 @@ All notable user-visible changes are documented here. The format follows [Keep a
 
 ## [Unreleased]
 
-No unreleased changes.
+### Added
+
+- Browser acceptance for non-destructive migration of v16 browser storage into typed project storage.
+- A staged legacy-retirement plan that separates removal of the old UI from later removal of v16 data compatibility.
+
+### Changed
+
+- Mark the v16 calculator as a temporary compatibility and recovery mode with migration guidance.
+- Remove remaining user-facing preview wording from the stable React calculator.
+- Refresh the roadmap, README, and feature-parity review with explicit post-`v2.0.0` legacy-removal gates.
 
 ## [2.0.0] - 2026-08-25
 

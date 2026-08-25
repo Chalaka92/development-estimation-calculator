@@ -1,0 +1,76 @@
+name: Prepare v2.0.1 metadata
+
+on:
+  push:
+    branches:
+      - release/v2.0.1
+
+permissions:
+  contents: write
+
+jobs:
+  prepare:
+    name: Prepare release metadata
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out release branch
+        uses: actions/checkout@v7
+        with:
+          ref: release/v2.0.1
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Bump npm version metadata
+        run: npm version 2.0.1 --no-git-tag-version
+
+      - name: Promote unreleased notes to v2.0.1
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs')
+
+          const changelogPath = 'CHANGELOG.md'
+          let changelog = fs.readFileSync(changelogPath, 'utf8')
+          const unreleased = '## [Unreleased]\n\n'
+          if (!changelog.includes(unreleased)) {
+            throw new Error('Unreleased changelog section not found')
+          }
+          changelog = changelog.replace(
+            unreleased,
+            `${unreleased}No unreleased changes.\n\n## [2.0.1] - 2026-08-25\n\n`,
+          )
+          const roadmapBullet = '- Refresh the roadmap, README, and feature-parity review with explicit post-`v2.0.0` legacy-removal gates.'
+          if (!changelog.includes(roadmapBullet)) {
+            throw new Error('Expected v2.0.1 changelog content not found')
+          }
+          changelog = changelog.replace(
+            roadmapBullet,
+            `${roadmapBullet}\n- Upgrade GitHub Actions artifact uploads from v5 to v6 so CI, Pages, and release reports use the current Node 24 action runtime.`,
+          )
+          fs.writeFileSync(changelogPath, changelog)
+
+          const readmePath = 'README.md'
+          let readme = fs.readFileSync(readmePath, 'utf8')
+          const oldVersion = 'Current package version: `2.0.0`'
+          if (!readme.includes(oldVersion)) {
+            throw new Error('README current-version marker not found')
+          }
+          readme = readme.replace(oldVersion, 'Current package version: `2.0.1`')
+          fs.writeFileSync(readmePath, readme)
+          NODE
+
+      - name: Remove one-time preparation workflow
+        run: rm .github/workflows/prepare-v2.0.1.yml
+
+      - name: Commit prepared release metadata
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json package-lock.json CHANGELOG.md README.md .github/workflows/prepare-v2.0.1.yml
+          git commit -m "Prepare v2.0.1 maintenance release"
+          git push origin HEAD:release/v2.0.1

@@ -16,6 +16,7 @@ Live application: [https://chalaka92.github.io/development-estimation-calculator
 - Acyclic dependencies between main items and sub-items, with automatic cleanup after deletion
 - Live effort totals by delivery role and planning metadata in every summary export
 - Editable provider-neutral work-item preview with hierarchy, dependencies, and JSON/CSV exports
+- Configurable Jira-ready CSV export with hierarchy IDs and estimates expressed in seconds
 - Versioned browser autosave and safe legacy-data migration
 - Multiple saved projects with search, duplication, archive, and recent-project switching
 - Reusable templates, project snapshots, comparison, restore, and automatic recovery before destructive replacement
@@ -111,6 +112,10 @@ Development and QA activities use normal hours by default. A row can optionally 
 Planning details are optional. Assigned delivery roles appear in the live summary; unassigned development effort is grouped as `Unassigned`, while unassigned QA effort is grouped as `QA`. Dependency choices cannot point to the same work unit, create a cycle, or survive deletion of their target. Editable JSON, Markdown, CSV, and PDF exports retain or report this planning information.
 
 The work-item generator converts the estimate into provider-neutral `group`, `deliverable`, `activity`, and `quality` records. It supports an editable preview, item selection, optional activity-level detail, QA inclusion, stable parent/dependency IDs, and versioned JSON or CSV output. When activity detail is enabled, effort moves to leaf activities so exported totals are not duplicated. Jira-specific field mapping and authentication remain outside the core domain.
+
+The optional Jira CSV adapter maps those neutral records to configurable Jira issue types, with defaults of Epic, Story, Sub-task, and Task. Enter the Jira project or space key and optionally set labels, component, fix version, and priority before downloading. The file includes Issue ID and Parent ID columns for hierarchy, repeated Labels columns, and Original Estimate values converted from hours to seconds.
+
+Multi-level hierarchy import requires Jira administration’s **External System Import**. Jira’s standard bulk CSV importer cannot map a hierarchy through multiple levels. During import, map the CSV columns to the matching Jira fields and validate before creating work items. See Atlassian’s [CSV importer guidance](https://support.atlassian.com/jira-software-cloud/docs/create-issues-using-the-csv-importer/) and [administrator CSV import reference](https://support.atlassian.com/jira-cloud-administration/docs/import-data-from-a-csv-file/).
 
 ```text
 http://localhost:5173/?ui=legacy

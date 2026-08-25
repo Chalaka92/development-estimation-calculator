@@ -190,6 +190,39 @@ test('previews and exports provider-neutral work items', async ({ page }) => {
   })
 })
 
+test('exports a hierarchy-ready Jira CSV', async ({ page }) => {
+  await page.getByRole('button', { name: 'Add first main item' }).click()
+  await page.getByLabel('Main item 1 name').fill('Billing')
+  await page.getByLabel('Activity 1 hours', { exact: true }).fill('1.5')
+  await page.getByLabel('Activity 1 hours', { exact: true }).press('Tab')
+
+  const panel = page.locator('.work-item-panel')
+  await panel.getByRole('checkbox', {
+    name: 'Generate estimation activities as child work items',
+  }).check()
+  await panel.getByLabel('Jira project or space key').fill('ct2')
+  await expect(panel.getByLabel('Jira project or space key')).toHaveValue('CT2')
+
+  const downloadPromise = page.waitForEvent('download')
+  await panel.getByRole('button', { name: 'Export Jira CSV' }).click()
+  const download = await downloadPromise
+  expect(download.suggestedFilename()).toBe('untitled-estimate-jira.csv')
+  const path = await download.path()
+  expect(path).not.toBeNull()
+  const content = await import('node:fs/promises').then(({ readFile }) =>
+    readFile(path!, 'utf8'),
+  )
+
+  expect(content).toContain(
+    'Issue ID,Parent ID,Project Key,Issue Type,Summary,Description,Original Estimate',
+  )
+  expect(content).toContain('10001,,CT2,Story,Billing')
+  expect(content).toContain(
+    '10002,10001,CT2,Sub-task,Requirement Analysis / Investigation',
+  )
+  expect(content).toContain(',5400,')
+})
+
 test('exports and reimports an editable project', async ({ page }) => {
   await page.getByLabel('Project or release name').fill('Browser Export')
   const downloadPromise = page.waitForEvent('download')

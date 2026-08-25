@@ -804,6 +804,61 @@
   cursor: pointer;
 }
 
+.jira-csv-options {
+  margin: 0 0 16px;
+  padding: 13px;
+  border: 1px solid #d8ddf6;
+  border-radius: 11px;
+  background: #f7f8ff;
+}
+
+.jira-csv-options legend {
+  padding: 0 5px;
+  color: var(--color-brand);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.jira-csv-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.jira-csv-grid label {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  color: var(--color-text-soft);
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.jira-csv-grid input {
+  width: 100%;
+  min-width: 0;
+  padding: 8px 9px;
+  border: 1px solid var(--color-border-control);
+  border-radius: 7px;
+  color: var(--color-text);
+  background: #fff;
+  font: inherit;
+  font-size: 11px;
+}
+
+.jira-labels-field {
+  grid-column: span 2;
+}
+
+.jira-csv-options > p {
+  margin: 10px 0 0;
+  color: var(--color-text-soft);
+  font-size: 10px;
+  line-height: 1.55;
+}
+
 .work-item-toolbar {
   display: flex;
   justify-content: space-between;
@@ -949,6 +1004,10 @@
   color: #157347;
   font-size: 10px;
   font-weight: 700;
+}
+
+.work-item-message--error {
+  color: var(--color-danger);
 }
 
 .transfer-panel__heading {
@@ -1757,8 +1816,13 @@ button.wbs-danger-action:hover {
   }
 
   .work-item-card,
-  .work-item-card dl {
+  .work-item-card dl,
+  .jira-csv-grid {
     grid-template-columns: 1fr;
+  }
+
+  .jira-labels-field {
+    grid-column: auto;
   }
 
   .preview-workspace {

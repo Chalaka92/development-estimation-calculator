@@ -12,6 +12,7 @@ Live application: [https://chalaka92.github.io/development-estimation-calculator
 - Full live estimation table, copyable summary, and print-ready report
 - Decimal manpower/FTE and decimal-hour support
 - Versioned browser autosave and safe legacy-data migration
+- Reusable templates, project snapshots, comparison, restore, and automatic recovery before destructive replacement
 - Editable JSON import/export with validation
 - Markdown, CSV, and A4 PDF summary exports
 - Temporary v16 fallback at `?ui=legacy`
@@ -88,13 +89,15 @@ public/legacy/  Temporary v16 fallback
 docs/adr/       Architecture decision records
 ```
 
-Calculation rules belong in `src/domain/`, not React components. Browser persistence is versioned under `developmentEstimation.project.v1`; the legacy `developmentEstimationV4` key remains separate and is never overwritten by the typed persistence layer.
+Calculation rules belong in `src/domain/`, not React components. Browser persistence is versioned under `developmentEstimation.project.v1`; templates and project history use the separate `developmentEstimation.archive.v1` record. The legacy `developmentEstimationV4` key remains separate and is never overwritten by the typed persistence layer.
 
 The completed feature-parity and accessibility assessment is recorded in [docs/feature-parity-accessibility-review.md](docs/feature-parity-accessibility-review.md).
 
 ## Data and migration safety
 
 The application validates imported and stored projects before replacing active data. Invalid typed storage is quarantined when possible. The legacy calculator remains available at:
+
+Templates and snapshots are currently local to the active browser and are not included in an editable project JSON export. The calculator retains the newest 25 snapshots and 20 templates.
 
 ```text
 http://localhost:5173/?ui=legacy

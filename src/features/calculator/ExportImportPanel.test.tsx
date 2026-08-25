@@ -7,6 +7,7 @@ import { createProjectRuntime } from '../../app/projectRuntime'
 import { createEmptyEstimationProject } from '../../domain/factories'
 import type { KeyValueStorage } from '../../persistence/projectPersistence'
 import { ExportImportPanel } from './ExportImportPanel'
+import { loadProjectArchive } from '../../persistence/projectArchive'
 
 class MemoryStorage implements KeyValueStorage {
   readonly values = new Map<string, string>()
@@ -23,17 +24,18 @@ class MemoryStorage implements KeyValueStorage {
 
 function renderPanel() {
   let id = 0
+  const storage = new MemoryStorage()
   const dependencies = {
     createId: () => `transfer-${++id}`,
     now: () => '2026-08-24T23:00:00.000Z',
   }
-  const runtime = createProjectRuntime(new MemoryStorage(), dependencies)
+  const runtime = createProjectRuntime(storage, dependencies)
   render(
     <ProjectStoreProvider store={runtime.store}>
-      <ExportImportPanel />
+      <ExportImportPanel storage={storage} />
     </ProjectStoreProvider>,
   )
-  return { runtime, dependencies }
+  return { runtime, dependencies, storage }
 }
 
 function fileWithText(content: string, name = 'estimate.json'): File {
@@ -53,7 +55,7 @@ afterEach(() => {
 
 describe('ExportImportPanel', () => {
   it('imports a validated typed project into the active store', async () => {
-    const { runtime, dependencies } = renderPanel()
+    const { runtime, dependencies, storage } = renderPanel()
     const imported = createEmptyEstimationProject(
       'Imported Release',
       dependencies,
@@ -71,6 +73,17 @@ describe('ExportImportPanel', () => {
       'Project imported successfully.',
     )
     expect(runtime.store.getState().isDirty).toBe(true)
+    expect(loadProjectArchive(storage)).toMatchObject({
+      status: 'loaded',
+      archive: {
+        snapshots: [
+          expect.objectContaining({
+            label: 'Before project import',
+            kind: 'recovery',
+          }),
+        ],
+      },
+    })
   })
 
   it('rejects invalid imports without replacing the project', async () => {

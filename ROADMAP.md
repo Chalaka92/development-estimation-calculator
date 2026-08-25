@@ -13,7 +13,7 @@ This roadmap records direction, not a delivery commitment. Jira integration rema
 
 - [x] Split shared UI primitives and design tokens from calculator-specific components.
 - [x] Add Playwright coverage for critical workflows in Chromium, Firefox, and WebKit with retained CI reports.
-- Add project templates, version snapshots, comparison, and recovery UX.
+- [x] Add project templates, version snapshots, comparison, and recovery UX.
 - Add automated release notes and tagged releases after the alpha period.
 
 ## Future capabilities

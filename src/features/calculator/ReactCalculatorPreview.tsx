@@ -18,6 +18,7 @@ import { QaEstimationPanel } from './QaEstimationPanel'
 import { ExportImportPanel } from './ExportImportPanel'
 import { NewProjectControl } from './NewProjectControl'
 import { LiveEstimationTable } from './LiveEstimationTable'
+import { ProjectHistoryPanel } from './ProjectHistoryPanel'
 import './ReactCalculatorPreview.css'
 
 interface ReactCalculatorPreviewProps {
@@ -57,10 +58,12 @@ function PreviewContent({
   runtime,
   saveResult,
   onLegacyNavigation,
+  storage,
 }: {
   runtime: ProjectRuntime
   saveResult: SaveProjectResult | null
   onLegacyNavigation: (event: MouseEvent<HTMLAnchorElement>) => void
+  storage: KeyValueStorage
 }) {
   return (
     <main className="react-preview">
@@ -77,7 +80,7 @@ function PreviewContent({
         </div>
         <div className="preview-header__actions">
           <SaveStatus result={saveResult} />
-          <NewProjectControl />
+          <NewProjectControl storage={storage} />
           <a
             className="preview-legacy-link"
             href="?ui=legacy"
@@ -116,7 +119,8 @@ function PreviewContent({
           <DevelopmentWorkBreakdownPanel />
           <QaEstimationPanel />
           <LiveEstimationTable />
-          <ExportImportPanel />
+          <ExportImportPanel storage={storage} />
+          <ProjectHistoryPanel storage={storage} />
         </div>
 
         <EstimateSummaryPanel />
@@ -130,6 +134,7 @@ export function ReactCalculatorPreview({
   storage,
 }: ReactCalculatorPreviewProps) {
   const runtime = suppliedRuntime ?? getBrowserProjectRuntime()
+  const projectStorage = storage ?? globalThis.localStorage
   const [saveResult, setSaveResult] = useState<SaveProjectResult | null>(null)
   const autosaveRef = useRef<ProjectAutosaveController | null>(null)
 
@@ -146,7 +151,7 @@ export function ReactCalculatorPreview({
   useEffect(() => {
     const autosave = startProjectAutosave(
       runtime.store,
-      storage ?? globalThis.localStorage,
+      projectStorage,
       { onResult: setSaveResult },
     )
     autosaveRef.current = autosave
@@ -159,7 +164,7 @@ export function ReactCalculatorPreview({
       autosave.dispose()
       if (autosaveRef.current === autosave) autosaveRef.current = null
     }
-  }, [runtime, storage])
+  }, [projectStorage, runtime])
 
   return (
     <ProjectStoreProvider store={runtime.store}>
@@ -167,6 +172,7 @@ export function ReactCalculatorPreview({
         runtime={runtime}
         saveResult={saveResult}
         onLegacyNavigation={handleLegacyNavigation}
+        storage={projectStorage}
       />
     </ProjectStoreProvider>
   )

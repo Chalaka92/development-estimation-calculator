@@ -1,4 +1,5 @@
 export * from './appMode'
+export * from './appVersion'
 export * from './browserProjectRuntime'
 export * from './projectRuntime'
 export * from './ProjectStoreProvider'

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type MouseEvent } from 'react'
 import {
+  APP_VERSION,
   getBrowserProjectRuntime,
   ProjectStoreProvider,
   startProjectAutosave,
@@ -71,7 +72,7 @@ function PreviewContent({
           <span className="preview-brand__mark">DE</span>
           <div>
             <strong>Development Estimation</strong>
-            <span>Typed React calculator</span>
+            <span>Typed React calculator · v{APP_VERSION}</span>
           </div>
         </div>
         <div className="preview-header__actions">

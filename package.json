@@ -1,10 +1,11 @@
 {
   "name": "development-estimation-calculator",
   "private": true,
-  "version": "2.0.0-alpha.1",
+  "version": "2.0.0-rc.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "version:check": "node scripts/check-version.mjs",
     "build": "tsc -b && vite build",
     "lint": "oxlint .",
     "test": "vitest run",
@@ -12,7 +13,8 @@
     "test:e2e": "playwright test",
     "test:e2e:smoke": "playwright test --grep @smoke --project=chromium",
     "typecheck": "tsc -b",
-    "check": "npm run lint && npm run typecheck && npm run test && npm run build",
+    "check": "npm run version:check && npm run lint && npm run typecheck && npm run test && npm run build",
+    "release:verify": "npm run check && npm run build -- --base ./",
     "preview": "vite preview"
   },
   "dependencies": {

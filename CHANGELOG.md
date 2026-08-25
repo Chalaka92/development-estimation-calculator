@@ -4,6 +4,10 @@ All notable user-visible changes are documented here. The format follows [Keep a
 
 ## [Unreleased]
 
+No unreleased changes.
+
+## [2.0.0-rc.1] - 2026-08-25
+
 ### Added
 
 - Contributor, security, issue-reporting, pull-request, dependency-update, and architecture-decision standards.
@@ -25,6 +29,7 @@ All notable user-visible changes are documented here. The format follows [Keep a
 - Jira-ready CSV export with configurable issue types, project key, hierarchy IDs, labels, component, fix version, priority, and estimates in seconds.
 - Named risk-buffer presets with a persistent Custom percentage option.
 - An accessible tabbed workspace for Project, Development, QA, Review, Export and Jira, and History while retaining the live summary across sections.
+- Release-candidate version injection, consistency checks, generated release notes, verified build archives, checksums, smoke testing, and rollback guidance.
 
 ### Fixed
 

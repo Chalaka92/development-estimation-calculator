@@ -191,3 +191,56 @@ test('keeps the sticky header and editor within a mobile viewport', async ({
     }),
   ).toBe(0)
 })
+
+test('creates, searches, archives, and switches saved projects', async ({
+  page,
+}) => {
+  await page.getByLabel('Project or release name').fill('Portfolio Alpha')
+  await page.getByLabel('Project or release name').press('Tab')
+  await expect(page.locator('.preview-save-status')).toContainText(
+    'All changes saved',
+    { timeout: 3_000 },
+  )
+
+  page.once('dialog', (dialog) => dialog.accept('Portfolio Beta'))
+  await page.getByRole('button', { name: 'New project' }).click()
+  await expect(page.getByLabel('Project or release name')).toHaveValue(
+    'Portfolio Beta',
+  )
+  await expect(page.getByText('Portfolio Alpha')).toBeVisible()
+
+  const alpha = page.locator('.workspace-project').filter({
+    hasText: 'Portfolio Alpha',
+  })
+  await alpha.getByRole('button', { name: 'Duplicate' }).click()
+  await page.getByLabel('Search projects').fill('Copy')
+  await expect(page.getByText('Portfolio Alpha (Copy)')).toBeVisible()
+
+  page.once('dialog', (dialog) => dialog.accept())
+  await page
+    .locator('.workspace-project')
+    .filter({ hasText: 'Portfolio Alpha (Copy)' })
+    .getByRole('button', { name: 'Archive' })
+    .click()
+
+  await page.getByLabel('Search projects').fill('')
+  await page.getByRole('button', { name: 'Archived' }).click()
+  await expect(page.getByText('Portfolio Alpha (Copy)')).toBeVisible()
+  await page.getByRole('button', { name: 'Restore' }).click()
+  await page.getByRole('button', { name: 'Active' }).click()
+
+  await page
+    .locator('.workspace-project')
+    .filter({ hasText: 'Portfolio Alpha (Copy)' })
+    .getByRole('button', { name: 'Open' })
+    .click()
+  await expect(page.getByLabel('Project or release name')).toHaveValue(
+    'Portfolio Alpha (Copy)',
+  )
+
+  await page.reload()
+  await expect(page.getByLabel('Project or release name')).toHaveValue(
+    'Portfolio Alpha (Copy)',
+  )
+})
+

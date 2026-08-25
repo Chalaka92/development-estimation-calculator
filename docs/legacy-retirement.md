@@ -4,7 +4,7 @@ The v16 calculator remains available only as a temporary compatibility and recov
 
 ## Current status
 
-As of `v2.0.0`:
+As of `v2.0.1`:
 
 - The typed React calculator is the default application.
 - Feature parity and accessibility review is complete.
@@ -16,6 +16,8 @@ As of `v2.0.0`:
 - Untimestamped conflicting v16 data is surfaced for manual review.
 - Migrating v16 storage writes a typed copy and preserves the original legacy key.
 - The `?ui=legacy` route is deprecated and presented as recovery mode.
+- The first post-`v2.0.0` maintenance release has shipped with the deprecation notice and migration acceptance coverage enabled.
+- There are no unresolved repository issues requiring the legacy UI for recovery.
 
 The application has no backend usage telemetry. Absence of bug reports is therefore not proof that nobody still depends on the legacy UI.
 
@@ -66,11 +68,11 @@ All conditions must be true before Stage B:
 - [x] Browser acceptance verifies the real legacy fallback while it exists.
 - [x] Browser acceptance verifies non-destructive v16 storage migration into typed storage.
 - [x] Autosave flushes before navigating into legacy mode.
-- [ ] At least one maintenance release after `v2.0.0` has shipped with the deprecation notice and migration acceptance checks enabled.
-- [ ] No unresolved high-severity issue requires the legacy UI for recovery.
+- [x] At least one maintenance release after `v2.0.0` has shipped with the deprecation notice and migration acceptance checks enabled (`v2.0.1`).
+- [x] No unresolved high-severity issue requires the legacy UI for recovery.
 - [ ] The removal PR demonstrates that old v16 editable exports and browser snapshots still migrate without the legacy HTML page.
 
-The first two unchecked items are the operational blockers immediately after `v2.0.0`. The final item is the proof required inside the future Stage B removal PR itself.
+The operational observation gates are satisfied as of `v2.0.1`. The final unchecked item is deliberately left for the future Stage B removal PR, where migration must be proven after the legacy HTML page and UI route are removed.
 
 ## Removal PR checklist
 

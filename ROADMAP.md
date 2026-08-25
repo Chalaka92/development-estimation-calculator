@@ -27,6 +27,16 @@ This roadmap records direction, not a delivery commitment. Direct Jira API integ
 - [x] Confirm no unresolved high-severity issue still requires the legacy UI for recovery.
 - [x] Remove the legacy HTML UI and navigation while preserving v16 editable-export and browser-storage migration compatibility.
 
+## v2.1 direction
+
+Stage C is explicitly out of scope for v2.1. The v16 schemas, import readers, browser-storage migration, and conflict recovery remain compatibility contracts throughout this line.
+
+- [x] Replace the preview-era root component and test identity with the stable `ReactCalculator` name without changing runtime behavior.
+- [ ] Normalize the remaining preview-era stylesheet and CSS selector namespace without changing the visual design.
+- [ ] Add an explicit compatibility guard that fails if the retained v16 reader contracts are accidentally removed during v2.1 cleanup.
+- [ ] Review browser-storage/versioning boundaries and document the forward-migration contract before introducing another persistence schema.
+- [ ] Select the next frontend-safe user-facing capability after the post-legacy cleanup is complete.
+
 ## Future capabilities
 
 - [x] Optional per-activity three-point estimation with PERT calculations and export parity.
@@ -38,6 +48,6 @@ This roadmap records direction, not a delivery commitment. Direct Jira API integ
 
 ## Legacy retirement status
 
-Stage B removes `public/legacy/calculator-v16.html`, the `?ui=legacy` application mode, and the React header link to the old calculator. Browser acceptance continues to prove that representative v16 editable exports and `developmentEstimationV4` browser snapshots migrate successfully without the legacy HTML page.
+Stage B removed `public/legacy/calculator-v16.html`, the `?ui=legacy` application mode, and the React header link to the old calculator. Browser acceptance continues to prove that representative v16 editable exports and `developmentEstimationV4` browser snapshots migrate successfully without the legacy HTML page.
 
 Stage B deliberately keeps the v16 schemas, import readers, storage migration, and conflict-recovery behavior. Retiring those compatibility readers is Stage C and requires a separate later major-version decision. See `docs/legacy-retirement.md` for the staged retirement contract.

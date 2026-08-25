@@ -16,32 +16,67 @@ test('@smoke exposes the checked-out application version', async ({ page }) => {
   ).toBeVisible()
 })
 
-test('opens the deprecated legacy calculator recovery fallback', async ({ page }) => {
+test('ignores the retired legacy query and keeps the React calculator active', async ({
+  page,
+}) => {
   await page.goto('./?ui=legacy')
 
+  await expect(page.getByText(/Typed React calculator/)).toBeVisible()
   await expect(
-    page.getByRole('heading', { name: 'Legacy v16 calculator' }),
-  ).toBeVisible()
-  await expect(
-    page.getByText('Temporary compatibility mode'),
-  ).toBeVisible()
-  await expect(
-    page.getByText(/newer saved v16 data is migrated automatically/i),
-  ).toBeVisible()
-  await expect(
-    page.getByRole('link', { name: 'Return to React calculator' }),
-  ).toBeVisible()
+    page.getByRole('link', { name: 'Open legacy calculator' }),
+  ).toHaveCount(0)
+  await expect(page.locator('iframe')).toHaveCount(0)
+})
 
-  const legacy = page.frameLocator(
-    'iframe[title="Development Estimation Calculator"]',
+test('imports a v16 editable export after the legacy UI has been removed', async ({
+  page,
+}) => {
+  await openWorkspaceTab(page, 'Export & Jira')
+
+  const legacyEditable = {
+    fileType: 'DevelopmentEstimationCalculator',
+    version: 1,
+    exportedAt: '2026-08-25T14:30:00.000Z',
+    settings: {
+      projectName: 'Legacy Editable Acceptance',
+      buffer: '12.5',
+      hoursPerDay: '8',
+      teamSize: '1.25',
+      daysPerWeek: '5',
+    },
+    development: {
+      items: [
+        {
+          name: 'Legacy Editable Billing',
+          directEstimation: [{ name: 'Build', hours: '6.5' }],
+          subItems: [],
+        },
+      ],
+    },
+    qa: {
+      estimation: [{ name: 'Regression', hours: '2.5' }],
+    },
+  }
+
+  await page.getByLabel('Import editable estimate').setInputFiles({
+    name: 'legacy-v16-estimate.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(JSON.stringify(legacyEditable)),
+  })
+
+  await expect(page.getByRole('status').last()).toContainText(
+    'Legacy project imported and migrated successfully.',
   )
-  await expect(
-    legacy.getByRole('heading', { name: 'Development Estimation Calculator' }),
-  ).toBeVisible()
-  await expect(legacy.locator('#buffer')).toHaveValue('15')
-  await expect(legacy.locator('#teamSize')).toHaveValue('1')
-  await expect(legacy.locator('#qaBody input').first()).toHaveValue(
-    'QA Analysis / Test Planning',
+
+  await openWorkspaceTab(page, 'Project')
+  await expect(page.getByLabel('Project or release name')).toHaveValue(
+    'Legacy Editable Acceptance',
+  )
+  await expect(page.getByLabel('Total manpower')).toHaveValue('1.25')
+
+  await openWorkspaceTab(page, 'Development')
+  await expect(page.getByLabel('Main item 1 name')).toHaveValue(
+    'Legacy Editable Billing',
   )
 })
 

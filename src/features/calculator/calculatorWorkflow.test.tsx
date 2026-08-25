@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { cleanup, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it } from 'vitest'
 import { createProjectRuntime } from '../../app/projectRuntime'
@@ -89,25 +89,6 @@ describe('calculator workflow', () => {
     expect(reloadedProject.qaActivities).toHaveLength(6)
     expect(reloadedProject.qaActivities[0].hours).toBe(2)
     expect(screen.getAllByText('13.8 h').length).toBeGreaterThan(1)
-  })
-
-  it('flushes pending changes before opening the legacy calculator', () => {
-    const storage = new MemoryStorage()
-    const runtime = createProjectRuntime(storage, dependencies())
-    render(<ReactCalculatorPreview runtime={runtime} storage={storage} />)
-    runtime.store.getState().actions.renameProject('Saved Before Legacy')
-
-    const legacyLink = screen.getByRole('link', {
-      name: 'Open legacy calculator',
-    })
-    legacyLink.addEventListener('click', (event) => event.preventDefault())
-    fireEvent.click(legacyLink)
-
-    expect(loadProject(storage)).toMatchObject({
-      status: 'loaded',
-      project: { name: 'Saved Before Legacy' },
-    })
-    expect(runtime.store.getState().isDirty).toBe(false)
   })
 
   it('flushes pending changes when the page is leaving', () => {

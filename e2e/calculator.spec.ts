@@ -21,10 +21,6 @@ test('@smoke loads the production calculator and legacy defaults', async ({
   await expect(page.getByLabel('QA activity 6 name')).toHaveValue(
     'UAT / Release Validation Support',
   )
-  await expect(page.getByRole('link', { name: 'Open legacy calculator' })).toHaveAttribute(
-    'href',
-    '?ui=legacy',
-  )
 })
 
 test('creates, calculates, autosaves, and restores a complete estimate', async ({

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState, type MouseEvent } from 'react'
+import { useEffect, useState } from 'react'
 import {
   APP_VERSION,
   getBrowserProjectRuntime,
@@ -6,7 +6,6 @@ import {
   startProjectAutosave,
   useProjectStore,
   type ProjectRuntime,
-  type ProjectAutosaveController,
 } from '../../app/index'
 import type {
   KeyValueStorage,
@@ -54,12 +53,10 @@ function SaveStatus({ result }: { result: SaveProjectResult | null }) {
 function PreviewContent({
   runtime,
   saveResult,
-  onLegacyNavigation,
   storage,
 }: {
   runtime: ProjectRuntime
   saveResult: SaveProjectResult | null
-  onLegacyNavigation: (event: MouseEvent<HTMLAnchorElement>) => void
   storage: KeyValueStorage
 }) {
   return (
@@ -78,13 +75,6 @@ function PreviewContent({
         <div className="preview-header__actions">
           <SaveStatus result={saveResult} />
           <NewProjectControl storage={storage} />
-          <a
-            className="preview-legacy-link"
-            href="?ui=legacy"
-            onClick={onLegacyNavigation}
-          >
-            Open legacy calculator
-          </a>
         </div>
       </header>
 
@@ -128,17 +118,6 @@ export function ReactCalculatorPreview({
   const runtime = suppliedRuntime ?? getBrowserProjectRuntime()
   const projectStorage = storage ?? globalThis.localStorage
   const [saveResult, setSaveResult] = useState<SaveProjectResult | null>(null)
-  const autosaveRef = useRef<ProjectAutosaveController | null>(null)
-
-  const handleLegacyNavigation = useCallback(
-    (event: MouseEvent<HTMLAnchorElement>) => {
-      const result = autosaveRef.current?.flush()
-      if (result?.status === 'invalid' || result?.status === 'storage-error') {
-        event.preventDefault()
-      }
-    },
-    [],
-  )
 
   useEffect(() => {
     const autosave = startProjectAutosave(
@@ -151,7 +130,6 @@ export function ReactCalculatorPreview({
         },
       },
     )
-    autosaveRef.current = autosave
     const flushBeforeUnload = () => autosave.flush()
     globalThis.addEventListener('beforeunload', flushBeforeUnload)
 
@@ -159,7 +137,6 @@ export function ReactCalculatorPreview({
       globalThis.removeEventListener('beforeunload', flushBeforeUnload)
       autosave.flush()
       autosave.dispose()
-      if (autosaveRef.current === autosave) autosaveRef.current = null
     }
   }, [projectStorage, runtime])
 
@@ -168,7 +145,6 @@ export function ReactCalculatorPreview({
       <PreviewContent
         runtime={runtime}
         saveResult={saveResult}
-        onLegacyNavigation={handleLegacyNavigation}
         storage={projectStorage}
       />
     </ProjectStoreProvider>

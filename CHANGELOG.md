@@ -4,7 +4,14 @@ All notable user-visible changes are documented here. The format follows [Keep a
 
 ## [Unreleased]
 
-No unreleased changes.
+### Changed
+
+- Keep v16 editable-export and `developmentEstimationV4` browser-storage migration support after retiring the old calculator UI, with browser acceptance covering both compatibility paths.
+- Treat the retired `?ui=legacy` query like the normal React application instead of switching application modes.
+
+### Removed
+
+- Remove the deprecated v16 HTML calculator, legacy iframe application mode, and React header link to the old UI.
 
 ## [2.0.1] - 2026-08-25
 

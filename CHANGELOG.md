@@ -4,6 +4,10 @@ All notable user-visible changes are documented here. The format follows [Keep a
 
 ## [Unreleased]
 
+No unreleased changes.
+
+## [2.0.1] - 2026-08-25
+
 ### Added
 
 - Browser acceptance for non-destructive migration of v16 browser storage into typed project storage.
@@ -14,6 +18,7 @@ All notable user-visible changes are documented here. The format follows [Keep a
 - Mark the v16 calculator as a temporary compatibility and recovery mode with migration guidance.
 - Remove remaining user-facing preview wording from the stable React calculator.
 - Refresh the roadmap, README, and feature-parity review with explicit post-`v2.0.0` legacy-removal gates.
+- Upgrade GitHub Actions artifact uploads from v5 to v6 so CI, Pages, and release reports use the current Node 24 action runtime.
 
 ## [2.0.0] - 2026-08-25
 

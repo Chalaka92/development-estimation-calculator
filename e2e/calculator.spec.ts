@@ -214,7 +214,7 @@ test('creates, searches, archives, and switches saved projects', async ({
   })
   await alpha.getByRole('button', { name: 'Duplicate' }).click()
   await page.getByLabel('Search projects').fill('Copy')
-  await expect(page.getByText('Portfolio Alpha (Copy)')).toBeVisible()
+  await expect(page.getByText('Portfolio Alpha (Copy)', { exact: true })).toBeVisible()
 
   page.once('dialog', (dialog) => dialog.accept())
   await page
@@ -225,7 +225,7 @@ test('creates, searches, archives, and switches saved projects', async ({
 
   await page.getByLabel('Search projects').fill('')
   await page.getByRole('button', { name: 'Archived' }).click()
-  await expect(page.getByText('Portfolio Alpha (Copy)')).toBeVisible()
+  await expect(page.getByText('Portfolio Alpha (Copy)', { exact: true })).toBeVisible()
   await page.getByRole('button', { name: 'Restore' }).click()
   await page.getByRole('button', { name: 'Active' }).click()
 

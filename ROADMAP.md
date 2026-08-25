@@ -14,7 +14,7 @@ This roadmap records direction, not a delivery commitment. Direct Jira API integ
 - [x] Split shared UI primitives and design tokens from calculator-specific components.
 - [x] Add Playwright coverage for critical workflows in Chromium, Firefox, and WebKit with retained CI reports.
 - [x] Add project templates, version snapshots, comparison, and recovery UX.
-- Add automated release notes and tagged releases after the alpha period.
+- [x] Add version consistency checks, automated release notes, verified tagged releases, build checksums, and release rollback guidance.
 
 ## Future capabilities
 

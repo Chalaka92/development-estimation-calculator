@@ -1,0 +1,115 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing version tag to release, for example v2.0.0-rc.1
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Verify and publish release
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Check out tagged source
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Resolve and validate release tag
+        id: release
+        env:
+          REQUESTED_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+        run: |
+          node scripts/check-version.mjs --tag "$REQUESTED_TAG"
+          git fetch origin main --no-tags
+          git merge-base --is-ancestor HEAD origin/main || {
+            echo "The tagged commit must be contained in main."
+            exit 1
+          }
+          VERSION="${REQUESTED_TAG#v}"
+          echo "tag=$REQUESTED_TAG" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "archive=development-estimation-calculator-$VERSION.tar.gz" >> "$GITHUB_OUTPUT"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify release candidate and build portable site
+        run: npm run release:verify
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Smoke-test release build
+        env:
+          VITE_BASE_PATH: ./
+        run: npm run test:e2e:smoke
+
+      - name: Package release assets
+        env:
+          ARCHIVE: ${{ steps.release.outputs.archive }}
+        run: |
+          tar -czf "$ARCHIVE" -C dist .
+          sha256sum "$ARCHIVE" > "$ARCHIVE.sha256"
+
+      - name: Upload verified build artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: release-${{ steps.release.outputs.version }}
+          path: |
+            ${{ steps.release.outputs.archive }}
+            ${{ steps.release.outputs.archive }}.sha256
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Upload smoke-test report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v5
+        with:
+          name: release-smoke-report-${{ steps.release.outputs.version }}
+          path: playwright-report/
+          retention-days: 14
+
+      - name: Create or refresh GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.release.outputs.tag }}
+          VERSION: ${{ steps.release.outputs.version }}
+          ARCHIVE: ${{ steps.release.outputs.archive }}
+        run: |
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" "$ARCHIVE" "$ARCHIVE.sha256" --clobber
+            exit 0
+          fi
+
+          RELEASE_FLAGS=()
+          if [[ "$VERSION" == *-* ]]; then
+            RELEASE_FLAGS+=(--prerelease)
+          fi
+          gh release create "$TAG" "$ARCHIVE" "$ARCHIVE.sha256" \
+            --verify-tag \
+            --generate-notes \
+            --title "$TAG" \
+            "${RELEASE_FLAGS[@]}"

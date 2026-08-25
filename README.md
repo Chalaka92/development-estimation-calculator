@@ -71,6 +71,8 @@ npx playwright install chromium firefox webkit
 npm run test:e2e
 ```
 
+Run `npm run release:verify` before proposing a version tag. It validates version metadata, runs the complete quality gate, and creates a portable production build. Tagged releases are verified and published through GitHub Actions; see [docs/releasing.md](docs/releasing.md).
+
 ## Deployment and browser support
 
 Every successful push to `main` builds and deploys `dist/` through GitHub Pages. The deployment workflow then runs a Chromium smoke test against the published URL. In **Repository Settings → Pages**, the publishing source must be **GitHub Actions**.
@@ -134,7 +136,7 @@ Do not report sensitive vulnerabilities in a public issue. Follow [SECURITY.md](
 
 ## Releases and roadmap
 
-- Current package version: `2.0.0-alpha.1`
+- Current package version: `2.0.0-rc.1`
 - Completed and upcoming work: [ROADMAP.md](ROADMAP.md)
 - User-visible history: [CHANGELOG.md](CHANGELOG.md)
 

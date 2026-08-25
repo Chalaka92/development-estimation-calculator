@@ -73,6 +73,7 @@ describe('React calculator preview', () => {
     )
 
     expect(markup).toContain('Capital Trust Release')
+    expect(markup).toContain('Typed React calculator · v2.0.0-rc.1')
     expect(markup).toContain('Development</span><strong>20 h')
     expect(markup).toContain('QA</span><strong>10 h')
     expect(markup).toContain('Final estimate</span><strong>33 h')

@@ -5,7 +5,7 @@ This roadmap records direction, not a delivery commitment. Direct Jira API integ
 ## Immediate hardening
 
 - [x] Reconcile typed and legacy browser data when both exist, so the newest timestamped project is selected and an unversioned legacy conflict is surfaced.
-- [x] Flush pending autosave before navigating to the legacy calculator or leaving the page.
+- [x] Flush pending autosave before leaving the page and, while the fallback existed, before navigating to the legacy calculator.
 - [x] Complete a feature-parity and accessibility review before removing the legacy fallback.
 - [x] Complete the first GitHub Pages deployment and deployed-site smoke test.
 
@@ -23,8 +23,9 @@ This roadmap records direction, not a delivery commitment. Direct Jira API integ
 - [x] Remove remaining user-facing preview wording from the stable React experience.
 - [x] Add browser acceptance for non-destructive v16 browser-storage migration into typed storage.
 - [x] Document staged legacy retirement so UI removal does not remove v16 data compatibility.
-- [ ] Ship at least one maintenance release with the legacy deprecation notice and migration acceptance checks enabled.
-- [ ] Confirm no unresolved high-severity issue still requires the legacy UI for recovery.
+- [x] Ship at least one maintenance release with the legacy deprecation notice and migration acceptance checks enabled (`v2.0.1`).
+- [x] Confirm no unresolved high-severity issue still requires the legacy UI for recovery.
+- [x] Remove the legacy HTML UI and navigation while preserving v16 editable-export and browser-storage migration compatibility.
 
 ## Future capabilities
 
@@ -35,8 +36,8 @@ This roadmap records direction, not a delivery commitment. Direct Jira API integ
 - [x] Jira CSV export with configurable issue types, hierarchy, estimates, and planning fields.
 - Secure server-backed Jira authentication and direct work-item creation.
 
-## Legacy removal gate
+## Legacy retirement status
 
-The legacy UI is now deprecated. Remove `public/legacy/calculator-v16.html` only after the remaining post-v2.0.0 operational gates are complete and a removal PR proves that v16 editable exports and `developmentEstimationV4` browser snapshots still migrate without the old HTML page.
+Stage B removes `public/legacy/calculator-v16.html`, the `?ui=legacy` application mode, and the React header link to the old calculator. Browser acceptance continues to prove that representative v16 editable exports and `developmentEstimationV4` browser snapshots migrate successfully without the legacy HTML page.
 
-Legacy UI removal must not remove the v16 schemas, import readers, storage migration, or conflict-recovery behavior. Those compatibility readers require a separate later major-version decision. See `docs/legacy-retirement.md` for the staged retirement contract and checklist.
+Stage B deliberately keeps the v16 schemas, import readers, storage migration, and conflict-recovery behavior. Retiring those compatibility readers is Stage C and requires a separate later major-version decision. See `docs/legacy-retirement.md` for the staged retirement contract.

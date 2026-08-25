@@ -171,7 +171,7 @@ export function ProjectHistoryPanel({ storage }: ProjectHistoryPanelProps) {
         title="Templates and project history"
         titleId="history-title"
         description="Save reusable zero-hour structures or capture exact versions before major changes."
-        step="06"
+        step="07"
       />
 
       <div className="history-grid">

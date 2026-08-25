@@ -152,7 +152,7 @@ export function ExportImportPanel({
         title="Export or import"
         titleId="transfer-title"
         description="Share summary-only files, or keep an editable validated project backup."
-        step="05"
+        step="06"
       />
 
       <div className="transfer-grid">

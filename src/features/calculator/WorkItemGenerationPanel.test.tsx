@@ -108,4 +108,26 @@ describe('WorkItemGenerationPanel', () => {
     expect(screen.getByDisplayValue('QA Analysis / Test Planning')).toBeTruthy()
     expect(screen.getAllByText('quality').length).toBe(6)
   })
+
+  it('validates Jira CSV mapping before download', async () => {
+    const user = userEvent.setup()
+    renderPanel()
+
+    expect((screen.getByRole('textbox', {
+      name: 'Jira group issue type',
+    }) as HTMLInputElement).value).toBe('Epic')
+    expect((screen.getByRole('textbox', {
+      name: 'Jira deliverable issue type',
+    }) as HTMLInputElement).value).toBe('Story')
+    await user.click(screen.getByRole('button', { name: 'Export Jira CSV' }))
+    expect(screen.getByRole('alert').textContent).toContain(
+      'Enter a Jira project or space key',
+    )
+
+    const projectKey = screen.getByRole('textbox', {
+      name: 'Jira project or space key',
+    }) as HTMLInputElement
+    await user.type(projectKey, 'ct2')
+    expect(projectKey.value).toBe('CT2')
+  })
 })

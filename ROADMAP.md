@@ -1,6 +1,6 @@
 # Roadmap
 
-This roadmap records direction, not a delivery commitment. Jira integration remains parked until the core repository and transition are stable.
+This roadmap records direction, not a delivery commitment. Direct Jira API integration remains parked until authentication and backend hosting are designed.
 
 ## Immediate hardening
 
@@ -22,7 +22,8 @@ This roadmap records direction, not a delivery commitment. Jira integration rema
 - [x] Role-based effort, acyclic dependencies, risk, confidence, notes, and export parity.
 - [x] Multiple saved projects with search, recent access, duplication, archive, and deletion.
 - [x] Provider-neutral work-item generation with editable preview and JSON/CSV export.
-- Jira CSV export, followed later by a secure server-backed Jira integration.
+- [x] Jira CSV export with configurable issue types, hierarchy, estimates, and planning fields.
+- Secure server-backed Jira authentication and direct work-item creation.
 
 ## Legacy removal gate
 

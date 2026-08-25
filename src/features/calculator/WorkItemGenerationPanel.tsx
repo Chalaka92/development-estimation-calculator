@@ -3,6 +3,12 @@ import { useProjectStore } from '../../app/useProjectStore'
 import { Button, EmptyState, Panel, PanelHeader } from '../../components/ui'
 import { downloadText } from '../../export/browserDownloads'
 import {
+  createJiraCsv,
+  createJiraCsvFilename,
+  DEFAULT_JIRA_CSV_OPTIONS,
+  type JiraCsvOptions,
+} from '../../integrations/jira'
+import {
   createWorkItemCollection,
   createWorkItemCsv,
   createWorkItemExportFilename,
@@ -15,6 +21,11 @@ import {
 interface WorkItemOverride {
   summary?: string
   description?: string
+}
+
+interface WorkItemMessage {
+  tone: 'success' | 'error'
+  text: string
 }
 
 const numberFormatter = new Intl.NumberFormat('en', {
@@ -32,7 +43,13 @@ export function WorkItemGenerationPanel() {
   )
   const [overrides, setOverrides] = useState<Record<string, WorkItemOverride>>({})
   const [excludedIds, setExcludedIds] = useState<Set<string>>(() => new Set())
-  const [message, setMessage] = useState('')
+  const [jiraOptions, setJiraOptions] = useState<JiraCsvOptions>(
+    DEFAULT_JIRA_CSV_OPTIONS,
+  )
+  const [jiraLabels, setJiraLabels] = useState(
+    DEFAULT_JIRA_CSV_OPTIONS.labels.join(', '),
+  )
+  const [message, setMessage] = useState<WorkItemMessage | null>(null)
   const generatedItems = useMemo(
     () => generateWorkItems(project, options),
     [options, project],
@@ -63,7 +80,7 @@ export function WorkItemGenerationPanel() {
     checked: boolean,
   ) => {
     setOptions((current) => ({ ...current, [key]: checked }))
-    setMessage('')
+    setMessage(null)
   }
 
   const updateItem = (
@@ -74,7 +91,7 @@ export function WorkItemGenerationPanel() {
       ...current,
       [id]: { ...current[id], ...changes },
     }))
-    setMessage('')
+    setMessage(null)
   }
 
   const toggleItem = (item: GeneratedWorkItem, included: boolean) => {
@@ -106,7 +123,7 @@ export function WorkItemGenerationPanel() {
       }
       return next
     })
-    setMessage('')
+    setMessage(null)
   }
 
   const exportJson = () => {
@@ -116,7 +133,10 @@ export function WorkItemGenerationPanel() {
       createWorkItemExportFilename(project.name, 'json'),
       'application/json;charset=utf-8',
     )
-    setMessage(`${selectedItems.length} work items exported as JSON.`)
+    setMessage({
+      tone: 'success',
+      text: `${selectedItems.length} work items exported as JSON.`,
+    })
   }
 
   const exportCsv = () => {
@@ -125,13 +145,39 @@ export function WorkItemGenerationPanel() {
       createWorkItemExportFilename(project.name, 'csv'),
       'text/csv;charset=utf-8',
     )
-    setMessage(`${selectedItems.length} work items exported as CSV.`)
+    setMessage({
+      tone: 'success',
+      text: `${selectedItems.length} work items exported as CSV.`,
+    })
+  }
+
+  const exportJiraCsv = () => {
+    const result = createJiraCsv(selectedItems, {
+      ...jiraOptions,
+      labels: jiraLabels.split(',').map((label) => label.trim()),
+    })
+    if (result.status === 'invalid') {
+      setMessage({ tone: 'error', text: result.error })
+      return
+    }
+    downloadText(
+      result.content,
+      createJiraCsvFilename(project.name),
+      'text/csv;charset=utf-8',
+    )
+    setMessage({
+      tone: 'success',
+      text: `${result.rowCount} Jira-ready work items exported.`,
+    })
   }
 
   const resetPreview = () => {
     setOverrides({})
     setExcludedIds(new Set())
-    setMessage('Work-item preview reset from the current estimate.')
+    setMessage({
+      tone: 'success',
+      text: 'Work-item preview reset from the current estimate.',
+    })
   }
 
   return (
@@ -140,7 +186,7 @@ export function WorkItemGenerationPanel() {
         eyebrow="Integration-ready backlog"
         title="Generate work items"
         titleId="work-item-title"
-        description="Review and edit a provider-neutral backlog before exporting it to another system. Jira-specific mapping remains separate."
+        description="Review and edit a provider-neutral backlog, then export neutral files or map the selected items into a Jira-ready CSV."
         step="05"
       />
 
@@ -178,6 +224,121 @@ export function WorkItemGenerationPanel() {
         </label>
       </fieldset>
 
+      <fieldset className="jira-csv-options">
+        <legend>Jira CSV mapping</legend>
+        <div className="jira-csv-grid">
+          <label>
+            <span>Project or space key</span>
+            <input
+              aria-label="Jira project or space key"
+              value={jiraOptions.projectKey}
+              placeholder="PROJ"
+              onChange={(event) => {
+                setJiraOptions((current) => ({
+                  ...current,
+                  projectKey: event.target.value.toUpperCase(),
+                }))
+                setMessage(null)
+              }}
+            />
+          </label>
+          <label>
+            <span>Group type</span>
+            <input
+              aria-label="Jira group issue type"
+              value={jiraOptions.groupIssueType}
+              onChange={(event) => setJiraOptions((current) => ({
+                ...current,
+                groupIssueType: event.target.value,
+              }))}
+            />
+          </label>
+          <label>
+            <span>Deliverable type</span>
+            <input
+              aria-label="Jira deliverable issue type"
+              value={jiraOptions.deliverableIssueType}
+              onChange={(event) => setJiraOptions((current) => ({
+                ...current,
+                deliverableIssueType: event.target.value,
+              }))}
+            />
+          </label>
+          <label>
+            <span>Activity type</span>
+            <input
+              aria-label="Jira activity issue type"
+              value={jiraOptions.activityIssueType}
+              onChange={(event) => setJiraOptions((current) => ({
+                ...current,
+                activityIssueType: event.target.value,
+              }))}
+            />
+          </label>
+          <label>
+            <span>QA type</span>
+            <input
+              aria-label="Jira QA issue type"
+              value={jiraOptions.qualityIssueType}
+              onChange={(event) => setJiraOptions((current) => ({
+                ...current,
+                qualityIssueType: event.target.value,
+              }))}
+            />
+          </label>
+          <label>
+            <span>Component</span>
+            <input
+              aria-label="Jira component"
+              value={jiraOptions.component}
+              placeholder="Optional"
+              onChange={(event) => setJiraOptions((current) => ({
+                ...current,
+                component: event.target.value,
+              }))}
+            />
+          </label>
+          <label>
+            <span>Fix version</span>
+            <input
+              aria-label="Jira fix version"
+              value={jiraOptions.fixVersion}
+              placeholder="Optional"
+              onChange={(event) => setJiraOptions((current) => ({
+                ...current,
+                fixVersion: event.target.value,
+              }))}
+            />
+          </label>
+          <label>
+            <span>Priority</span>
+            <input
+              aria-label="Jira priority"
+              value={jiraOptions.priority}
+              placeholder="Optional"
+              onChange={(event) => setJiraOptions((current) => ({
+                ...current,
+                priority: event.target.value,
+              }))}
+            />
+          </label>
+          <label className="jira-labels-field">
+            <span>Labels</span>
+            <input
+              aria-label="Jira labels"
+              value={jiraLabels}
+              placeholder="estimate, release"
+              onChange={(event) => setJiraLabels(event.target.value)}
+            />
+          </label>
+        </div>
+        <p>
+          For parent/child hierarchy, use Jira administration’s External System
+          CSV import and map Issue ID, Parent ID, Issue Type, and Original Estimate.
+          Estimates are exported in seconds as required by Jira.
+        </p>
+      </fieldset>
+
       <div className="work-item-toolbar">
         <p>
           <strong>{selectedItems.length}</strong> of {previewItems.length} items ·{' '}
@@ -187,6 +348,13 @@ export function WorkItemGenerationPanel() {
           <Button size="small" onClick={resetPreview}>Reset preview</Button>
           <Button size="small" onClick={exportCsv} disabled={selectedItems.length === 0}>
             Export work-item CSV
+          </Button>
+          <Button
+            size="small"
+            onClick={exportJiraCsv}
+            disabled={selectedItems.length === 0}
+          >
+            Export Jira CSV
           </Button>
           <Button
             variant="primary"
@@ -273,7 +441,14 @@ export function WorkItemGenerationPanel() {
         </div>
       )}
 
-      {message && <p className="work-item-message" role="status">{message}</p>}
+      {message && (
+        <p
+          className={`work-item-message work-item-message--${message.tone}`}
+          role={message.tone === 'error' ? 'alert' : 'status'}
+        >
+          {message.text}
+        </p>
+      )}
     </Panel>
   )
 }

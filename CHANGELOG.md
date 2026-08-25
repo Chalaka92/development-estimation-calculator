@@ -22,6 +22,7 @@ All notable user-visible changes are documented here. The format follows [Keep a
 - Acyclic dependencies between development work units with automatic dangling-reference cleanup.
 - Live effort-by-role totals and planning metadata in Markdown, CSV, PDF, and editable JSON exports.
 - Provider-neutral group, deliverable, activity, and quality work-item generation with editable preview, selection, and versioned JSON/CSV exports.
+- Jira-ready CSV export with configurable issue types, project key, hierarchy IDs, labels, component, fix version, priority, and estimates in seconds.
 
 ### Fixed
 

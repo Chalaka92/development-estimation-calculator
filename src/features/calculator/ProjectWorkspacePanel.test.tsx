@@ -29,7 +29,7 @@ function renderPanel() {
   const storage = new MemoryStorage()
   let id = 0
   const runtime = createProjectRuntime(storage, {
-    createId: () => \`panel-\${++id}\`,
+    createId: () => `panel-${++id}`,
     now: () => '2026-08-25T11:00:00.000Z',
   })
   runtime.store.getState().actions.renameProject('Current Project')

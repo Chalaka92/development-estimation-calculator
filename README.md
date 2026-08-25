@@ -18,12 +18,11 @@ Live application: [https://chalaka92.github.io/development-estimation-calculator
 - Live effort totals by delivery role and planning metadata in every summary export
 - Editable provider-neutral work-item preview with hierarchy, dependencies, and JSON/CSV exports
 - Configurable Jira-ready CSV export with hierarchy IDs and estimates expressed in seconds
-- Versioned browser autosave and safe legacy-data migration
+- Versioned browser autosave and safe v16 data migration
 - Multiple saved projects with search, duplication, archive, and recent-project switching
 - Reusable templates, project snapshots, comparison, restore, and automatic recovery before destructive replacement
-- Editable JSON import/export with validation
+- Editable JSON import/export with validation, including v16 editable-export migration
 - Markdown, CSV, and A4 PDF summary exports
-- Deprecated v16 recovery fallback at `?ui=legacy` during the transition period
 
 ## Technology
 
@@ -77,7 +76,7 @@ Run `npm run release:verify` before proposing a version tag. It validates versio
 
 Every successful push to `main` builds and deploys `dist/` through GitHub Pages. The deployment workflow then runs a Chromium smoke test against the published URL. In **Repository Settings → Pages**, the publishing source must be **GitHub Actions**.
 
-CI verifies the critical create, calculate, autosave/reload, sub-item, import/export, and mobile-layout workflows using:
+CI verifies the critical create, calculate, autosave/reload, sub-item, import/export, compatibility-migration, and mobile-layout workflows using:
 
 - Chromium
 - Firefox
@@ -96,7 +95,6 @@ src/
   integrations/ Provider-neutral work-item generation and export contracts
   persistence/  Validation, schema migration, storage, and recovery
   state/        Typed project store and immutable actions
-public/legacy/  Deprecated v16 recovery fallback
 docs/adr/       Architecture decision records
 ```
 
@@ -106,15 +104,11 @@ The completed feature-parity and accessibility assessment is recorded in [docs/f
 
 ## Data and migration safety
 
-The application validates imported and stored projects before replacing active data. Invalid typed storage is quarantined when possible. The deprecated legacy calculator remains available during the transition at:
+The application validates imported and stored projects before replacing active data. Invalid typed storage is quarantined when possible. The legacy v16 HTML calculator and its navigation route have been removed after the `v2.0.1` observation period; `?ui=legacy` no longer switches the application away from React.
 
-```text
-http://localhost:5173/?ui=legacy
-```
+v16 data compatibility remains intentionally supported. Newer timestamped `developmentEstimationV4` browser data is migrated automatically into typed storage while the original legacy value is preserved. Untimestamped conflicting data is surfaced for manual review rather than silently overwritten. Old v16 editable JSON exports can still be imported and migrated through the normal **Import project** action.
 
-Use the legacy screen only to review or recover older v16 estimates. Save any required changes there, then return to the React calculator. Newer timestamped v16 browser data is migrated automatically into typed storage while the original `developmentEstimationV4` value is preserved. Untimestamped conflicting data is surfaced for manual review rather than silently overwritten.
-
-Removing the legacy HTML user interface will not remove v16 editable-export or browser-storage migration support. Those compatibility readers have a separate, later retirement stage; see `docs/legacy-retirement.md`.
+Removing the legacy HTML user interface does not remove v16 editable-export or browser-storage migration support. Those compatibility readers have a separate, later retirement stage; see `docs/legacy-retirement.md`.
 
 Saved projects, templates, and snapshots are currently local to the active browser and are not included in an editable project JSON export. The calculator retains the newest 25 snapshots and 20 templates.
 
@@ -128,7 +122,7 @@ The optional Jira CSV adapter maps those neutral records to configurable Jira is
 
 Multi-level hierarchy import requires Jira administration’s **External System Import**. Jira’s standard bulk CSV importer cannot map a hierarchy through multiple levels. During import, map the CSV columns to the matching Jira fields and validate before creating work items. See Atlassian’s [CSV importer guidance](https://support.atlassian.com/jira-software-cloud/docs/create-issues-using-the-csv-importer/) and [administrator CSV import reference](https://support.atlassian.com/jira-cloud-administration/docs/import-data-from-a-csv-file/).
 
-Before relying on browser-only project storage, export an editable JSON backup. Legacy-to-React retirement gates are tracked in `ROADMAP.md` and `docs/legacy-retirement.md`.
+Before relying on browser-only project storage, export an editable JSON backup. Legacy-to-React retirement status is tracked in `ROADMAP.md` and `docs/legacy-retirement.md`.
 
 ## Contributing
 

@@ -16,9 +16,18 @@ test('@smoke exposes the checked-out application version', async ({ page }) => {
   ).toBeVisible()
 })
 
-test('opens the functional legacy calculator fallback', async ({ page }) => {
+test('opens the deprecated legacy calculator recovery fallback', async ({ page }) => {
   await page.goto('./?ui=legacy')
 
+  await expect(
+    page.getByRole('heading', { name: 'Legacy v16 calculator' }),
+  ).toBeVisible()
+  await expect(
+    page.getByText('Temporary compatibility mode'),
+  ).toBeVisible()
+  await expect(
+    page.getByText(/newer saved v16 data is migrated automatically/i),
+  ).toBeVisible()
   await expect(
     page.getByRole('link', { name: 'Return to React calculator' }),
   ).toBeVisible()
@@ -33,6 +42,52 @@ test('opens the functional legacy calculator fallback', async ({ page }) => {
   await expect(legacy.locator('#teamSize')).toHaveValue('1')
   await expect(legacy.locator('#qaBody input').first()).toHaveValue(
     'QA Analysis / Test Planning',
+  )
+})
+
+test('migrates newer legacy browser storage without deleting the legacy copy', async ({
+  page,
+}) => {
+  await page.evaluate(() => {
+    localStorage.clear()
+    localStorage.setItem(
+      'developmentEstimationV4',
+      JSON.stringify({
+        savedAt: '2026-08-25T14:00:00.000Z',
+        projectName: 'Legacy Migration Acceptance',
+        buffer: '10',
+        hoursPerDay: '8',
+        teamSize: '1.5',
+        daysPerWeek: '5',
+        items: [
+          {
+            name: 'Legacy Billing',
+            directEstimation: [{ name: 'Build', hours: '7.5' }],
+            subItems: [],
+          },
+        ],
+        qaEstimation: [{ name: 'Regression', hours: '2.5' }],
+      }),
+    )
+  })
+
+  await page.reload()
+
+  await expect(page.getByLabel('Project or release name')).toHaveValue(
+    'Legacy Migration Acceptance',
+  )
+
+  const stored = await page.evaluate(() => ({
+    typed: localStorage.getItem('developmentEstimation.project.v1'),
+    legacy: localStorage.getItem('developmentEstimationV4'),
+  }))
+
+  expect(stored.typed).not.toBeNull()
+  expect(stored.legacy).not.toBeNull()
+  expect(JSON.parse(stored.typed!).name).toBe('Legacy Migration Acceptance')
+  expect(JSON.parse(stored.typed!).schedule.totalManpower).toBe(1.5)
+  expect(JSON.parse(stored.legacy!).projectName).toBe(
+    'Legacy Migration Acceptance',
   )
 })
 

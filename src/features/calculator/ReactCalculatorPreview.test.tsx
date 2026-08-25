@@ -1,5 +1,6 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
+import { APP_VERSION } from '../../app/appVersion'
 import { resolveAppMode } from '../../app/appMode'
 import { createProjectRuntime } from '../../app/projectRuntime'
 import {
@@ -73,7 +74,7 @@ describe('React calculator preview', () => {
     )
 
     expect(markup).toContain('Capital Trust Release')
-    expect(markup).toContain('Typed React calculator · v2.0.0-rc.1')
+    expect(markup).toContain(`Typed React calculator · v${APP_VERSION}`)
     expect(markup).toContain('Development</span><strong>20 h')
     expect(markup).toContain('QA</span><strong>10 h')
     expect(markup).toContain('Final estimate</span><strong>33 h')

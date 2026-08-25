@@ -1,10 +1,20 @@
 # Changelog
 
-All notable user-visible changes are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project intends to use [Semantic Versioning](https://semver.org/spec/v2.0.0.html) when stable releases begin.
+All notable user-visible changes are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
 No unreleased changes.
+
+## [2.0.0] - 2026-08-25
+
+### Changed
+
+- Promoted the accepted `2.0.0-rc.1` release candidate to the first stable `2.0.0` release after post-RC browser acceptance passed across Chromium, Firefox, and WebKit, including version-marker, legacy-fallback, Markdown-export, and PDF-export checks.
+
+### Known issues
+
+- Legacy snapshots created before modification timestamps were introduced cannot be ordered automatically when their content differs; the application surfaces this case for review.
 
 ## [2.0.0-rc.1] - 2026-08-25
 

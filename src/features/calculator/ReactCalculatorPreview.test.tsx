@@ -1,7 +1,6 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import { APP_VERSION } from '../../app/appVersion'
-import { resolveAppMode } from '../../app/appMode'
 import { createProjectRuntime } from '../../app/projectRuntime'
 import {
   createEmptyEstimationProject,
@@ -38,13 +37,7 @@ const dependencies: EntityFactoryDependencies = {
 }
 
 describe('React calculator preview', () => {
-  it('uses React by default and keeps legacy as an explicit fallback', () => {
-    expect(resolveAppMode('')).toBe('react-preview')
-    expect(resolveAppMode('?ui=legacy')).toBe('legacy')
-    expect(resolveAppMode('?ui=react')).toBe('react-preview')
-  })
-
-  it('renders typed settings and calculated totals', () => {
+  it('renders typed settings and calculated totals without a legacy UI entry point', () => {
     const storage = new MemoryStorage()
     const emptyProject = createEmptyEstimationProject(
       'Capital Trust Release',
@@ -75,6 +68,8 @@ describe('React calculator preview', () => {
 
     expect(markup).toContain('Capital Trust Release')
     expect(markup).toContain(`Typed React calculator · v${APP_VERSION}`)
+    expect(markup).not.toContain('Open legacy calculator')
+    expect(markup).not.toContain('?ui=legacy')
     expect(markup).toContain('Development</span><strong>20 h')
     expect(markup).toContain('QA</span><strong>10 h')
     expect(markup).toContain('Final estimate</span><strong>33 h')

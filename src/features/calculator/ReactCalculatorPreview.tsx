@@ -105,10 +105,10 @@ function PreviewContent({
             <p className="preview-eyebrow">Project workspace</p>
             <h1>Build a clear, defensible estimate.</h1>
             <p>
-              This preview uses the typed project model, validated persistence,
-              and live calculation engine. Project settings and the complete
-              development, QA, review, export, and history sections now stay in
-              sync automatically without crowding one view.
+              This calculator uses the typed project model, validated
+              persistence, and live calculation engine. Project settings and
+              the complete development, QA, review, export, and history
+              sections stay in sync automatically without crowding one view.
             </p>
           </div>
 

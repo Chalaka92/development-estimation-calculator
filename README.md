@@ -23,7 +23,7 @@ Live application: [https://chalaka92.github.io/development-estimation-calculator
 - Reusable templates, project snapshots, comparison, restore, and automatic recovery before destructive replacement
 - Editable JSON import/export with validation
 - Markdown, CSV, and A4 PDF summary exports
-- Temporary v16 fallback at `?ui=legacy`
+- Deprecated v16 recovery fallback at `?ui=legacy` during the transition period
 
 ## Technology
 
@@ -96,17 +96,25 @@ src/
   integrations/ Provider-neutral work-item generation and export contracts
   persistence/  Validation, schema migration, storage, and recovery
   state/        Typed project store and immutable actions
-public/legacy/  Temporary v16 fallback
+public/legacy/  Deprecated v16 recovery fallback
 docs/adr/       Architecture decision records
 ```
 
 Calculation rules belong in `src/domain/`, not React components. Browser persistence keeps the active project under `developmentEstimation.project.v1`, the multi-project library under `developmentEstimation.workspace.v1`, and templates/project history under `developmentEstimation.archive.v1`. The legacy `developmentEstimationV4` key remains separate and is never overwritten by the typed persistence layer.
 
-The completed feature-parity and accessibility assessment is recorded in [docs/feature-parity-accessibility-review.md](docs/feature-parity-accessibility-review.md).
+The completed feature-parity and accessibility assessment is recorded in [docs/feature-parity-accessibility-review.md](docs/feature-parity-accessibility-review.md). The staged legacy UI and data-compatibility retirement contract is recorded in [docs/legacy-retirement.md](docs/legacy-retirement.md).
 
 ## Data and migration safety
 
-The application validates imported and stored projects before replacing active data. Invalid typed storage is quarantined when possible. The legacy calculator remains available at:
+The application validates imported and stored projects before replacing active data. Invalid typed storage is quarantined when possible. The deprecated legacy calculator remains available during the transition at:
+
+```text
+http://localhost:5173/?ui=legacy
+```
+
+Use the legacy screen only to review or recover older v16 estimates. Save any required changes there, then return to the React calculator. Newer timestamped v16 browser data is migrated automatically into typed storage while the original `developmentEstimationV4` value is preserved. Untimestamped conflicting data is surfaced for manual review rather than silently overwritten.
+
+Removing the legacy HTML user interface will not remove v16 editable-export or browser-storage migration support. Those compatibility readers have a separate, later retirement stage; see `docs/legacy-retirement.md`.
 
 Saved projects, templates, and snapshots are currently local to the active browser and are not included in an editable project JSON export. The calculator retains the newest 25 snapshots and 20 templates.
 
@@ -120,11 +128,7 @@ The optional Jira CSV adapter maps those neutral records to configurable Jira is
 
 Multi-level hierarchy import requires Jira administration’s **External System Import**. Jira’s standard bulk CSV importer cannot map a hierarchy through multiple levels. During import, map the CSV columns to the matching Jira fields and validate before creating work items. See Atlassian’s [CSV importer guidance](https://support.atlassian.com/jira-software-cloud/docs/create-issues-using-the-csv-importer/) and [administrator CSV import reference](https://support.atlassian.com/jira-cloud-administration/docs/import-data-from-a-csv-file/).
 
-```text
-http://localhost:5173/?ui=legacy
-```
-
-Before relying on the legacy fallback during the transition, export an editable JSON backup. The remaining legacy-to-React handoff risks are tracked in `ROADMAP.md`.
+Before relying on browser-only project storage, export an editable JSON backup. Legacy-to-React retirement gates are tracked in `ROADMAP.md` and `docs/legacy-retirement.md`.
 
 ## Contributing
 

@@ -16,6 +16,16 @@ This roadmap records direction, not a delivery commitment. Direct Jira API integ
 - [x] Add project templates, version snapshots, comparison, and recovery UX.
 - [x] Add version consistency checks, automated release notes, verified tagged releases, build checksums, and release rollback guidance.
 
+## Post-v2.0.0 cleanup
+
+- [x] Publish stable `v2.0.0` and verify the tagged release, Pages deployment, build archive, checksum, and smoke report.
+- [x] Mark the v16 UI as a temporary compatibility/recovery mode rather than a parallel calculator.
+- [x] Remove remaining user-facing preview wording from the stable React experience.
+- [x] Add browser acceptance for non-destructive v16 browser-storage migration into typed storage.
+- [x] Document staged legacy retirement so UI removal does not remove v16 data compatibility.
+- [ ] Ship at least one maintenance release with the legacy deprecation notice and migration acceptance checks enabled.
+- [ ] Confirm no unresolved high-severity issue still requires the legacy UI for recovery.
+
 ## Future capabilities
 
 - [x] Optional per-activity three-point estimation with PERT calculations and export parity.
@@ -27,4 +37,6 @@ This roadmap records direction, not a delivery commitment. Direct Jira API integ
 
 ## Legacy removal gate
 
-Remove `public/legacy/calculator-v16.html` only after data reconciliation, autosave-on-navigation, feature parity, accessibility, import/export compatibility, the first successful deployed-site smoke test, and a stable transition period are verified.
+The legacy UI is now deprecated. Remove `public/legacy/calculator-v16.html` only after the remaining post-v2.0.0 operational gates are complete and a removal PR proves that v16 editable exports and `developmentEstimationV4` browser snapshots still migrate without the old HTML page.
+
+Legacy UI removal must not remove the v16 schemas, import readers, storage migration, or conflict-recovery behavior. Those compatibility readers require a separate later major-version decision. See `docs/legacy-retirement.md` for the staged retirement contract and checklist.

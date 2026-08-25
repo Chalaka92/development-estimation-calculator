@@ -1,0 +1,116 @@
+import { expect, test } from '@playwright/test'
+
+test.beforeEach(async ({ page }) => {
+  await page.goto('./')
+})
+
+test('@smoke loads the production calculator and legacy defaults', async ({
+  page,
+}) => {
+  await expect(
+    page.getByRole('heading', { name: 'Build a clear, defensible estimate.' }),
+  ).toBeVisible()
+  await expect(page.getByLabel('QA activity 1 name')).toHaveValue(
+    'QA Analysis / Test Planning',
+  )
+  await expect(page.getByLabel('QA activity 6 name')).toHaveValue(
+    'UAT / Release Validation Support',
+  )
+  await expect(page.getByRole('link', { name: 'Open legacy calculator' })).toHaveAttribute(
+    'href',
+    '?ui=legacy',
+  )
+})
+
+test('creates, calculates, autosaves, and restores a complete estimate', async ({
+  page,
+}) => {
+  await page.getByLabel('Project or release name').fill('Browser Verification')
+  await page.getByRole('button', { name: 'Add first main item' }).click()
+
+  await expect(
+    page.getByRole('textbox', { name: /^Activity \d+ name$/ }),
+  ).toHaveCount(8)
+  await expect(page.getByLabel('Activity 1 name', { exact: true })).toHaveValue(
+    'Requirement Analysis / Investigation',
+  )
+
+  await page.getByLabel('Activity 1 hours', { exact: true }).fill('10')
+  await page.getByLabel('Activity 1 hours', { exact: true }).press('Tab')
+  await page.getByLabel('QA activity 1 hours').fill('2')
+  await page.getByLabel('QA activity 1 hours').press('Tab')
+
+  await expect(page.locator('.preview-summary')).toContainText('13.8 h')
+  await expect(page.locator('.preview-save-status')).toContainText(
+    'All changes saved',
+    { timeout: 3_000 },
+  )
+
+  await page.reload()
+  await expect(page.getByLabel('Project or release name')).toHaveValue(
+    'Browser Verification',
+  )
+  await expect(page.getByLabel('Activity 1 hours', { exact: true })).toHaveValue(
+    '10',
+  )
+  await expect(page.getByLabel('QA activity 1 hours')).toHaveValue('2')
+  await expect(page.locator('.preview-summary')).toContainText('13.8 h')
+})
+
+test('creates a legacy estimation form for a new sub-item', async ({ page }) => {
+  await page.getByRole('button', { name: 'Add first main item' }).click()
+  await page.getByLabel('Activity 1 hours', { exact: true }).fill('1')
+  await page.getByLabel('Activity 1 hours', { exact: true }).press('Tab')
+
+  page.once('dialog', (dialog) => dialog.accept())
+  await page.getByRole('button', { name: '+ Add sub-item' }).click()
+
+  await expect(page.getByLabel('Sub-item 1 name')).toBeVisible()
+  await expect(
+    page.getByRole('textbox', { name: /^Activity \d+ name$/ }),
+  ).toHaveCount(8)
+  await expect(page.getByLabel('Activity 1 name', { exact: true })).toHaveValue(
+    'Requirement Analysis / Investigation',
+  )
+  await expect(page.getByText('Form total: 0 h')).toBeVisible()
+})
+
+test('exports and reimports an editable project', async ({ page }) => {
+  await page.getByLabel('Project or release name').fill('Browser Export')
+  const downloadPromise = page.waitForEvent('download')
+  await page.getByRole('button', { name: 'Export JSON' }).click()
+  const download = await downloadPromise
+  expect(download.suggestedFilename()).toMatch(/^browser-export.*\.json$/)
+
+  const downloadPath = await download.path()
+  expect(downloadPath).not.toBeNull()
+  await page.getByLabel('Project or release name').fill('Changed Project')
+  await page.getByLabel('Import editable estimate').setInputFiles(downloadPath!)
+
+  await expect(page.getByRole('status').last()).toContainText(
+    'Project imported successfully.',
+  )
+  await expect(page.getByLabel('Project or release name')).toHaveValue(
+    'Browser Export',
+  )
+})
+
+test('keeps the sticky header and editor within a mobile viewport', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.reload()
+  await page.evaluate(() => globalThis.scrollTo(0, 700))
+
+  const header = page.locator('.preview-header')
+  await expect(header).toBeVisible()
+  await expect
+    .poll(async () => (await header.boundingBox())?.y ?? -1)
+    .toBeGreaterThanOrEqual(0)
+  expect(
+    await page.evaluate(() => {
+      globalThis.scrollTo(100, globalThis.scrollY)
+      return globalThis.scrollX
+    }),
+  ).toBe(0)
+})

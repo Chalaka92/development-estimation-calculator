@@ -1,5 +1,6 @@
 .react-preview {
   min-height: 100dvh;
+  overflow-x: clip;
   color: #14213d;
   background:
     radial-gradient(circle at 8% 5%, rgb(68 97 242 / 8%), transparent 28rem),
@@ -1017,6 +1018,7 @@ button.wbs-danger-action:hover {
 .preview-summary {
   position: sticky;
   top: 104px;
+  overflow: hidden;
   align-self: start;
   padding: 28px;
   border-radius: 20px;
@@ -1228,6 +1230,10 @@ button.wbs-danger-action:hover {
 }
 
 @media (max-width: 600px) {
+  .preview-summary::after {
+    display: none;
+  }
+
   .preview-header {
     align-items: flex-start;
     gap: 16px;

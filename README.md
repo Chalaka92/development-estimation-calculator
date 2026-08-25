@@ -2,6 +2,8 @@
 
 A browser-based React application for preparing transparent software-development and QA estimates, calculating delivery duration, and exporting the result.
 
+Live application: [https://chalaka92.github.io/development-estimation-calculator/](https://chalaka92.github.io/development-estimation-calculator/)
+
 ## Features
 
 - Hierarchical development work breakdown with legacy-aligned estimation templates for new main items and sub-items
@@ -21,6 +23,7 @@ A browser-based React application for preparing transparent software-development
 - Zustand for framework-independent project state
 - Zod for persisted/imported data validation
 - Vitest and Testing Library
+- Playwright browser testing
 - Oxlint
 
 ## Requirements
@@ -46,11 +49,30 @@ Open the local URL displayed by Vite. Use `npm install` only when intentionally 
 | `npm run typecheck` | Run the TypeScript compiler checks |
 | `npm run test` | Run the test suite once |
 | `npm run test:watch` | Run tests in watch mode |
+| `npm run test:e2e` | Run critical workflows in Chromium, Firefox, and WebKit |
+| `npm run test:e2e:smoke` | Smoke-test the configured site in Chromium |
 | `npm run build` | Type-check and create the production build |
 | `npm run preview` | Preview the production build locally |
 | `npm run check` | Run the complete local quality gate |
 
-Pull requests and pushes to `main` run `npm ci` and `npm run check` in GitHub Actions.
+Pull requests and pushes to `main` run the repository quality gate and the critical Playwright workflows in GitHub Actions. Playwright requires its browser binaries locally:
+
+```bash
+npx playwright install chromium firefox webkit
+npm run test:e2e
+```
+
+## Deployment and browser support
+
+Every successful push to `main` builds and deploys `dist/` through GitHub Pages. The deployment workflow then runs a Chromium smoke test against the published URL. In **Repository Settings → Pages**, the publishing source must be **GitHub Actions**.
+
+CI verifies the critical create, calculate, autosave/reload, sub-item, import/export, and mobile-layout workflows using:
+
+- Chromium
+- Firefox
+- WebKit (Safari engine)
+
+Playwright reports are retained as GitHub Actions artifacts for 14 days.
 
 ## Repository structure
 

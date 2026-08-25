@@ -36,4 +36,8 @@ Completed in this review:
 
 ## Legacy removal gate
 
-Functional parity is complete. Automated Chromium, Firefox, and WebKit coverage and the GitHub Pages workflow are configured. The first successful deployed-site smoke test and a stable transition period remain required before removing `public/legacy/calculator-v16.html`.
+Functional parity is complete. Automated Chromium, Firefox, and WebKit coverage is active, GitHub Pages deployment and deployed-site smoke testing are successful, and stable `v2.0.0` was published on 2026-08-25.
+
+Post-release hardening adds browser acceptance for the real legacy fallback and for non-destructive migration of `developmentEstimationV4` browser storage into typed storage. The legacy screen is explicitly marked as a temporary compatibility/recovery mode.
+
+The legacy UI must remain through at least one maintenance release with that deprecation and migration coverage enabled, and no unresolved high-severity recovery issue may depend on it. Removing the UI must not remove v16 editable-export or browser-storage migration support. See `legacy-retirement.md` for the staged retirement contract.

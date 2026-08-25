@@ -1,6 +1,7 @@
 import { useProjectStore } from '../../app/useProjectStore'
 import { Panel, PanelHeader, StepBadge } from '../../components/ui'
 import { NumberField } from './NumberField'
+import { RiskBufferField } from './RiskBufferField'
 import { SectionResetButton } from './SectionResetButton'
 
 export function ProjectSettingsPanel() {
@@ -42,15 +43,8 @@ export function ProjectSettingsPanel() {
       </div>
 
       <div className="preview-field-grid">
-        <NumberField
-          id="risk-buffer"
-          label="Risk buffer"
+        <RiskBufferField
           value={schedule.riskBufferPercentage}
-          min={0}
-          max={500}
-          step={0.5}
-          suffix="%"
-          hint="Applied after development and QA."
           onCommit={(riskBufferPercentage) =>
             actions.updateSchedule({ riskBufferPercentage })
           }

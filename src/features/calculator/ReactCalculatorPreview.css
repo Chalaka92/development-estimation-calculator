@@ -309,7 +309,8 @@
   font-weight: 700;
 }
 
-.preview-field input {
+.preview-field input,
+.preview-field select {
   width: 100%;
   height: 44px;
   padding: 0 13px;
@@ -322,7 +323,8 @@
   transition: border-color var(--transition-control), box-shadow var(--transition-control);
 }
 
-.preview-field input:focus {
+.preview-field input:focus,
+.preview-field select:focus {
   border-color: #6878e8;
   box-shadow: var(--shadow-focus);
 }
@@ -331,6 +333,16 @@
   color: #8992a5;
   font-size: 11px;
   line-height: 1.4;
+}
+
+.risk-buffer-controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+}
+
+.risk-buffer-controls:has(.risk-buffer-custom-input) {
+  grid-template-columns: minmax(0, 1.45fr) minmax(120px, 0.75fr);
 }
 
 .preview-number-input {
@@ -1802,6 +1814,10 @@ button.wbs-danger-action:hover {
   }
 
   .preview-field-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .risk-buffer-controls:has(.risk-buffer-custom-input) {
     grid-template-columns: 1fr;
   }
 

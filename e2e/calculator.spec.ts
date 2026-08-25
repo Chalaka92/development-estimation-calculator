@@ -247,8 +247,9 @@ test('resets individual sections and the complete project safely', async ({
   page,
 }) => {
   await page.getByLabel('Project or release name').fill('Reset Test')
-  await page.getByLabel('Risk buffer').fill('28')
-  await page.getByLabel('Risk buffer').press('Tab')
+  await page.getByLabel('Risk buffer').selectOption('custom')
+  await page.getByLabel('Custom risk buffer').fill('28')
+  await page.getByLabel('Custom risk buffer').press('Tab')
   await page.getByRole('button', { name: 'Add first main item' }).click()
   await page.getByLabel('QA activity 1 hours').fill('9')
   await page.getByLabel('QA activity 1 hours').press('Tab')
@@ -271,6 +272,7 @@ test('resets individual sections and the complete project safely', async ({
     'Untitled Estimate',
   )
   await expect(page.getByLabel('Risk buffer')).toHaveValue('15')
+  await expect(page.getByLabel('Custom risk buffer')).toHaveCount(0)
 
   await page.getByLabel('Project or release name').fill('Full Reset Test')
   await page.getByRole('button', { name: 'Reset all' }).click()

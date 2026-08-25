@@ -48,7 +48,7 @@ export function RiskBufferField({ value, onCommit }: RiskBufferFieldProps) {
   }
 
   return (
-    <div className="preview-field risk-buffer-field">
+    <div className="calculator-field risk-buffer-field">
       <label htmlFor="risk-buffer">Risk buffer</label>
       <div className="risk-buffer-controls">
         <select
@@ -78,7 +78,7 @@ export function RiskBufferField({ value, onCommit }: RiskBufferFieldProps) {
         </select>
 
         {customSelected && (
-          <div className="preview-number-input risk-buffer-custom-input">
+          <div className="calculator-number-input risk-buffer-custom-input">
             <input
               aria-label="Custom risk buffer"
               aria-describedby={hintId}

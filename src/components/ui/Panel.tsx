@@ -6,7 +6,7 @@ interface PanelProps extends HTMLAttributes<HTMLElement> {
 
 export function Panel({ children, className = '', ...props }: PanelProps) {
   return (
-    <section className={`ui-panel preview-card ${className}`.trim()} {...props}>
+    <section className={`ui-panel calculator-card ${className}`.trim()} {...props}>
       {children}
     </section>
   )

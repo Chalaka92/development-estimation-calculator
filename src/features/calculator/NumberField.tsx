@@ -51,9 +51,9 @@ export function NumberField({
   }
 
   return (
-    <div className="preview-field">
+    <div className="calculator-field">
       <label htmlFor={id}>{label}</label>
-      <div className="preview-number-input">
+      <div className="calculator-number-input">
         <input
           id={id}
           aria-describedby={hintId}

@@ -7,11 +7,20 @@ const isoDateTimeSchema = z.string().refine(
   'Expected an ISO date-time string',
 )
 
+const threePointEstimateSchema = z
+  .object({
+    optimisticHours: finiteNumberSchema,
+    mostLikelyHours: finiteNumberSchema,
+    pessimisticHours: finiteNumberSchema,
+  })
+  .strict()
+
 const estimationActivitySchema = z
   .object({
     id: entityIdSchema,
     name: z.string(),
     hours: finiteNumberSchema,
+    threePointEstimate: threePointEstimateSchema.optional(),
   })
   .strict()
 
@@ -37,6 +46,7 @@ const qaActivitySchema = z
     id: entityIdSchema,
     name: z.string(),
     hours: finiteNumberSchema,
+    threePointEstimate: threePointEstimateSchema.optional(),
   })
   .strict()
 

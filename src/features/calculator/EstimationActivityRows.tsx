@@ -1,12 +1,17 @@
 import { useProjectStore } from '../../app/useProjectStore'
 import { Button } from '../../components/ui'
-import { calculateEstimationHours } from '../../domain/calculations'
+import {
+  calculateActivityHours,
+  calculateEstimationHours,
+} from '../../domain/calculations'
 import type {
   EstimationActivity,
   EntityId,
 } from '../../domain/estimation'
+import { createThreePointEstimate } from '../../domain/factories'
 import type { EstimationOwner } from '../../state/projectStore'
 import { InlineNumberField } from './InlineNumberField'
+import { ThreePointEstimateFields } from './ThreePointEstimateFields'
 
 interface EstimationActivityRowsProps {
   owner: EstimationOwner
@@ -33,7 +38,7 @@ export function EstimationActivityRows({
         <div className="wbs-activity-list">
           <div className="wbs-activity-list__header" aria-hidden="true">
             <span>Activity</span>
-            <span>Hours</span>
+            <span>Final hours</span>
             <span>Actions</span>
           </div>
           {activities.map((activity, index) => (
@@ -45,14 +50,37 @@ export function EstimationActivityRows({
                 value={activity.name}
                 onChange={(event) => updateName(activity.id, event.target.value)}
               />
-              <InlineNumberField
-                ariaLabel={`Activity ${index + 1} hours`}
-                value={activity.hours}
-                onCommit={(hours) =>
-                  actions.updateEstimationActivity(owner, activity.id, { hours })
-                }
-              />
+              <div className="activity-estimate-cell">
+                {activity.threePointEstimate ? (
+                  <strong>{calculateActivityHours(activity).toLocaleString('en', {
+                    maximumFractionDigits: 2,
+                  })} h</strong>
+                ) : (
+                  <InlineNumberField
+                    ariaLabel={`Activity ${index + 1} hours`}
+                    value={activity.hours}
+                    onCommit={(hours) =>
+                      actions.updateEstimationActivity(owner, activity.id, { hours })
+                    }
+                  />
+                )}
+              </div>
               <div className="wbs-row-actions">
+                <Button
+                  size="small"
+                  aria-pressed={Boolean(activity.threePointEstimate)}
+                  aria-label={`${activity.threePointEstimate ? 'Use single-point estimate for' : 'Use three-point estimate for'} activity ${index + 1}`}
+                  onClick={() =>
+                    actions.updateEstimationActivity(owner, activity.id, {
+                      hours: calculateActivityHours(activity),
+                      threePointEstimate: activity.threePointEstimate
+                        ? undefined
+                        : createThreePointEstimate(activity.hours),
+                    })
+                  }
+                >
+                  {activity.threePointEstimate ? '1-point' : '3-point'}
+                </Button>
                 <Button
                   size="small"
                   title="Duplicate activity"
@@ -76,6 +104,15 @@ export function EstimationActivityRows({
                   Delete
                 </Button>
               </div>
+              <ThreePointEstimateFields
+                activity={activity}
+                labelPrefix={`Activity ${index + 1}`}
+                onChange={(threePointEstimate) =>
+                  actions.updateEstimationActivity(owner, activity.id, {
+                    threePointEstimate,
+                  })
+                }
+              />
             </div>
           ))}
         </div>

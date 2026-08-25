@@ -75,6 +75,37 @@ test('creates a legacy estimation form for a new sub-item', async ({ page }) => 
   await expect(page.getByText('Form total: 0 h')).toBeVisible()
 })
 
+test('calculates and restores an optional three-point estimate', async ({
+  page,
+}) => {
+  await page.getByRole('button', { name: 'Add first main item' }).click()
+  await page.getByRole('button', {
+    name: 'Use three-point estimate for activity 1',
+  }).click()
+
+  for (const [name, value] of [
+    ['Activity 1 optimistic hours', '4'],
+    ['Activity 1 most likely hours', '10'],
+    ['Activity 1 pessimistic hours', '16'],
+  ] as const) {
+    await page.getByLabel(name).fill(value)
+    await page.getByLabel(name).press('Tab')
+  }
+
+  await expect(page.getByText('PERT expected')).toBeVisible()
+  await expect(page.locator('.preview-summary')).toContainText('11.5 h')
+  await expect(page.locator('.preview-save-status')).toContainText(
+    'All changes saved',
+    { timeout: 3_000 },
+  )
+
+  await page.reload()
+  await expect(page.getByLabel('Activity 1 optimistic hours')).toHaveValue('4')
+  await expect(page.getByLabel('Activity 1 most likely hours')).toHaveValue('10')
+  await expect(page.getByLabel('Activity 1 pessimistic hours')).toHaveValue('16')
+  await expect(page.locator('.preview-summary')).toContainText('11.5 h')
+})
+
 test('exports and reimports an editable project', async ({ page }) => {
   await page.getByLabel('Project or release name').fill('Browser Export')
   const downloadPromise = page.waitForEvent('download')
@@ -243,4 +274,3 @@ test('creates, searches, archives, and switches saved projects', async ({
     'Portfolio Alpha (Copy)',
   )
 })
-

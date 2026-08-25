@@ -8,9 +8,14 @@ import {
   PanelHeader,
   StepBadge,
 } from '../../components/ui'
-import { calculateQaHours } from '../../domain/calculations'
+import {
+  calculateActivityHours,
+  calculateQaHours,
+} from '../../domain/calculations'
+import { createThreePointEstimate } from '../../domain/factories'
 import { InlineNumberField } from './InlineNumberField'
 import { SectionResetButton } from './SectionResetButton'
+import { ThreePointEstimateFields } from './ThreePointEstimateFields'
 
 function formatHours(hours: number): string {
   return `${new Intl.NumberFormat('en', { maximumFractionDigits: 2 }).format(hours)} h`
@@ -66,7 +71,7 @@ export function QaEstimationPanel() {
             <div className="qa-activity-list">
               <div className="qa-activity-list__header" aria-hidden="true">
                 <span>Activity</span>
-                <span>Hours</span>
+                <span>Final hours</span>
                 <span>Actions</span>
               </div>
               {activities.map((activity, index) => (
@@ -82,14 +87,35 @@ export function QaEstimationPanel() {
                       })
                     }
                   />
-                  <InlineNumberField
-                    ariaLabel={`QA activity ${index + 1} hours`}
-                    value={activity.hours}
-                    onCommit={(hours) =>
-                      actions.updateQaActivity(activity.id, { hours })
-                    }
-                  />
+                  <div className="activity-estimate-cell">
+                    {activity.threePointEstimate ? (
+                      <strong>{formatHours(calculateActivityHours(activity))}</strong>
+                    ) : (
+                      <InlineNumberField
+                        ariaLabel={`QA activity ${index + 1} hours`}
+                        value={activity.hours}
+                        onCommit={(hours) =>
+                          actions.updateQaActivity(activity.id, { hours })
+                        }
+                      />
+                    )}
+                  </div>
                   <div className="wbs-row-actions">
+                    <Button
+                      size="small"
+                      aria-pressed={Boolean(activity.threePointEstimate)}
+                      aria-label={`${activity.threePointEstimate ? 'Use single-point estimate for' : 'Use three-point estimate for'} QA activity ${index + 1}`}
+                      onClick={() =>
+                        actions.updateQaActivity(activity.id, {
+                          hours: calculateActivityHours(activity),
+                          threePointEstimate: activity.threePointEstimate
+                            ? undefined
+                            : createThreePointEstimate(activity.hours),
+                        })
+                      }
+                    >
+                      {activity.threePointEstimate ? '1-point' : '3-point'}
+                    </Button>
                     <Button
                       size="small"
                       aria-label={`Duplicate QA activity ${index + 1}`}
@@ -107,6 +133,15 @@ export function QaEstimationPanel() {
                       Delete
                     </Button>
                   </div>
+                  <ThreePointEstimateFields
+                    activity={activity}
+                    labelPrefix={`QA activity ${index + 1}`}
+                    onChange={(threePointEstimate) =>
+                      actions.updateQaActivity(activity.id, {
+                        threePointEstimate,
+                      })
+                    }
+                  />
                 </div>
               ))}
             </div>

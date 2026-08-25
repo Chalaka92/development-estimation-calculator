@@ -24,10 +24,12 @@ export interface EstimationOwner {
 }
 
 export type EstimationActivityChanges = Partial<
-  Pick<EstimationActivity, 'name' | 'hours'>
+  Pick<EstimationActivity, 'name' | 'hours' | 'threePointEstimate'>
 >
 
-export type QaActivityChanges = Partial<Pick<QaActivity, 'name' | 'hours'>>
+export type QaActivityChanges = Partial<
+  Pick<QaActivity, 'name' | 'hours' | 'threePointEstimate'>
+>
 export type ScheduleChanges = Partial<EstimationSchedule>
 
 export interface ProjectActions {

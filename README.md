@@ -11,6 +11,7 @@ Live application: [https://chalaka92.github.io/development-estimation-calculator
 - Live development, QA, risk-buffer, and delivery calculations
 - Full live estimation table, copyable summary, and print-ready report
 - Decimal manpower/FTE and decimal-hour support
+- Optional per-activity three-point estimation using the PERT expected-hours formula
 - Versioned browser autosave and safe legacy-data migration
 - Multiple saved projects with search, duplication, archive, and recent-project switching
 - Reusable templates, project snapshots, comparison, restore, and automatic recovery before destructive replacement
@@ -99,6 +100,8 @@ The completed feature-parity and accessibility assessment is recorded in [docs/f
 The application validates imported and stored projects before replacing active data. Invalid typed storage is quarantined when possible. The legacy calculator remains available at:
 
 Saved projects, templates, and snapshots are currently local to the active browser and are not included in an editable project JSON export. The calculator retains the newest 25 snapshots and 20 templates.
+
+Development and QA activities use normal hours by default. A row can optionally use optimistic, most-likely, and pessimistic hours; live totals and summary exports then use `(O + 4M + P) / 6`. Editable JSON retains the original three input values.
 
 ```text
 http://localhost:5173/?ui=legacy

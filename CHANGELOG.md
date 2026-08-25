@@ -17,6 +17,7 @@ All notable user-visible changes are documented here. The format follows [Keep a
 - Confirmation-protected resets for project settings, development work, QA estimation, and the complete project.
 - Reusable zero-hour project templates, named version snapshots, comparison, restore, and automatic recovery snapshots before destructive replacement.
 - A browser-local project library with create, search, open, rename, deep duplicate, archive, restore, and delete workflows.
+- Optional optimistic, most-likely, and pessimistic activity estimates calculated with the PERT expected-hours formula.
 
 ### Fixed
 

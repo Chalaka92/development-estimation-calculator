@@ -1,6 +1,7 @@
 import {
   calculateDevelopmentItemHours,
   calculateEstimate,
+  calculateActivityHours,
 } from '../domain/calculations'
 import type { EstimationProject } from '../domain/estimation'
 import { serializeProject } from '../persistence/projectPersistence'
@@ -40,7 +41,7 @@ export function createLiveEstimateRows(
         mainItem: '',
         subItem: subItem.name,
         hours: subItem.estimation.reduce(
-          (total, activity) => total + activity.hours,
+          (total, activity) => total + calculateActivityHours(activity),
           0,
         ),
       })),
@@ -88,7 +89,7 @@ export function createMarkdownSummary(project: EstimationProject): string {
     '| --- | --- | ---: |',
     ...project.qaActivities.map(
       (activity, index) =>
-        `| ${index + 1} | ${escapeMarkdown(activity.name)} | ${formatExportNumber(activity.hours)} h |`,
+        `| ${index + 1} | ${escapeMarkdown(activity.name)} | ${formatExportNumber(calculateActivityHours(activity))} h |`,
     ),
     '',
     '## Estimate Summary',
@@ -123,7 +124,7 @@ export function createCsvSummary(project: EstimationProject): string {
       index + 1,
       '',
       activity.name,
-      formatExportNumber(activity.hours),
+      formatExportNumber(calculateActivityHours(activity)),
     ]),
     [],
     ['Summary', '', 'Development', '', formatExportNumber(summary.developmentHours)],

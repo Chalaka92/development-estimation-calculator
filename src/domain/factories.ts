@@ -6,6 +6,7 @@ import {
   type EstimationSchedule,
   type IsoDateTimeString,
   type QaActivity,
+  type ThreePointEstimate,
 } from './estimation'
 
 export interface EntityFactoryDependencies {
@@ -37,6 +38,14 @@ export const DEFAULT_QA_ACTIVITY_NAMES = [
   'Bug Retesting / Verification',
   'UAT / Release Validation Support',
 ] as const
+
+export function createThreePointEstimate(hours: number): ThreePointEstimate {
+  return {
+    optimisticHours: hours,
+    mostLikelyHours: hours,
+    pessimisticHours: hours,
+  }
+}
 
 export function createStandardEstimationActivities(
   dependencies: EntityFactoryDependencies = defaultEntityFactoryDependencies,

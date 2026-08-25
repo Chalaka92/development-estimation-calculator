@@ -27,12 +27,30 @@ function projectFixture() {
           {
             id: 'import',
             name: 'Import, validation',
-            estimation: [{ id: 'api', name: 'API', hours: 20 }],
+            estimation: [{
+              id: 'api',
+              name: 'API',
+              hours: 999,
+              threePointEstimate: {
+                optimisticHours: 14,
+                mostLikelyHours: 20,
+                pessimisticHours: 26,
+              },
+            }],
           },
         ],
       },
     ],
-    qaActivities: [{ id: 'qa', name: 'Regression "suite"', hours: 10 }],
+    qaActivities: [{
+      id: 'qa',
+      name: 'Regression "suite"',
+      hours: 999,
+      threePointEstimate: {
+        optimisticHours: 4,
+        mostLikelyHours: 10,
+        pessimisticHours: 16,
+      },
+    }],
   }
 }
 

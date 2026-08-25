@@ -37,7 +37,16 @@ function estimatedProject(factory: EntityFactoryDependencies) {
     developmentItems: [{
       id: factory.createId(),
       name: 'Billing',
-      directEstimation: [{ id: factory.createId(), name: 'Build', hours: 12 }],
+      directEstimation: [{
+        id: factory.createId(),
+        name: 'Build',
+        hours: 12,
+        threePointEstimate: {
+          optimisticHours: 8,
+          mostLikelyHours: 12,
+          pessimisticHours: 16,
+        },
+      }],
       subItems: [],
     }],
     qaActivities: [{ id: factory.createId(), name: 'Regression', hours: 3 }],
@@ -68,6 +77,11 @@ describe('project archive', () => {
         directEstimation: [{
           ...project.developmentItems[0].directEstimation[0],
           hours: 20,
+          threePointEstimate: {
+            optimisticHours: 16,
+            mostLikelyHours: 20,
+            pessimisticHours: 24,
+          },
         }],
       }],
     }
@@ -97,6 +111,10 @@ describe('project archive', () => {
     expect(saved.status).toBe('success')
     if (saved.status !== 'success') return
     expect(saved.value.project.developmentItems[0].directEstimation[0].hours).toBe(0)
+    expect(
+      saved.value.project.developmentItems[0].directEstimation[0]
+        .threePointEstimate,
+    ).toEqual({ optimisticHours: 0, mostLikelyHours: 0, pessimisticHours: 0 })
     expect(saved.value.project.qaActivities[0].hours).toBe(0)
 
     const instance = instantiateProjectTemplate(saved.value, dependencies('new'))

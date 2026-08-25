@@ -43,8 +43,8 @@ test('creates, calculates, autosaves, and restores a complete estimate', async (
   await page.getByLabel('QA activity 1 hours').fill('2')
   await page.getByLabel('QA activity 1 hours').press('Tab')
 
-  await expect(page.locator('.preview-summary')).toContainText('13.8 h')
-  await expect(page.locator('.preview-save-status')).toContainText(
+  await expect(page.locator('.calculator-summary')).toContainText('13.8 h')
+  await expect(page.locator('.calculator-save-status')).toContainText(
     'All changes saved',
     { timeout: 3_000 },
   )
@@ -59,7 +59,7 @@ test('creates, calculates, autosaves, and restores a complete estimate', async (
   )
   await openWorkspaceTab(page, 'QA')
   await expect(page.getByLabel('QA activity 1 hours')).toHaveValue('2')
-  await expect(page.locator('.preview-summary')).toContainText('13.8 h')
+  await expect(page.locator('.calculator-summary')).toContainText('13.8 h')
 })
 
 test('creates a legacy estimation form for a new sub-item', async ({ page }) => {
@@ -100,8 +100,8 @@ test('calculates and restores an optional three-point estimate', async ({
   }
 
   await expect(page.getByText('PERT expected')).toBeVisible()
-  await expect(page.locator('.preview-summary')).toContainText('11.5 h')
-  await expect(page.locator('.preview-save-status')).toContainText(
+  await expect(page.locator('.calculator-summary')).toContainText('11.5 h')
+  await expect(page.locator('.calculator-save-status')).toContainText(
     'All changes saved',
     { timeout: 3_000 },
   )
@@ -111,7 +111,7 @@ test('calculates and restores an optional three-point estimate', async ({
   await expect(page.getByLabel('Activity 1 optimistic hours')).toHaveValue('4')
   await expect(page.getByLabel('Activity 1 most likely hours')).toHaveValue('10')
   await expect(page.getByLabel('Activity 1 pessimistic hours')).toHaveValue('16')
-  await expect(page.locator('.preview-summary')).toContainText('11.5 h')
+  await expect(page.locator('.calculator-summary')).toContainText('11.5 h')
 })
 
 test('records delivery metadata and dependencies across reloads', async ({ page }) => {
@@ -136,7 +136,7 @@ test('records delivery metadata and dependencies across reloads', async ({ page 
 
   await expect(page.locator('.role-effort-summary')).toContainText('Backend')
   await expect(page.locator('.role-effort-summary')).toContainText('6 h')
-  await expect(page.locator('.preview-save-status')).toContainText(
+  await expect(page.locator('.calculator-save-status')).toContainText(
     'All changes saved',
     { timeout: 3_000 },
   )
@@ -364,7 +364,7 @@ test('keeps the sticky header and editor within a mobile viewport', async ({
   await page.reload()
   await page.evaluate(() => globalThis.scrollTo(0, 700))
 
-  const header = page.locator('.preview-header')
+  const header = page.locator('.calculator-header')
   await expect(header).toBeVisible()
   await expect
     .poll(async () => (await header.boundingBox())?.y ?? -1)
@@ -382,7 +382,7 @@ test('creates, searches, archives, and switches saved projects', async ({
 }) => {
   await page.getByLabel('Project or release name').fill('Portfolio Alpha')
   await page.getByLabel('Project or release name').press('Tab')
-  await expect(page.locator('.preview-save-status')).toContainText(
+  await expect(page.locator('.calculator-save-status')).toContainText(
     'All changes saved',
     { timeout: 3_000 },
   )

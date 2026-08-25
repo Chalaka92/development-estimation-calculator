@@ -140,7 +140,7 @@ Do not report sensitive vulnerabilities in a public issue. Follow [SECURITY.md](
 
 ## Releases and roadmap
 
-- Current package version: `2.0.0`
+- Current package version: `2.0.1`
 - Completed and upcoming work: [ROADMAP.md](ROADMAP.md)
 - User-visible history: [CHANGELOG.md](CHANGELOG.md)
 

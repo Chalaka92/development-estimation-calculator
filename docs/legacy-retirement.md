@@ -84,12 +84,12 @@ All Stage B conditions are satisfied:
 2. [x] Remove the legacy navigation link from the React header.
 3. [x] Keep `legacyV16EditableExportSchema`, `legacyV16StorageSnapshotSchema`, `loadLegacyV16Project`, and `LEGACY_V16_STORAGE_KEY`.
 4. [x] Convert the legacy fallback browser test into compatibility regression tests that do not require the old HTML page.
-5. [ ] Run `npm run check` and the complete Playwright suite in CI for the removal PR.
+5. [x] Run `npm run check` and the complete Playwright suite in CI for the removal PR.
 6. [x] Add a representative v16 editable JSON browser import that must migrate successfully.
 7. [x] Keep a representative `developmentEstimationV4` browser snapshot test that creates typed storage without deleting the original snapshot.
 8. [x] Update README, roadmap, changelog, and this retirement plan to state that only the legacy UI is removed.
 
-The CI item is intentionally checked only after the Stage B pull request finishes successfully.
+Stage B CI completed successfully across the repository quality gate and the full Chromium, Firefox, and WebKit Playwright matrix.
 
 ## Rollback principle
 

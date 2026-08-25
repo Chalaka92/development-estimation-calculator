@@ -2,7 +2,7 @@
 
 Date: 2026-08-25
 
-This review compares the typed React calculator with the temporary v16 fallback and records the accessibility work completed before legacy removal.
+This review compares the typed React calculator with the former v16 fallback and records the accessibility work completed before legacy UI removal.
 
 ## Feature parity
 
@@ -34,10 +34,10 @@ Completed in this review:
 - Reduced-motion and print styles.
 - Left-aligned QA empty-state guidance that follows the editor's reading edge.
 
-## Legacy removal gate
+## Legacy removal result
 
-Functional parity is complete. Automated Chromium, Firefox, and WebKit coverage is active, GitHub Pages deployment and deployed-site smoke testing are successful, and stable `v2.0.0` was published on 2026-08-25.
+Functional parity is complete. Automated Chromium, Firefox, and WebKit coverage is active, GitHub Pages deployment and deployed-site smoke testing are successful, stable `v2.0.0` was published on 2026-08-25, and `v2.0.1` completed the required maintenance-release observation period with migration acceptance enabled.
 
-Post-release hardening adds browser acceptance for the real legacy fallback and for non-destructive migration of `developmentEstimationV4` browser storage into typed storage. The legacy screen is explicitly marked as a temporary compatibility/recovery mode.
+Stage B removes the old v16 HTML calculator, legacy iframe application mode, and React navigation link. The browser suite replaces old-page assertions with compatibility tests that prove both a representative v16 editable export and a `developmentEstimationV4` browser snapshot still migrate after the HTML page is gone.
 
-The legacy UI must remain through at least one maintenance release with that deprecation and migration coverage enabled, and no unresolved high-severity recovery issue may depend on it. Removing the UI must not remove v16 editable-export or browser-storage migration support. See `legacy-retirement.md` for the staged retirement contract.
+Legacy data compatibility is not part of Stage B removal. v16 editable-export schemas, browser-storage readers, migration logic, original-key preservation, and conflict-recovery behavior remain supported until a separate Stage C major-version decision. See `legacy-retirement.md` for the staged retirement contract.

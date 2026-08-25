@@ -7,6 +7,7 @@ All notable user-visible changes are documented here. The format follows [Keep a
 ### Added
 
 - Add a CI-enforced Stage C compatibility guard that pins the retained v16 schemas, editable-export reader, `developmentEstimationV4` storage key, and non-destructive browser-storage migration path.
+- Document the browser-storage forward-migration contract in ADR 0009 and pin the current project, archive, and workspace `.v1` storage identities in CI so future schema changes require explicit coordinated migration work.
 
 ### Changed
 
@@ -61,7 +62,7 @@ All notable user-visible changes are documented here. The format follows [Keep a
 - Acyclic dependencies between development work units with automatic dangling-reference cleanup.
 - Live effort-by-role totals and planning metadata in Markdown, CSV, PDF, and editable JSON exports.
 - Provider-neutral group, deliverable, activity, and quality work-item generation with editable preview, selection, and versioned JSON/CSV exports.
-- Jira-ready CSV export with configurable issue types, project key, hierarchy IDs, labels, component, fix version, priority, and estimates in seconds.
+- Jira-ready CSV export with configurable issue types, hierarchy IDs, estimates, and planning fields.
 - Named risk-buffer presets with a persistent Custom percentage option.
 - An accessible tabbed workspace for Project, Development, QA, Review, Export and Jira, and History while retaining the live summary across sections.
 - Release-candidate version injection, consistency checks, generated release notes, verified build archives, checksums, smoke testing, and rollback guidance.

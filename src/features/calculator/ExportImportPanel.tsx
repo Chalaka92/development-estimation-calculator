@@ -14,6 +14,8 @@ import {
   printCurrentPage,
 } from '../../export/browserDownloads'
 import { deserializeProject } from '../../persistence/projectPersistence'
+import { createProjectSnapshot } from '../../persistence/projectArchive'
+import type { KeyValueStorage } from '../../persistence/projectPersistence'
 
 const MAX_IMPORT_BYTES = 5 * 1024 * 1024
 
@@ -22,7 +24,11 @@ interface PanelMessage {
   text: string
 }
 
-export function ExportImportPanel() {
+export function ExportImportPanel({
+  storage = globalThis.localStorage,
+}: {
+  storage?: KeyValueStorage
+}) {
   const project = useProjectStore((state) => state.project)
   const replaceProject = useProjectStore(
     (state) => state.actions.replaceProject,
@@ -111,6 +117,16 @@ export function ExportImportPanel() {
       const result = deserializeProject(await file.text())
       if (result.status === 'invalid') {
         setMessage({ tone: 'error', text: result.error })
+        return
+      }
+      const recovery = createProjectSnapshot(
+        storage,
+        project,
+        'Before project import',
+        'recovery',
+      )
+      if (recovery.status !== 'success') {
+        setMessage({ tone: 'error', text: recovery.error })
         return
       }
       replaceProject(result.project)

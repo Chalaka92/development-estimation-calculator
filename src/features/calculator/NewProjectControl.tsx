@@ -1,22 +1,44 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
 import { useProjectStore } from '../../app/useProjectStore'
 import { Button } from '../../components/ui'
+import { createProjectSnapshot } from '../../persistence/projectArchive'
+import type { KeyValueStorage } from '../../persistence/projectPersistence'
 
-export function NewProjectControl() {
+export function NewProjectControl({
+  storage = globalThis.localStorage,
+}: {
+  storage?: KeyValueStorage
+}) {
   const [open, setOpen] = useState(false)
   const triggerRef = useRef<HTMLButtonElement>(null)
   const dialogRef = useRef<HTMLDivElement>(null)
   const cancelRef = useRef<HTMLButtonElement>(null)
+  const project = useProjectStore((state) => state.project)
+  const [recoveryError, setRecoveryError] = useState<string | null>(null)
   const resetProject = useProjectStore(
     (state) => state.actions.resetProject,
   )
 
   const createProject = () => {
+    const recovery = createProjectSnapshot(
+      storage,
+      project,
+      'Before full reset',
+      'recovery',
+    )
+    if (recovery.status !== 'success') {
+      setRecoveryError(recovery.error)
+      return
+    }
     resetProject()
+    setRecoveryError(null)
     setOpen(false)
   }
 
-  const closeDialog = () => setOpen(false)
+  const closeDialog = () => {
+    setRecoveryError(null)
+    setOpen(false)
+  }
 
   useEffect(() => {
     if (!open) return
@@ -87,6 +109,7 @@ export function NewProjectControl() {
               restores all defaults. Export an editable JSON backup first if you
               need to keep the current work.
             </p>
+            {recoveryError && <p className="new-project-dialog__error" role="alert">{recoveryError}</p>}
             <div className="new-project-dialog__actions">
               <Button ref={cancelRef} onClick={closeDialog}>
                 Keep current project

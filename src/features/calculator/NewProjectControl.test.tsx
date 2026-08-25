@@ -7,6 +7,7 @@ import { ProjectStoreProvider } from '../../app/ProjectStoreProvider'
 import { createProjectRuntime } from '../../app/projectRuntime'
 import type { KeyValueStorage } from '../../persistence/projectPersistence'
 import { NewProjectControl } from './NewProjectControl'
+import { loadProjectArchive } from '../../persistence/projectArchive'
 
 class MemoryStorage implements KeyValueStorage {
   readonly values = new Map<string, string>()
@@ -23,7 +24,8 @@ class MemoryStorage implements KeyValueStorage {
 
 function renderControl() {
   let id = 0
-  const runtime = createProjectRuntime(new MemoryStorage(), {
+  const storage = new MemoryStorage()
+  const runtime = createProjectRuntime(storage, {
     createId: () => `new-${++id}`,
     now: () => '2026-08-25T00:00:00.000Z',
   })
@@ -31,10 +33,10 @@ function renderControl() {
   runtime.store.getState().actions.addDevelopmentItem('Existing Item')
   render(
     <ProjectStoreProvider store={runtime.store}>
-      <NewProjectControl />
+      <NewProjectControl storage={storage} />
     </ProjectStoreProvider>,
   )
-  return runtime
+  return { runtime, storage }
 }
 
 afterEach(cleanup)
@@ -42,7 +44,7 @@ afterEach(cleanup)
 describe('NewProjectControl', () => {
   it('cancels without changing the active project', async () => {
     const user = userEvent.setup()
-    const runtime = renderControl()
+    const { runtime } = renderControl()
     const project = runtime.store.getState().project
 
     await user.click(screen.getByRole('button', { name: 'Reset all' }))
@@ -77,7 +79,7 @@ describe('NewProjectControl', () => {
 
   it('replaces the active project only after confirmation', async () => {
     const user = userEvent.setup()
-    const runtime = renderControl()
+    const { runtime, storage } = renderControl()
     const previousId = runtime.store.getState().project.id
 
     await user.click(screen.getByRole('button', { name: 'Reset all' }))
@@ -102,5 +104,17 @@ describe('NewProjectControl', () => {
     })
     expect(runtime.store.getState().project.qaActivities).toHaveLength(6)
     expect(runtime.store.getState().project.id).not.toBe(previousId)
+    expect(loadProjectArchive(storage)).toMatchObject({
+      status: 'loaded',
+      archive: {
+        snapshots: [
+          expect.objectContaining({
+            label: 'Before full reset',
+            kind: 'recovery',
+            project: expect.objectContaining({ name: 'Keep Me' }),
+          }),
+        ],
+      },
+    })
   })
 })

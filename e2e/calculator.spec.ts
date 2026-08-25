@@ -133,6 +133,43 @@ test('resets individual sections and the complete project safely', async ({
   await expect(page.getByLabel('Project or release name')).toHaveValue(
     'Untitled Estimate',
   )
+  await expect(
+    page.getByRole('option', { name: /Recovery: Before full reset/ }),
+  ).toHaveCount(1)
+})
+
+test('saves, compares, restores, and reuses project versions', async ({ page }) => {
+  await page.getByLabel('Project or release name').fill('History Test')
+  await page.getByRole('button', { name: 'Add first main item' }).click()
+  await page.getByLabel('Activity 1 hours', { exact: true }).fill('10')
+  await page.getByLabel('Activity 1 hours', { exact: true }).press('Tab')
+
+  await page.getByLabel('Snapshot name').fill('Baseline')
+  await page.getByRole('button', { name: 'Save snapshot' }).click()
+  await expect(page.getByRole('option', { name: /Baseline/ })).toHaveCount(1)
+
+  await page.getByLabel('Activity 1 hours', { exact: true }).fill('18')
+  await page.getByLabel('Activity 1 hours', { exact: true }).press('Tab')
+  await expect(
+    page.locator('.history-comparison__row').filter({ hasText: 'Development' }),
+  ).toContainText('+8 h')
+
+  page.once('dialog', (dialog) => dialog.accept())
+  await page.getByRole('button', { name: 'Restore selected' }).click()
+  await expect(page.getByLabel('Activity 1 hours', { exact: true })).toHaveValue('10')
+  await expect(
+    page.getByRole('option', { name: /Recovery: Before snapshot restore/ }),
+  ).toHaveCount(1)
+
+  await page.getByLabel('Template name').fill('Reusable Billing')
+  await page.getByRole('button', { name: 'Save template' }).click()
+  await expect(page.getByText('Reusable Billing')).toBeVisible()
+  page.once('dialog', (dialog) => dialog.accept())
+  await page.getByRole('button', { name: 'Apply' }).click()
+  await expect(page.getByLabel('Project or release name')).toHaveValue(
+    'Reusable Billing',
+  )
+  await expect(page.getByLabel('Activity 1 hours', { exact: true })).toHaveValue('0')
 })
 
 test('keeps the sticky header and editor within a mobile viewport', async ({

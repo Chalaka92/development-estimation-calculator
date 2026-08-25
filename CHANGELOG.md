@@ -4,6 +4,10 @@ All notable user-visible changes are documented here. The format follows [Keep a
 
 ## [Unreleased]
 
+### Added
+
+- Add a CI-enforced Stage C compatibility guard that pins the retained v16 schemas, editable-export reader, `developmentEstimationV4` storage key, and non-destructive browser-storage migration path.
+
 ### Changed
 
 - Keep v16 editable-export and `developmentEstimationV4` browser-storage migration support after retiring the old calculator UI, with browser acceptance covering both compatibility paths.

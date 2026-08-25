@@ -1434,3 +1434,138 @@ button.wbs-danger-action:hover {
     grid-template-columns: 1fr;
   }
 }
+
+.workspace-toolbar {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 22px 16px;
+}
+
+.workspace-toolbar label {
+  display: grid;
+  flex: 1;
+  gap: 5px;
+  color: var(--color-text-soft);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.workspace-toolbar input {
+  width: 100%;
+  height: 36px;
+  padding: 0 10px;
+  border: 1px solid var(--color-border-control);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  background: var(--color-surface);
+  font: inherit;
+}
+
+.workspace-filter,
+.workspace-project__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.workspace-project-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0 22px 20px;
+  list-style: none;
+}
+
+.workspace-project {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.workspace-project--active {
+  border-color: #9da9ff;
+  background: #f7f8ff;
+}
+
+.workspace-project__details {
+  display: grid;
+  min-width: 0;
+  gap: 4px;
+}
+
+.workspace-project__details > div {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.workspace-project__details strong {
+  overflow: hidden;
+  color: var(--color-text-strong);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.workspace-project__details > span,
+.workspace-local-note {
+  color: var(--color-text-soft);
+  font-size: 9px;
+}
+
+.workspace-active-badge {
+  padding: 2px 6px;
+  border-radius: 999px;
+  color: #3148d8;
+  background: #e9ecff;
+  font-size: 8px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.workspace-empty,
+.workspace-message,
+.workspace-local-note {
+  margin: 0 22px 16px;
+  text-align: left;
+}
+
+.workspace-empty {
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-soft);
+  background: var(--color-surface-muted);
+  font-size: 10px;
+}
+
+.workspace-message {
+  padding: 9px 11px;
+  border-radius: var(--radius-sm);
+  font-size: 10px;
+}
+
+.workspace-message--success {
+  color: var(--color-success);
+  background: #edf9f2;
+}
+
+.workspace-message--error {
+  color: var(--color-danger);
+  background: #fff1f0;
+}
+
+@media (max-width: 760px) {
+  .workspace-toolbar,
+  .workspace-project {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
+

@@ -19,6 +19,8 @@ import { ExportImportPanel } from './ExportImportPanel'
 import { NewProjectControl } from './NewProjectControl'
 import { LiveEstimationTable } from './LiveEstimationTable'
 import { ProjectHistoryPanel } from './ProjectHistoryPanel'
+import { ProjectWorkspacePanel } from './ProjectWorkspacePanel'
+import { synchronizeWorkspaceProject } from '../../persistence/projectWorkspace'
 import './ReactCalculatorPreview.css'
 
 interface ReactCalculatorPreviewProps {
@@ -116,6 +118,7 @@ function PreviewContent({
           </div>
 
           <ProjectSettingsPanel />
+          <ProjectWorkspacePanel storage={storage} />
           <DevelopmentWorkBreakdownPanel />
           <QaEstimationPanel />
           <LiveEstimationTable />
@@ -152,7 +155,12 @@ export function ReactCalculatorPreview({
     const autosave = startProjectAutosave(
       runtime.store,
       projectStorage,
-      { onResult: setSaveResult },
+      {
+        onResult: setSaveResult,
+        onProjectSaved: (project) => {
+          synchronizeWorkspaceProject(projectStorage, project)
+        },
+      },
     )
     autosaveRef.current = autosave
     const flushBeforeUnload = () => autosave.flush()

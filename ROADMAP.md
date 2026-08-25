@@ -20,7 +20,7 @@ This roadmap records direction, not a delivery commitment. Jira integration rema
 
 - Optional three-point estimation.
 - Role-based effort, dependencies, risk, confidence, and notes.
-- Multiple saved projects and project history.
+- [x] Multiple saved projects with search, recent access, duplication, archive, and deletion.
 - Provider-neutral work-item generation.
 - Jira CSV export, followed later by a secure server-backed Jira integration.
 

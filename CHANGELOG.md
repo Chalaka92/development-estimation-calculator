@@ -16,6 +16,7 @@ All notable user-visible changes are documented here. The format follows [Keep a
 - Shared panel, header, empty-state, button, and expansion primitives backed by centralized design tokens.
 - Confirmation-protected resets for project settings, development work, QA estimation, and the complete project.
 - Reusable zero-hour project templates, named version snapshots, comparison, restore, and automatic recovery snapshots before destructive replacement.
+- A browser-local project library with create, search, open, rename, deep duplicate, archive, restore, and delete workflows.
 
 ### Fixed
 

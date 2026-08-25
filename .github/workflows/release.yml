@@ -75,7 +75,7 @@ jobs:
           sha256sum "$ARCHIVE" > "$ARCHIVE.sha256"
 
       - name: Upload verified build artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: release-${{ steps.release.outputs.version }}
           path: |
@@ -86,7 +86,7 @@ jobs:
 
       - name: Upload smoke-test report
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: release-smoke-report-${{ steps.release.outputs.version }}
           path: playwright-report/

@@ -50,6 +50,7 @@ describe('calculator workflow', () => {
     await user.clear(projectName)
     await user.type(projectName, 'Release Candidate')
 
+    await user.click(screen.getByRole('tab', { name: 'Development' }))
     await user.click(screen.getByRole('button', { name: 'Add first main item' }))
     const developmentHours = screen.getByRole('spinbutton', {
       name: 'Activity 1 hours',
@@ -58,6 +59,7 @@ describe('calculator workflow', () => {
     await user.type(developmentHours, '10')
     await user.tab()
 
+    await user.click(screen.getByRole('tab', { name: 'QA' }))
     const qaHours = screen.getByRole('spinbutton', {
       name: 'QA activity 1 hours',
     })

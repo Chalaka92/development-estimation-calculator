@@ -242,6 +242,69 @@
   min-width: 0;
 }
 
+.workspace-tabs {
+  min-width: 0;
+}
+
+.workspace-tab-list {
+  position: sticky;
+  z-index: 20;
+  top: var(--header-sticky-offset);
+  display: flex;
+  gap: 5px;
+  overflow-x: auto;
+  padding: 7px;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  background: rgb(255 255 255 / 94%);
+  box-shadow: 0 8px 24px rgb(20 33 61 / 8%);
+  backdrop-filter: blur(14px);
+  scrollbar-width: thin;
+}
+
+.workspace-tab {
+  flex: 1 0 auto;
+  min-height: 42px;
+  padding: 9px 13px;
+  border: 0;
+  border-radius: 9px;
+  color: #667085;
+  background: transparent;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.workspace-tab:hover {
+  color: var(--color-brand-strong);
+  background: var(--color-brand-surface);
+}
+
+.workspace-tab--active {
+  color: #fff;
+  background: var(--color-brand-strong);
+  box-shadow: 0 6px 14px rgb(49 72 216 / 20%);
+}
+
+.workspace-tab--active:hover {
+  color: #fff;
+  background: var(--color-brand-strong);
+}
+
+.workspace-tab__short-label {
+  display: none;
+}
+
+.workspace-tab-panel {
+  padding-top: 22px;
+}
+
+.workspace-tab-panel > * + * {
+  margin-top: 22px;
+}
+
 .preview-intro {
   max-width: 720px;
   margin-bottom: 30px;
@@ -1594,6 +1657,7 @@ button.wbs-danger-action:hover {
   .preview-header,
   .preview-warning,
   .preview-intro,
+  .workspace-tab-list,
   .preview-settings,
   .wbs-panel,
   .qa-panel,
@@ -1601,6 +1665,15 @@ button.wbs-danger-action:hover {
   .history-panel,
   .preview-step {
     display: none !important;
+  }
+
+  .workspace-tab-panel {
+    display: none !important;
+    padding-top: 0;
+  }
+
+  .workspace-tab-panel--review {
+    display: block !important;
   }
 
   .preview-workspace {
@@ -1815,6 +1888,22 @@ button.wbs-danger-action:hover {
 
   .preview-field-grid {
     grid-template-columns: 1fr;
+  }
+
+  .workspace-tab-list {
+    margin-inline: -4px;
+  }
+
+  .workspace-tab {
+    padding-inline: 11px;
+  }
+
+  .workspace-tab__label:has(+ .workspace-tab__short-label) {
+    display: none;
+  }
+
+  .workspace-tab__short-label {
+    display: inline;
   }
 
   .risk-buffer-controls:has(.risk-buffer-custom-input) {

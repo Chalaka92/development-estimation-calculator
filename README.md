@@ -6,6 +6,7 @@ Live application: [https://chalaka92.github.io/development-estimation-calculator
 
 ## Features
 
+- Accessible tabbed workspace for Project, Development, QA, Review, Export and Jira, and History, with the live summary retained across sections
 - Hierarchical development work breakdown with legacy-aligned estimation templates for new main items and sub-items
 - Separate QA estimation prefilled with the six legacy QA activities
 - Live development, QA, risk-buffer, and delivery calculations

@@ -79,9 +79,7 @@ describe('CalculatorWorkspaceTabs', () => {
     expect(screen.getByRole('heading', {
       name: 'Estimation health review',
     })).toBeTruthy()
-    expect(screen.getByRole('status', { name: '' }).textContent).toContain(
-      'Needs review',
-    )
+    expect(screen.getByText('Needs review')).toBeTruthy()
     expect(screen.getByRole('heading', {
       name: 'Live estimation table',
     })).toBeTruthy()

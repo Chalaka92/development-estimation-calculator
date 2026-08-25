@@ -70,7 +70,7 @@ All conditions must be true before Stage B:
 - [ ] No unresolved high-severity issue requires the legacy UI for recovery.
 - [ ] The removal PR demonstrates that old v16 editable exports and browser snapshots still migrate without the legacy HTML page.
 
-The two unchecked operational gates are intentionally the remaining blockers immediately after `v2.0.0`.
+The first two unchecked items are the operational blockers immediately after `v2.0.0`. The final item is the proof required inside the future Stage B removal PR itself.
 
 ## Removal PR checklist
 

@@ -106,6 +106,47 @@ test('calculates and restores an optional three-point estimate', async ({
   await expect(page.locator('.preview-summary')).toContainText('11.5 h')
 })
 
+test('records delivery metadata and dependencies across reloads', async ({ page }) => {
+  await page.getByRole('button', { name: 'Add first main item' }).click()
+  await page.getByRole('button', { name: '+ Add main item' }).click()
+  await page.getByLabel('Main item 1 name').fill('Foundation')
+  await page.getByLabel('Main item 2 name').fill('Billing')
+
+  const billing = page.getByLabel('Main item 2 name').locator('xpath=ancestor::article[1]')
+  await billing.getByRole('checkbox', { name: '1. Foundation' }).check()
+  await page.getByRole('button', {
+    name: 'Show planning details for activity 1',
+  }).first().click()
+  await page.getByLabel('Activity 1 delivery role').first().selectOption('Backend')
+  await page.getByLabel('Activity 1 risk level').first().selectOption('high')
+  await page.getByLabel('Activity 1 confidence percentage').first().fill('80')
+  await page.getByLabel('Activity 1 confidence percentage').first().press('Tab')
+  await page.getByLabel('Activity 1 notes').first().fill('Identity service dependency.')
+  await page.getByLabel('Activity 1 hours', { exact: true }).first().fill('6')
+  await page.getByLabel('Activity 1 hours', { exact: true }).first().press('Tab')
+
+  await expect(page.locator('.role-effort-summary')).toContainText('Backend')
+  await expect(page.locator('.role-effort-summary')).toContainText('6 h')
+  await expect(page.locator('.preview-save-status')).toContainText(
+    'All changes saved',
+    { timeout: 3_000 },
+  )
+
+  await page.reload()
+  await expect(page.getByLabel('Main item 2 name')).toHaveValue('Billing')
+  const restoredBilling = page.getByLabel('Main item 2 name').locator('xpath=ancestor::article[1]')
+  await expect(restoredBilling.getByRole('checkbox', { name: '1. Foundation' })).toBeChecked()
+  await page.getByRole('button', {
+    name: 'Show planning details for activity 1',
+  }).first().click()
+  await expect(page.getByLabel('Activity 1 delivery role').first()).toHaveValue('Backend')
+  await expect(page.getByLabel('Activity 1 risk level').first()).toHaveValue('high')
+  await expect(page.getByLabel('Activity 1 confidence percentage').first()).toHaveValue('80')
+  await expect(page.getByLabel('Activity 1 notes').first()).toHaveValue(
+    'Identity service dependency.',
+  )
+})
+
 test('exports and reimports an editable project', async ({ page }) => {
   await page.getByLabel('Project or release name').fill('Browser Export')
   const downloadPromise = page.waitForEvent('download')

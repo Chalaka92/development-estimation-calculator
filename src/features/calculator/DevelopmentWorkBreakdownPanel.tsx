@@ -18,6 +18,7 @@ import type {
 } from '../../domain/estimation'
 import { EstimationActivityRows } from './EstimationActivityRows'
 import { SectionResetButton } from './SectionResetButton'
+import { DependencySelector } from './DependencySelector'
 
 function formatHours(hours: number): string {
   return `${new Intl.NumberFormat('en', { maximumFractionDigits: 2 }).format(hours)} h`
@@ -77,6 +78,19 @@ function SubItemCard({ workItemId, subItem, index }: SubItemCardProps) {
 
       {expanded && (
         <div className="wbs-item-body wbs-item-body--sub" id={`sub-item-${subItem.id}`}>
+          <DependencySelector
+            ownerId={subItem.id}
+            excludedIds={[workItemId]}
+            selectedIds={subItem.dependencyIds ?? []}
+            label={`Dependencies for sub-item ${index + 1}`}
+            onChange={(dependencyIds) =>
+              actions.updateSubItemDependencies(
+                workItemId,
+                subItem.id,
+                dependencyIds,
+              )
+            }
+          />
           <EstimationActivityRows
             owner={owner}
             activities={subItem.estimation}
@@ -156,6 +170,15 @@ function WorkItemCard({ item, index }: WorkItemCardProps) {
 
       {expanded && (
         <div className="wbs-item-body" id={`work-item-${item.id}`}>
+          <DependencySelector
+            ownerId={item.id}
+            excludedIds={item.subItems.map((subItem) => subItem.id)}
+            selectedIds={item.dependencyIds ?? []}
+            label={`Dependencies for main item ${index + 1}`}
+            onChange={(dependencyIds) =>
+              actions.updateDevelopmentDependencies(item.id, dependencyIds)
+            }
+          />
           {hasSubItems ? (
             <div className="wbs-sub-item-list">
               {item.subItems.map((subItem, subItemIndex) => (

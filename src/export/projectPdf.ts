@@ -1,9 +1,14 @@
 import { jsPDF } from 'jspdf'
-import { calculateEstimate } from '../domain/calculations'
+import {
+  calculateEstimate,
+  calculateRoleEffort,
+} from '../domain/calculations'
 import type { EstimationProject } from '../domain/estimation'
 import { calculateActivityHours } from '../domain/calculations'
 import {
   createLiveEstimateRows,
+  createActivityDetailRows,
+  createDependencyDetailRows,
   formatExportNumber,
 } from './projectExport'
 
@@ -94,6 +99,52 @@ export function createProjectPdf(project: EstimationProject): ArrayBuffer {
         { align: 'right' },
       )
       y += rowHeight
+    })
+  }
+
+  section('Effort by Role')
+  const roleEffort = calculateRoleEffort(project)
+  if (roleEffort.length === 0) {
+    text('No estimated role effort.', 9)
+  } else {
+    roleEffort.forEach((entry) => {
+      ensureSpace(18)
+      document.setFont('helvetica', 'normal')
+      document.setFontSize(9)
+      document.text(entry.role, margin, y)
+      document.text(
+        `${formatExportNumber(entry.hours)} h`,
+        pageWidth - margin,
+        y,
+        { align: 'right' },
+      )
+      y += 18
+    })
+  }
+
+  section('Activity Planning Details')
+  for (const { path, activity, hours } of createActivityDetailRows(project)) {
+    const metadata = [
+      activity.role || (path === 'QA' ? 'QA' : 'Unassigned'),
+      activity.riskLevel ? `${activity.riskLevel} risk` : 'risk not set',
+      activity.confidencePercentage === undefined
+        ? 'confidence not set'
+        : `${formatExportNumber(activity.confidencePercentage)}% confidence`,
+    ].join(' · ')
+    text(`${path} / ${activity.name}`, 9, 'bold')
+    text(`${metadata} · ${formatExportNumber(hours)} h`, 8)
+    if (activity.notes?.trim()) text(activity.notes, 8, 'normal', 10)
+    y += 4
+  }
+
+  section('Dependencies')
+  const dependencies = createDependencyDetailRows(project)
+  if (dependencies.length === 0) {
+    text('No dependencies recorded.', 9)
+  } else {
+    dependencies.forEach((entry) => {
+      text(`${entry.workItem} depends on ${entry.dependsOn}`, 9)
+      y += 2
     })
   }
 

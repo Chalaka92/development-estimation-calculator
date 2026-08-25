@@ -6,6 +6,7 @@ import {
   calculateEstimationHours,
   calculateQaHours,
   calculateActivityHours,
+  calculateRoleEffort,
   calculateThreePointHours,
 } from './calculations'
 import type {
@@ -111,6 +112,48 @@ describe('estimation totals', () => {
     expect(calculateDevelopmentHours([item, directItem('receipts', [6])])).toBe(
       23,
     )
+  })
+
+  it('groups effective development and QA effort by delivery role', () => {
+    const project = {
+      developmentItems: [
+        {
+          ...directItem('billing', [100]),
+          directEstimation: [{
+            ...activity('ignored', 100),
+            role: 'Frontend',
+          }],
+          subItems: [{
+            id: 'billing-api',
+            name: 'API',
+            estimation: [
+              { ...activity('backend', 8), role: 'Backend' },
+              {
+                ...activity('analysis', 99),
+                role: 'Business analysis',
+                threePointEstimate: {
+                  optimisticHours: 2,
+                  mostLikelyHours: 5,
+                  pessimisticHours: 8,
+                },
+              },
+              activity('unassigned', 2),
+            ],
+          }],
+        },
+      ],
+      qaActivities: [
+        { id: 'qa-default', name: 'Regression', hours: 4 },
+        { id: 'qa-automation', name: 'Automation', hours: 6, role: 'QA' },
+      ],
+    }
+
+    expect(calculateRoleEffort(project)).toEqual([
+      { role: 'QA', hours: 10 },
+      { role: 'Backend', hours: 8 },
+      { role: 'Business analysis', hours: 5 },
+      { role: 'Unassigned', hours: 2 },
+    ])
   })
 })
 

@@ -18,6 +18,9 @@ All notable user-visible changes are documented here. The format follows [Keep a
 - Reusable zero-hour project templates, named version snapshots, comparison, restore, and automatic recovery snapshots before destructive replacement.
 - A browser-local project library with create, search, open, rename, deep duplicate, archive, restore, and delete workflows.
 - Optional optimistic, most-likely, and pessimistic activity estimates calculated with the PERT expected-hours formula.
+- Optional activity delivery roles, risk levels, confidence percentages, and planning notes.
+- Acyclic dependencies between development work units with automatic dangling-reference cleanup.
+- Live effort-by-role totals and planning metadata in Markdown, CSV, PDF, and editable JSON exports.
 
 ### Fixed
 

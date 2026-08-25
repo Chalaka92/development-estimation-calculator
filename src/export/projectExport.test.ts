@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { createEmptyEstimationProject } from '../domain/factories'
+import type { EstimationProject } from '../domain/estimation'
 import { deserializeProject } from '../persistence/projectPersistence'
 import {
   createCsvSummary,
@@ -10,7 +11,7 @@ import {
 } from './projectExport'
 import { createProjectPdf } from './projectPdf'
 
-function projectFixture() {
+function projectFixture(): EstimationProject {
   const project = createEmptyEstimationProject('Capital Trust / Release 2', {
     createId: () => 'project',
     now: () => '2026-08-24T22:00:00.000Z',
@@ -27,10 +28,15 @@ function projectFixture() {
           {
             id: 'import',
             name: 'Import, validation',
+            dependencyIds: ['foundation'],
             estimation: [{
               id: 'api',
               name: 'API',
               hours: 999,
+              role: 'Backend',
+              riskLevel: 'high',
+              confidencePercentage: 70,
+              notes: 'Coordinate | with platform',
               threePointEstimate: {
                 optimisticHours: 14,
                 mostLikelyHours: 20,
@@ -39,6 +45,12 @@ function projectFixture() {
             }],
           },
         ],
+      },
+      {
+        id: 'foundation',
+        name: 'Foundation',
+        directEstimation: [],
+        subItems: [],
       },
     ],
     qaActivities: [{
@@ -69,6 +81,12 @@ describe('project export', () => {
         subItem: 'Import, validation',
         hours: 20,
       },
+      {
+        number: '2',
+        mainItem: 'Foundation',
+        subItem: '',
+        hours: 0,
+      },
     ])
   })
 
@@ -79,6 +97,9 @@ describe('project export', () => {
     expect(markdown).toContain('| 1.1 |  | Import, validation | 20 h |')
     expect(markdown).toContain('- Final estimate: 33 h')
     expect(markdown).toContain('- Team: 1.5 FTE')
+    expect(markdown).toContain('| Backend | 20 h |')
+    expect(markdown).toContain('| Billing \\| Invoices / Import, validation | API | Backend | high | 70% | Coordinate \\| with platform | 20 h |')
+    expect(markdown).toContain('| 1.1 Import, validation | 2. Foundation |')
   })
 
   it('creates CSV with correct quoting and summary values', () => {
@@ -87,6 +108,9 @@ describe('project export', () => {
     expect(csv).toContain('Development,1.1,,"Import, validation",20')
     expect(csv).toContain('QA,1,,"Regression ""suite""",10')
     expect(csv).toContain('Summary,,Final estimate,,33')
+    expect(csv).toContain('Activity detail,"Billing | Invoices / Import, validation",API,Backend,high,70,Coordinate | with platform,20')
+    expect(csv).toContain('Role effort,Backend,20')
+    expect(csv).toContain('Dependency,"1.1 Import, validation",2. Foundation')
   })
 
   it('creates an editable export that round-trips through validation', () => {

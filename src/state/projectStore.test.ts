@@ -96,6 +96,37 @@ describe('project store', () => {
     expect(actions.deleteDevelopmentItem('missing')).toBe(false)
   })
 
+  it('maintains acyclic dependencies and cleans references on deletion', () => {
+    const store = createTestStore()
+    const { actions } = store.getState()
+    const firstId = actions.addDevelopmentItem('Foundation')
+    const secondId = actions.addDevelopmentItem('Feature')
+    const subItemId = actions.addSubItem(secondId, 'Feature UI')!
+
+    expect(actions.updateDevelopmentDependencies(secondId, [firstId, firstId])).toBe(true)
+    expect(actions.updateSubItemDependencies(secondId, subItemId, [firstId])).toBe(true)
+    expect(actions.updateDevelopmentDependencies(firstId, [secondId])).toBe(false)
+    expect(store.getState().project.developmentItems[0].dependencyIds).toBeUndefined()
+    expect(store.getState().project.developmentItems[1]).toMatchObject({
+      dependencyIds: [firstId],
+      subItems: [{ dependencyIds: [firstId] }],
+    })
+
+    const duplicateId = actions.duplicateDevelopmentItem(secondId)!
+    const duplicate = store.getState().project.developmentItems.find(
+      (item) => item.id === duplicateId,
+    )!
+    expect(duplicate.dependencyIds).toEqual([])
+    expect(duplicate.subItems[0].dependencyIds).toEqual([])
+
+    expect(actions.deleteDevelopmentItem(firstId)).toBe(true)
+    const source = store.getState().project.developmentItems.find(
+      (item) => item.id === secondId,
+    )!
+    expect(source.dependencyIds).toEqual([])
+    expect(source.subItems[0].dependencyIds).toEqual([])
+  })
+
   it('adds, updates, duplicates, and deletes sub-items', () => {
     const store = createTestStore()
     const { actions } = store.getState()
@@ -164,6 +195,44 @@ describe('project store', () => {
     expect(actions.deleteEstimationActivity({ workItemId: itemId }, activityId)).toBe(
       true,
     )
+  })
+
+  it('stores optional delivery metadata on development and QA activities', () => {
+    const store = createTestStore()
+    const { actions } = store.getState()
+    const itemId = actions.addDevelopmentItem('Feature')
+    const activityId = store.getState().project.developmentItems[0].directEstimation[0].id
+    const qaId = store.getState().project.qaActivities[0].id
+
+    expect(actions.updateEstimationActivity(
+      { workItemId: itemId },
+      activityId,
+      {
+        role: 'Backend',
+        riskLevel: 'high',
+        confidencePercentage: 75,
+        notes: 'Depends on the identity service.',
+      },
+    )).toBe(true)
+    expect(actions.updateQaActivity(qaId, {
+      role: 'QA',
+      riskLevel: 'medium',
+      confidencePercentage: 90,
+      notes: 'Automation included.',
+    })).toBe(true)
+
+    expect(store.getState().project.developmentItems[0].directEstimation[0]).toMatchObject({
+      role: 'Backend',
+      riskLevel: 'high',
+      confidencePercentage: 75,
+      notes: 'Depends on the identity service.',
+    })
+    expect(store.getState().project.qaActivities[0]).toMatchObject({
+      role: 'QA',
+      riskLevel: 'medium',
+      confidencePercentage: 90,
+      notes: 'Automation included.',
+    })
   })
 
   it('adds, updates, duplicates, and deletes QA activities', () => {

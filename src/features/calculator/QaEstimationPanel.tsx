@@ -16,6 +16,7 @@ import { createThreePointEstimate } from '../../domain/factories'
 import { InlineNumberField } from './InlineNumberField'
 import { SectionResetButton } from './SectionResetButton'
 import { ThreePointEstimateFields } from './ThreePointEstimateFields'
+import { ActivityMetadataFields } from './ActivityMetadataFields'
 
 function formatHours(hours: number): string {
   return `${new Intl.NumberFormat('en', { maximumFractionDigits: 2 }).format(hours)} h`
@@ -25,6 +26,7 @@ export function QaEstimationPanel() {
   const [expanded, setExpanded] = useState(true)
   const activities = useProjectStore((state) => state.project.qaActivities)
   const actions = useProjectStore((state) => state.actions)
+  const [detailIds, setDetailIds] = useState<Set<string>>(() => new Set())
   const totalHours = calculateQaHours(activities)
 
   return (
@@ -103,6 +105,21 @@ export function QaEstimationPanel() {
                   <div className="wbs-row-actions">
                     <Button
                       size="small"
+                      aria-expanded={detailIds.has(activity.id)}
+                      aria-label={`${detailIds.has(activity.id) ? 'Hide' : 'Show'} planning details for QA activity ${index + 1}`}
+                      onClick={() =>
+                        setDetailIds((current) => {
+                          const next = new Set(current)
+                          if (next.has(activity.id)) next.delete(activity.id)
+                          else next.add(activity.id)
+                          return next
+                        })
+                      }
+                    >
+                      Details
+                    </Button>
+                    <Button
+                      size="small"
                       aria-pressed={Boolean(activity.threePointEstimate)}
                       aria-label={`${activity.threePointEstimate ? 'Use single-point estimate for' : 'Use three-point estimate for'} QA activity ${index + 1}`}
                       onClick={() =>
@@ -142,6 +159,15 @@ export function QaEstimationPanel() {
                       })
                     }
                   />
+                  {detailIds.has(activity.id) && (
+                    <ActivityMetadataFields
+                      activity={activity}
+                      labelPrefix={`QA activity ${index + 1}`}
+                      onChange={(changes) =>
+                        actions.updateQaActivity(activity.id, changes)
+                      }
+                    />
+                  )}
                 </div>
               ))}
             </div>

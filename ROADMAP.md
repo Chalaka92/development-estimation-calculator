@@ -19,7 +19,7 @@ This roadmap records direction, not a delivery commitment. Jira integration rema
 ## Future capabilities
 
 - [x] Optional per-activity three-point estimation with PERT calculations and export parity.
-- Role-based effort, dependencies, risk, confidence, and notes.
+- [x] Role-based effort, acyclic dependencies, risk, confidence, notes, and export parity.
 - [x] Multiple saved projects with search, recent access, duplication, archive, and deletion.
 - Provider-neutral work-item generation.
 - Jira CSV export, followed later by a secure server-backed Jira integration.

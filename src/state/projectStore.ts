@@ -24,11 +24,29 @@ export interface EstimationOwner {
 }
 
 export type EstimationActivityChanges = Partial<
-  Pick<EstimationActivity, 'name' | 'hours' | 'threePointEstimate'>
+  Pick<
+    EstimationActivity,
+    | 'name'
+    | 'hours'
+    | 'threePointEstimate'
+    | 'role'
+    | 'riskLevel'
+    | 'confidencePercentage'
+    | 'notes'
+  >
 >
 
 export type QaActivityChanges = Partial<
-  Pick<QaActivity, 'name' | 'hours' | 'threePointEstimate'>
+  Pick<
+    QaActivity,
+    | 'name'
+    | 'hours'
+    | 'threePointEstimate'
+    | 'role'
+    | 'riskLevel'
+    | 'confidencePercentage'
+    | 'notes'
+  >
 >
 export type ScheduleChanges = Partial<EstimationSchedule>
 
@@ -42,6 +60,10 @@ export interface ProjectActions {
   updateSchedule: (changes: ScheduleChanges) => boolean
   addDevelopmentItem: (name?: string) => EntityId
   updateDevelopmentItem: (itemId: EntityId, name: string) => boolean
+  updateDevelopmentDependencies: (
+    itemId: EntityId,
+    dependencyIds: ReadonlyArray<EntityId>,
+  ) => boolean
   duplicateDevelopmentItem: (itemId: EntityId) => EntityId | null
   deleteDevelopmentItem: (itemId: EntityId) => boolean
   addSubItem: (workItemId: EntityId, name?: string) => EntityId | null
@@ -49,6 +71,11 @@ export interface ProjectActions {
     workItemId: EntityId,
     subItemId: EntityId,
     name: string,
+  ) => boolean
+  updateSubItemDependencies: (
+    workItemId: EntityId,
+    subItemId: EntityId,
+    dependencyIds: ReadonlyArray<EntityId>,
   ) => boolean
   duplicateSubItem: (
     workItemId: EntityId,
@@ -167,6 +194,84 @@ function updateOwnerEstimation(
   })
 }
 
+function allWorkUnitIds(project: EstimationProject): Set<EntityId> {
+  return new Set(
+    project.developmentItems.flatMap((item) => [
+      item.id,
+      ...item.subItems.map((subItem) => subItem.id),
+    ]),
+  )
+}
+
+function normalizeDependencyIds(
+  project: EstimationProject,
+  ownerId: EntityId,
+  dependencyIds: ReadonlyArray<EntityId>,
+): ReadonlyArray<EntityId> {
+  const available = allWorkUnitIds(project)
+  return [...new Set(dependencyIds)].filter(
+    (dependencyId) =>
+      dependencyId !== ownerId &&
+      available.has(dependencyId) &&
+      !wouldCreateDependencyCycle(project, ownerId, dependencyId),
+  )
+}
+
+function dependencyIdsFor(
+  project: EstimationProject,
+  workUnitId: EntityId,
+): ReadonlyArray<EntityId> {
+  for (const item of project.developmentItems) {
+    if (item.id === workUnitId) return item.dependencyIds ?? []
+    const subItem = item.subItems.find((current) => current.id === workUnitId)
+    if (subItem) return subItem.dependencyIds ?? []
+  }
+  return []
+}
+
+function wouldCreateDependencyCycle(
+  project: EstimationProject,
+  ownerId: EntityId,
+  targetId: EntityId,
+): boolean {
+  const pending = [targetId]
+  const visited = new Set<EntityId>()
+  while (pending.length > 0) {
+    const current = pending.pop()!
+    if (current === ownerId) return true
+    if (visited.has(current)) continue
+    visited.add(current)
+    pending.push(...dependencyIdsFor(project, current))
+  }
+  return false
+}
+
+function sameIds(
+  first: ReadonlyArray<EntityId> | undefined,
+  second: ReadonlyArray<EntityId>,
+): boolean {
+  return (first ?? []).length === second.length &&
+    (first ?? []).every((id, index) => id === second[index])
+}
+
+function removeDanglingDependencies(
+  items: ReadonlyArray<DevelopmentWorkItem>,
+  removedIds: ReadonlySet<EntityId>,
+): ReadonlyArray<DevelopmentWorkItem> {
+  return items.map((item) => ({
+    ...item,
+    dependencyIds: (item.dependencyIds ?? []).filter(
+      (id) => !removedIds.has(id),
+    ),
+    subItems: item.subItems.map((subItem) => ({
+      ...subItem,
+      dependencyIds: (subItem.dependencyIds ?? []).filter(
+        (id) => !removedIds.has(id),
+      ),
+    })),
+  }))
+}
+
 export function createProjectStore(
   initialProject: EstimationProject,
   dependencies: EntityFactoryDependencies = defaultEntityFactoryDependencies,
@@ -273,6 +378,20 @@ export function createProjectStore(
           ),
         ),
 
+      updateDevelopmentDependencies: (itemId, dependencyIds) =>
+        commitProject((project) => {
+          const normalized = normalizeDependencyIds(
+            project,
+            itemId,
+            dependencyIds,
+          )
+          return updateWorkItem(project, itemId, (item) =>
+            sameIds(item.dependencyIds, normalized)
+              ? item
+              : { ...item, dependencyIds: normalized },
+          )
+        }),
+
       duplicateDevelopmentItem: (itemId) => {
         const source = findWorkItem(get().project, itemId)
         if (!source) return null
@@ -281,10 +400,12 @@ export function createProjectStore(
           ...source,
           id: dependencies.createId(),
           name: copyName(source.name),
+          dependencyIds: [],
           directEstimation: source.directEstimation.map(cloneActivity),
           subItems: source.subItems.map((subItem) => ({
             ...subItem,
             id: dependencies.createId(),
+            dependencyIds: [],
             estimation: subItem.estimation.map(cloneActivity),
           })),
         }
@@ -303,12 +424,22 @@ export function createProjectStore(
 
       deleteDevelopmentItem: (itemId) =>
         commitProject((project) => {
+          const source = findWorkItem(project, itemId)
+          if (!source) return project
+          const removedIds = new Set([
+            itemId,
+            ...source.subItems.map((subItem) => subItem.id),
+          ])
           const developmentItems = project.developmentItems.filter(
             (item) => item.id !== itemId,
           )
-          return developmentItems.length === project.developmentItems.length
-            ? project
-            : { ...project, developmentItems }
+          return {
+            ...project,
+            developmentItems: removeDanglingDependencies(
+              developmentItems,
+              removedIds,
+            ),
+          }
         }),
 
       addSubItem: (workItemId, name = 'New Sub Item') => {
@@ -346,6 +477,33 @@ export function createProjectStore(
           }),
         ),
 
+      updateSubItemDependencies: (
+        workItemId,
+        subItemId,
+        dependencyIds,
+      ) =>
+        commitProject((project) => {
+          const normalized = normalizeDependencyIds(
+            project,
+            subItemId,
+            dependencyIds,
+          )
+          return updateWorkItem(project, workItemId, (item) => {
+            let changed = false
+            const subItems = item.subItems.map((subItem) => {
+              if (
+                subItem.id !== subItemId ||
+                sameIds(subItem.dependencyIds, normalized)
+              ) {
+                return subItem
+              }
+              changed = true
+              return { ...subItem, dependencyIds: normalized }
+            })
+            return changed ? { ...item, subItems } : item
+          })
+        }),
+
       duplicateSubItem: (workItemId, subItemId) => {
         const item = findWorkItem(get().project, workItemId)
         const source = item && findSubItem(item, subItemId)
@@ -355,6 +513,7 @@ export function createProjectStore(
           ...source,
           id: dependencies.createId(),
           name: copyName(source.name),
+          dependencyIds: [],
           estimation: source.estimation.map(cloneActivity),
         }
 
@@ -373,8 +532,8 @@ export function createProjectStore(
       },
 
       deleteSubItem: (workItemId, subItemId) =>
-        commitProject((project) =>
-          updateWorkItem(project, workItemId, (item) => {
+        commitProject((project) => {
+          const updatedProject = updateWorkItem(project, workItemId, (item) => {
             const subItems = item.subItems.filter(
               (subItem) => subItem.id !== subItemId,
             )
@@ -387,8 +546,16 @@ export function createProjectStore(
                     : item.directEstimation,
                   subItems,
                 }
-          }),
-        ),
+          })
+          if (updatedProject === project) return project
+          return {
+            ...updatedProject,
+            developmentItems: removeDanglingDependencies(
+              updatedProject.developmentItems,
+              new Set([subItemId]),
+            ),
+          }
+        }),
 
       addEstimationActivity: (
         owner,

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useProjectStore } from '../../app/useProjectStore'
 import { Button } from '../../components/ui'
 import {
@@ -12,6 +13,7 @@ import { createThreePointEstimate } from '../../domain/factories'
 import type { EstimationOwner } from '../../state/projectStore'
 import { InlineNumberField } from './InlineNumberField'
 import { ThreePointEstimateFields } from './ThreePointEstimateFields'
+import { ActivityMetadataFields } from './ActivityMetadataFields'
 
 interface EstimationActivityRowsProps {
   owner: EstimationOwner
@@ -25,6 +27,15 @@ export function EstimationActivityRows({
   emptyMessage,
 }: EstimationActivityRowsProps) {
   const actions = useProjectStore((state) => state.actions)
+  const [detailIds, setDetailIds] = useState<Set<EntityId>>(() => new Set())
+
+  const toggleDetails = (activityId: EntityId) =>
+    setDetailIds((current) => {
+      const next = new Set(current)
+      if (next.has(activityId)) next.delete(activityId)
+      else next.add(activityId)
+      return next
+    })
 
   const updateName = (activityId: EntityId, name: string) =>
     actions.updateEstimationActivity(owner, activityId, { name })
@@ -66,6 +77,14 @@ export function EstimationActivityRows({
                 )}
               </div>
               <div className="wbs-row-actions">
+                <Button
+                  size="small"
+                  aria-expanded={detailIds.has(activity.id)}
+                  aria-label={`${detailIds.has(activity.id) ? 'Hide' : 'Show'} planning details for activity ${index + 1}`}
+                  onClick={() => toggleDetails(activity.id)}
+                >
+                  Details
+                </Button>
                 <Button
                   size="small"
                   aria-pressed={Boolean(activity.threePointEstimate)}
@@ -113,6 +132,15 @@ export function EstimationActivityRows({
                   })
                 }
               />
+              {detailIds.has(activity.id) && (
+                <ActivityMetadataFields
+                  activity={activity}
+                  labelPrefix={`Activity ${index + 1}`}
+                  onChange={(changes) =>
+                    actions.updateEstimationActivity(owner, activity.id, changes)
+                  }
+                />
+              )}
             </div>
           ))}
         </div>

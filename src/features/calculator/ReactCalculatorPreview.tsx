@@ -20,6 +20,7 @@ import { NewProjectControl } from './NewProjectControl'
 import { LiveEstimationTable } from './LiveEstimationTable'
 import { ProjectHistoryPanel } from './ProjectHistoryPanel'
 import { ProjectWorkspacePanel } from './ProjectWorkspacePanel'
+import { WorkItemGenerationPanel } from './WorkItemGenerationPanel'
 import { synchronizeWorkspaceProject } from '../../persistence/projectWorkspace'
 import './ReactCalculatorPreview.css'
 
@@ -122,6 +123,7 @@ function PreviewContent({
           <DevelopmentWorkBreakdownPanel />
           <QaEstimationPanel />
           <LiveEstimationTable />
+          <WorkItemGenerationPanel />
           <ExportImportPanel storage={storage} />
           <ProjectHistoryPanel storage={storage} />
         </div>

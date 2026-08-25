@@ -15,6 +15,7 @@ Live application: [https://chalaka92.github.io/development-estimation-calculator
 - Optional delivery role, risk, confidence, and notes for every development and QA activity
 - Acyclic dependencies between main items and sub-items, with automatic cleanup after deletion
 - Live effort totals by delivery role and planning metadata in every summary export
+- Editable provider-neutral work-item preview with hierarchy, dependencies, and JSON/CSV exports
 - Versioned browser autosave and safe legacy-data migration
 - Multiple saved projects with search, duplication, archive, and recent-project switching
 - Reusable templates, project snapshots, comparison, restore, and automatic recovery before destructive replacement
@@ -88,6 +89,7 @@ src/
   domain/       Framework-independent types and calculation rules
   export/       JSON, Markdown, CSV, and PDF generation
   features/     Calculator UI components
+  integrations/ Provider-neutral work-item generation and export contracts
   persistence/  Validation, schema migration, storage, and recovery
   state/        Typed project store and immutable actions
 public/legacy/  Temporary v16 fallback
@@ -107,6 +109,8 @@ Saved projects, templates, and snapshots are currently local to the active brows
 Development and QA activities use normal hours by default. A row can optionally use optimistic, most-likely, and pessimistic hours; live totals and summary exports then use `(O + 4M + P) / 6`. Editable JSON retains the original three input values.
 
 Planning details are optional. Assigned delivery roles appear in the live summary; unassigned development effort is grouped as `Unassigned`, while unassigned QA effort is grouped as `QA`. Dependency choices cannot point to the same work unit, create a cycle, or survive deletion of their target. Editable JSON, Markdown, CSV, and PDF exports retain or report this planning information.
+
+The work-item generator converts the estimate into provider-neutral `group`, `deliverable`, `activity`, and `quality` records. It supports an editable preview, item selection, optional activity-level detail, QA inclusion, stable parent/dependency IDs, and versioned JSON or CSV output. When activity detail is enabled, effort moves to leaf activities so exported totals are not duplicated. Jira-specific field mapping and authentication remain outside the core domain.
 
 ```text
 http://localhost:5173/?ui=legacy

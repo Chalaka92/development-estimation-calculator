@@ -83,5 +83,6 @@ describe('React calculator preview', () => {
     expect(markup).toContain('aria-live="polite"')
     expect(markup).toContain('aria-label="Duplicate main item 1"')
     expect(markup).toContain('Live estimation table')
+    expect(markup).toContain('Generate work items')
   })
 })

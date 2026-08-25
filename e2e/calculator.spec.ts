@@ -147,6 +147,49 @@ test('records delivery metadata and dependencies across reloads', async ({ page 
   )
 })
 
+test('previews and exports provider-neutral work items', async ({ page }) => {
+  await page.getByRole('button', { name: 'Add first main item' }).click()
+  await page.getByLabel('Main item 1 name').fill('Billing')
+  await page.getByLabel('Activity 1 hours', { exact: true }).fill('5')
+  await page.getByLabel('Activity 1 hours', { exact: true }).press('Tab')
+
+  const panel = page.locator('.work-item-panel')
+  await expect(panel.locator('.work-item-toolbar')).toContainText('1 of 1 items')
+  await panel.getByLabel('Work item 1 summary').fill('Create billing feature')
+  await panel.getByRole('checkbox', {
+    name: 'Generate estimation activities as child work items',
+  }).check()
+  await expect(panel.locator('.work-item-toolbar')).toContainText('2 of 2 items')
+  await expect(panel.locator('.work-item-toolbar')).toContainText(
+    '5 h assigned to exported items',
+  )
+
+  const downloadPromise = page.waitForEvent('download')
+  await panel.getByRole('button', { name: 'Export work-item JSON' }).click()
+  const download = await downloadPromise
+  expect(download.suggestedFilename()).toBe(
+    'untitled-estimate-work-items.json',
+  )
+  const path = await download.path()
+  expect(path).not.toBeNull()
+  const content = await import('node:fs/promises').then(({ readFile }) =>
+    readFile(path!, 'utf8'),
+  )
+  const exported = JSON.parse(content)
+  expect(exported).toMatchObject({
+    fileType: 'DevelopmentEstimationWorkItems',
+    schemaVersion: 1,
+    options: { includeEstimationActivities: true },
+  })
+  expect(exported.workItems).toHaveLength(2)
+  expect(exported.workItems[0].summary).toBe('Create billing feature')
+  expect(exported.workItems[1]).toMatchObject({
+    kind: 'activity',
+    parentId: exported.workItems[0].id,
+    estimateHours: 5,
+  })
+})
+
 test('exports and reimports an editable project', async ({ page }) => {
   await page.getByLabel('Project or release name').fill('Browser Export')
   const downloadPromise = page.waitForEvent('download')

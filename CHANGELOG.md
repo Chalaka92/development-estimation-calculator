@@ -21,6 +21,7 @@ All notable user-visible changes are documented here. The format follows [Keep a
 - Optional activity delivery roles, risk levels, confidence percentages, and planning notes.
 - Acyclic dependencies between development work units with automatic dangling-reference cleanup.
 - Live effort-by-role totals and planning metadata in Markdown, CSV, PDF, and editable JSON exports.
+- Provider-neutral group, deliverable, activity, and quality work-item generation with editable preview, selection, and versioned JSON/CSV exports.
 
 ### Fixed
 

@@ -189,6 +189,7 @@ export interface ProjectAutosaveOptions {
   delayMilliseconds?: number
   scheduler?: AutosaveScheduler
   onResult?: (result: SaveProjectResult) => void
+  onProjectSaved?: (project: EstimationProject) => void
 }
 
 export interface ProjectAutosaveController {
@@ -221,6 +222,7 @@ export function startProjectAutosave(
     const project = state.project
     const result = saveProject(storage, project)
     options.onResult?.(result)
+    if (result.status === 'saved') options.onProjectSaved?.(project)
 
     if (
       result.status === 'saved' &&

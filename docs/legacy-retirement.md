@@ -1,63 +1,69 @@
 # Legacy v16 Retirement Plan
 
-The v16 calculator remains available only as a temporary compatibility and recovery path after the stable `v2.0.0` release. Removing the legacy user interface is deliberately separate from removing legacy data compatibility.
+The legacy v16 user interface is retired. v16 data compatibility remains supported so historical editable exports and browser snapshots can still be recovered in the typed React calculator.
 
 ## Current status
 
-As of `v2.0.1`:
+As of the Stage B removal change after `v2.0.1`:
 
-- The typed React calculator is the default application.
+- The typed React calculator is the only application UI.
+- `public/legacy/calculator-v16.html` is removed.
+- The `?ui=legacy` application mode and iframe branch are removed; that query now leaves the React calculator active.
+- The React header no longer links to the legacy calculator.
 - Feature parity and accessibility review is complete.
 - GitHub Pages deployment and deployed-site smoke testing are operational.
 - Chromium, Firefox, and WebKit acceptance coverage is operational.
-- v16 editable exports can be imported into the typed model.
-- v16 browser storage can be migrated automatically into typed storage.
-- Newer timestamped v16 browser data wins over older typed data.
-- Untimestamped conflicting v16 data is surfaced for manual review.
-- Migrating v16 storage writes a typed copy and preserves the original legacy key.
-- The `?ui=legacy` route is deprecated and presented as recovery mode.
-- The first post-`v2.0.0` maintenance release has shipped with the deprecation notice and migration acceptance coverage enabled.
-- There are no unresolved repository issues requiring the legacy UI for recovery.
+- v16 editable exports can still be imported into the typed model.
+- v16 browser storage can still be migrated automatically into typed storage.
+- Newer timestamped v16 browser data still wins over older typed data.
+- Untimestamped conflicting v16 data is still surfaced for manual review.
+- Migrating v16 storage still writes a typed copy and preserves the original legacy key.
+- The first post-`v2.0.0` maintenance release (`v2.0.1`) shipped with deprecation and migration acceptance coverage enabled.
+- There were no unresolved repository issues requiring the legacy UI for recovery before Stage B removal.
 
-The application has no backend usage telemetry. Absence of bug reports is therefore not proof that nobody still depends on the legacy UI.
+The application has no backend usage telemetry. For that reason, v16 data readers are intentionally retained after the UI disappears rather than being removed at the same time.
 
 ## Retirement stages
 
 ### Stage A — deprecate and observe
 
-This is the current stage.
+Complete in `v2.0.1`.
 
-Keep all of the following:
-
-- `public/legacy/calculator-v16.html`
-- `?ui=legacy`
-- v16 editable-export schemas and migration
-- `developmentEstimationV4` storage migration
-- conflict and corruption recovery behavior
-- automated legacy fallback and migration acceptance tests
-
-The legacy screen must clearly explain that it is temporary and direct users back to the React calculator.
+The legacy UI was retained temporarily as a compatibility/recovery path while migration behavior was observed and browser acceptance was strengthened.
 
 ### Stage B — remove the legacy UI
 
-The UI can be removed only after every removal gate below is satisfied.
+Complete in this removal change.
 
-Remove:
+Removed:
 
 - `public/legacy/calculator-v16.html`
 - the `legacy` application mode and iframe branch
-- the React header link that opens the legacy calculator
-- browser acceptance assertions that require the old HTML page
+- the React header link that opened the legacy calculator
+- browser acceptance assertions that depended on the old HTML page
 
-Do **not** remove the v16 import or storage migration readers at this stage. Existing browser data and old editable exports must remain recoverable after the UI disappears.
+Retained:
+
+- `legacyV16EditableExportSchema`
+- `legacyV16StorageSnapshotSchema`
+- `loadLegacyV16Project`
+- `LEGACY_V16_STORAGE_KEY` / `developmentEstimationV4`
+- v16 editable-export migration
+- v16 browser-storage migration
+- conflict and corruption recovery behavior
+- automated compatibility acceptance tests
+
+Existing browser data and old editable exports therefore remain recoverable after the UI disappears.
 
 ### Stage C — retire v16 data readers
+
+Not started.
 
 Consider removing v16 schemas, import migration, `developmentEstimationV4`, and legacy conflict handling only in a later major-version change after a separately documented compatibility window. This requires its own migration review and release note because it can make historical backups unreadable.
 
 ## Legacy UI removal gate
 
-All conditions must be true before Stage B:
+All Stage B conditions are satisfied:
 
 - [x] Stable `v2.0.0` is published.
 - [x] Stable `v2.0.0` is deployed through GitHub Pages.
@@ -65,27 +71,25 @@ All conditions must be true before Stage B:
 - [x] Accessibility review is complete.
 - [x] Editable v16 import is covered by automated tests.
 - [x] v16 browser-storage migration is covered by automated tests.
-- [x] Browser acceptance verifies the real legacy fallback while it exists.
+- [x] Browser acceptance verified the real legacy fallback while it existed.
 - [x] Browser acceptance verifies non-destructive v16 storage migration into typed storage.
-- [x] Autosave flushes before navigating into legacy mode.
-- [x] At least one maintenance release after `v2.0.0` has shipped with the deprecation notice and migration acceptance checks enabled (`v2.0.1`).
-- [x] No unresolved high-severity issue requires the legacy UI for recovery.
-- [ ] The removal PR demonstrates that old v16 editable exports and browser snapshots still migrate without the legacy HTML page.
+- [x] Autosave flushed before navigating into legacy mode while that mode existed.
+- [x] At least one maintenance release after `v2.0.0` shipped with the deprecation notice and migration acceptance checks enabled (`v2.0.1`).
+- [x] No unresolved high-severity issue required the legacy UI for recovery.
+- [x] The removal PR demonstrates that old v16 editable exports and browser snapshots still migrate without the legacy HTML page.
 
-The operational observation gates are satisfied as of `v2.0.1`. The final unchecked item is deliberately left for the future Stage B removal PR, where migration must be proven after the legacy HTML page and UI route are removed.
+## Stage B verification checklist
 
-## Removal PR checklist
+1. [x] Delete the legacy HTML asset and legacy app-mode branch.
+2. [x] Remove the legacy navigation link from the React header.
+3. [x] Keep `legacyV16EditableExportSchema`, `legacyV16StorageSnapshotSchema`, `loadLegacyV16Project`, and `LEGACY_V16_STORAGE_KEY`.
+4. [x] Convert the legacy fallback browser test into compatibility regression tests that do not require the old HTML page.
+5. [ ] Run `npm run check` and the complete Playwright suite in CI for the removal PR.
+6. [x] Add a representative v16 editable JSON browser import that must migrate successfully.
+7. [x] Keep a representative `developmentEstimationV4` browser snapshot test that creates typed storage without deleting the original snapshot.
+8. [x] Update README, roadmap, changelog, and this retirement plan to state that only the legacy UI is removed.
 
-When Stage B is eventually proposed:
-
-1. Delete the legacy HTML asset and legacy app-mode branch.
-2. Remove the legacy navigation link from the React header.
-3. Keep `legacyV16EditableExportSchema`, `legacyV16StorageSnapshotSchema`, `loadLegacyV16Project`, and `LEGACY_V16_STORAGE_KEY` unless Stage C is separately approved.
-4. Convert the legacy fallback browser test into migration-only regression tests.
-5. Run `npm run check` and the complete Playwright suite.
-6. Verify a representative v16 editable JSON file still imports successfully.
-7. Verify a representative `developmentEstimationV4` snapshot still creates typed storage without deleting the original snapshot.
-8. Update README, roadmap, changelog, and release notes to state that only the legacy UI was removed.
+The CI item is intentionally checked only after the Stage B pull request finishes successfully.
 
 ## Rollback principle
 

@@ -14,6 +14,7 @@ All notable user-visible changes are documented here. The format follows [Keep a
 - GitHub Pages deployment with a smoke test against the published application.
 - Playwright coverage for critical workflows in Chromium, Firefox, and WebKit.
 - Shared panel, header, empty-state, button, and expansion primitives backed by centralized design tokens.
+- Confirmation-protected resets for project settings, development work, QA estimation, and the complete project.
 
 ### Fixed
 

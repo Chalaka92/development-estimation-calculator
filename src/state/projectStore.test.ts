@@ -184,6 +184,63 @@ describe('project store', () => {
     expect(store.getState().project.qaActivities).toHaveLength(7)
   })
 
+  it('resets editable sections independently and can reset the full project', () => {
+    const store = createTestStore()
+    const { actions } = store.getState()
+    const initialProjectId = store.getState().project.id
+    const firstQaId = store.getState().project.qaActivities[0].id
+
+    actions.renameProject('Changed Project')
+    actions.updateSchedule({ riskBufferPercentage: 28, totalManpower: 2.5 })
+    actions.addDevelopmentItem('Billing')
+    actions.updateQaActivity(firstQaId, { name: 'Changed QA', hours: 9 })
+
+    expect(actions.resetProjectSettings()).toBe(true)
+    expect(store.getState().project).toMatchObject({
+      name: 'Untitled Estimate',
+      schedule: {
+        riskBufferPercentage: 15,
+        workingHoursPerPersonDay: 8,
+        totalManpower: 1,
+        businessDaysPerWeek: 5,
+      },
+    })
+    expect(store.getState().project.developmentItems).toHaveLength(1)
+    expect(store.getState().project.qaActivities[0]).toMatchObject({
+      name: 'Changed QA',
+      hours: 9,
+    })
+    expect(actions.resetProjectSettings()).toBe(false)
+
+    expect(actions.resetDevelopmentWork()).toBe(true)
+    expect(store.getState().project.developmentItems).toHaveLength(0)
+    expect(actions.resetDevelopmentWork()).toBe(false)
+
+    expect(actions.resetQaEstimation()).toBe(true)
+    expect(
+      store.getState().project.qaActivities.map(({ name, hours }) => ({
+        name,
+        hours,
+      })),
+    ).toEqual(DEFAULT_QA_ACTIVITY_NAMES.map((name) => ({ name, hours: 0 })))
+    expect(store.getState().project.qaActivities[0].id).not.toBe(firstQaId)
+
+    actions.renameProject('Reset Everything')
+    actions.addDevelopmentItem('Feature')
+    expect(actions.resetProject()).toBe(true)
+    expect(store.getState()).toMatchObject({
+      isDirty: true,
+      lastSavedAt: null,
+      project: {
+        name: 'Untitled Estimate',
+        developmentItems: [],
+        schedule: { riskBufferPercentage: 15, totalManpower: 1 },
+      },
+    })
+    expect(store.getState().project.qaActivities).toHaveLength(6)
+    expect(store.getState().project.id).not.toBe(initialProjectId)
+  })
+
   it('does not change state for missing parents or entities', () => {
     const store = createTestStore()
     const { actions } = store.getState()

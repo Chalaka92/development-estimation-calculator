@@ -3,6 +3,7 @@ import {
   type EntityId,
   type EstimationActivity,
   type EstimationProject,
+  type EstimationSchedule,
   type IsoDateTimeString,
   type QaActivity,
 } from './estimation'
@@ -57,6 +58,15 @@ export function createDefaultQaActivities(
   }))
 }
 
+export function createDefaultSchedule(): EstimationSchedule {
+  return {
+    riskBufferPercentage: 15,
+    workingHoursPerPersonDay: 8,
+    totalManpower: 1,
+    businessDaysPerWeek: 5,
+  }
+}
+
 export function createEmptyEstimationProject(
   name = 'Untitled Estimate',
   dependencies: EntityFactoryDependencies = defaultEntityFactoryDependencies,
@@ -70,12 +80,7 @@ export function createEmptyEstimationProject(
     name,
     developmentItems: [],
     qaActivities: createDefaultQaActivities(dependencies),
-    schedule: {
-      riskBufferPercentage: 15,
-      workingHoursPerPersonDay: 8,
-      totalManpower: 1,
-      businessDaysPerWeek: 5,
-    },
+    schedule: createDefaultSchedule(),
     createdAt: timestamp,
     updatedAt: timestamp,
   }

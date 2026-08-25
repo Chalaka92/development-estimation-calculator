@@ -1,5 +1,8 @@
 import { createStore, type StoreApi } from 'zustand/vanilla'
 import {
+  createDefaultQaActivities,
+  createDefaultSchedule,
+  createEmptyEstimationProject,
   createStandardEstimationActivities,
   defaultEntityFactoryDependencies,
   type EntityFactoryDependencies,
@@ -29,6 +32,10 @@ export type ScheduleChanges = Partial<EstimationSchedule>
 
 export interface ProjectActions {
   replaceProject: (project: EstimationProject) => boolean
+  resetProject: () => boolean
+  resetProjectSettings: () => boolean
+  resetDevelopmentWork: () => boolean
+  resetQaEstimation: () => boolean
   renameProject: (name: string) => boolean
   updateSchedule: (changes: ScheduleChanges) => boolean
   addDevelopmentItem: (name?: string) => EntityId
@@ -194,6 +201,37 @@ export function createProjectStore(
         }))
         return true
       },
+
+      resetProject: () =>
+        actions.replaceProject(
+          createEmptyEstimationProject('Untitled Estimate', dependencies),
+        ),
+
+      resetProjectSettings: () =>
+        commitProject((project) => {
+          const schedule = createDefaultSchedule()
+          const scheduleIsDefault = Object.keys(schedule).every(
+            (key) =>
+              project.schedule[key as keyof EstimationSchedule] ===
+              schedule[key as keyof EstimationSchedule],
+          )
+          return project.name === 'Untitled Estimate' && scheduleIsDefault
+            ? project
+            : { ...project, name: 'Untitled Estimate', schedule }
+        }),
+
+      resetDevelopmentWork: () =>
+        commitProject((project) =>
+          project.developmentItems.length === 0
+            ? project
+            : { ...project, developmentItems: [] },
+        ),
+
+      resetQaEstimation: () =>
+        commitProject((project) => ({
+          ...project,
+          qaActivities: createDefaultQaActivities(dependencies),
+        })),
 
       renameProject: (name) =>
         commitProject((project) =>

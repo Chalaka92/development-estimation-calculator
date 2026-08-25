@@ -10,6 +10,7 @@ import {
 } from '../../components/ui'
 import { calculateQaHours } from '../../domain/calculations'
 import { InlineNumberField } from './InlineNumberField'
+import { SectionResetButton } from './SectionResetButton'
 
 function formatHours(hours: number): string {
   return `${new Intl.NumberFormat('en', { maximumFractionDigits: 2 }).format(hours)} h`
@@ -32,6 +33,11 @@ export function QaEstimationPanel() {
         actions={
           <div className="qa-panel__summary">
             <strong>{formatHours(totalHours)}</strong>
+            <SectionResetButton
+              sectionName="QA estimation"
+              confirmation="Reset QA estimation to the six default activities and clear all QA hours?"
+              onReset={() => actions.resetQaEstimation()}
+            />
             <StepBadge>03</StepBadge>
             <ExpandButton
               expanded={expanded}

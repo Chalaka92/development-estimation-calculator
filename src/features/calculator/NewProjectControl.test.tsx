@@ -45,7 +45,7 @@ describe('NewProjectControl', () => {
     const runtime = renderControl()
     const project = runtime.store.getState().project
 
-    await user.click(screen.getByRole('button', { name: 'New project' }))
+    await user.click(screen.getByRole('button', { name: 'Reset all' }))
     expect(screen.getByRole('dialog')).toBeTruthy()
     const cancel = screen.getByRole('button', { name: 'Keep current project' })
     expect(document.activeElement).toBe(cancel)
@@ -58,11 +58,11 @@ describe('NewProjectControl', () => {
   it('contains keyboard focus, closes with Escape, and restores focus', async () => {
     const user = userEvent.setup()
     renderControl()
-    const trigger = screen.getByRole('button', { name: 'New project' })
+    const trigger = screen.getByRole('button', { name: 'Reset all' })
 
     await user.click(trigger)
     const cancel = screen.getByRole('button', { name: 'Keep current project' })
-    const confirm = screen.getByRole('button', { name: 'Start new project' })
+    const confirm = screen.getByRole('button', { name: 'Reset everything' })
     expect(document.activeElement).toBe(cancel)
 
     await user.tab()
@@ -80,8 +80,8 @@ describe('NewProjectControl', () => {
     const runtime = renderControl()
     const previousId = runtime.store.getState().project.id
 
-    await user.click(screen.getByRole('button', { name: 'New project' }))
-    await user.click(screen.getByRole('button', { name: 'Start new project' }))
+    await user.click(screen.getByRole('button', { name: 'Reset all' }))
+    await user.click(screen.getByRole('button', { name: 'Reset everything' }))
 
     expect(runtime.store.getState()).toMatchObject({
       isDirty: true,

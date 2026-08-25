@@ -95,6 +95,46 @@ test('exports and reimports an editable project', async ({ page }) => {
   )
 })
 
+test('resets individual sections and the complete project safely', async ({
+  page,
+}) => {
+  await page.getByLabel('Project or release name').fill('Reset Test')
+  await page.getByLabel('Risk buffer').fill('28')
+  await page.getByLabel('Risk buffer').press('Tab')
+  await page.getByRole('button', { name: 'Add first main item' }).click()
+  await page.getByLabel('QA activity 1 hours').fill('9')
+  await page.getByLabel('QA activity 1 hours').press('Tab')
+
+  page.once('dialog', (dialog) => dialog.accept())
+  await page.getByRole('button', { name: 'Reset development work breakdown' }).click()
+  await expect(page.getByRole('button', { name: 'Add first main item' })).toBeVisible()
+  await expect(page.getByLabel('Project or release name')).toHaveValue('Reset Test')
+
+  page.once('dialog', (dialog) => dialog.accept())
+  await page.getByRole('button', { name: 'Reset QA estimation' }).click()
+  await expect(page.getByLabel('QA activity 1 hours')).toHaveValue('0')
+  await expect(page.getByLabel('QA activity 1 name')).toHaveValue(
+    'QA Analysis / Test Planning',
+  )
+
+  page.once('dialog', (dialog) => dialog.accept())
+  await page.getByRole('button', { name: 'Reset project settings' }).click()
+  await expect(page.getByLabel('Project or release name')).toHaveValue(
+    'Untitled Estimate',
+  )
+  await expect(page.getByLabel('Risk buffer')).toHaveValue('15')
+
+  await page.getByLabel('Project or release name').fill('Full Reset Test')
+  await page.getByRole('button', { name: 'Reset all' }).click()
+  await expect(
+    page.getByRole('heading', { name: 'Reset the complete project?' }),
+  ).toBeVisible()
+  await page.getByRole('button', { name: 'Reset everything' }).click()
+  await expect(page.getByLabel('Project or release name')).toHaveValue(
+    'Untitled Estimate',
+  )
+})
+
 test('keeps the sticky header and editor within a mobile viewport', async ({
   page,
 }) => {

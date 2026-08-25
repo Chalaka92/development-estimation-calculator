@@ -1,19 +1,18 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
 import { useProjectStore } from '../../app/useProjectStore'
 import { Button } from '../../components/ui'
-import { createEmptyEstimationProject } from '../../domain/factories'
 
 export function NewProjectControl() {
   const [open, setOpen] = useState(false)
   const triggerRef = useRef<HTMLButtonElement>(null)
   const dialogRef = useRef<HTMLDivElement>(null)
   const cancelRef = useRef<HTMLButtonElement>(null)
-  const replaceProject = useProjectStore(
-    (state) => state.actions.replaceProject,
+  const resetProject = useProjectStore(
+    (state) => state.actions.resetProject,
   )
 
   const createProject = () => {
-    replaceProject(createEmptyEstimationProject())
+    resetProject()
     setOpen(false)
   }
 
@@ -67,7 +66,7 @@ export function NewProjectControl() {
         className="preview-new-project"
         onClick={() => setOpen(true)}
       >
-        New project
+        Reset all
       </Button>
 
       {open && (
@@ -81,11 +80,12 @@ export function NewProjectControl() {
             aria-describedby="new-project-description"
             onKeyDown={handleDialogKeyDown}
           >
-            <span className="new-project-dialog__mark">New</span>
-            <h2 id="new-project-title">Start a new estimate?</h2>
+            <span className="new-project-dialog__mark">Full reset</span>
+            <h2 id="new-project-title">Reset the complete project?</h2>
             <p id="new-project-description">
-              This replaces the active project with a clean estimate. Export an
-              editable JSON backup first if you need to keep the current work.
+              This clears project settings, development work, and QA hours, then
+              restores all defaults. Export an editable JSON backup first if you
+              need to keep the current work.
             </p>
             <div className="new-project-dialog__actions">
               <Button ref={cancelRef} onClick={closeDialog}>
@@ -96,7 +96,7 @@ export function NewProjectControl() {
                 className="new-project-dialog__confirm"
                 onClick={createProject}
               >
-                Start new project
+                Reset everything
               </Button>
             </div>
           </div>

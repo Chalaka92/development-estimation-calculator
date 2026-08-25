@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { useProjectStore } from '../../app/useProjectStore'
+import { Panel, PanelHeader } from '../../components/ui'
 import {
   calculateDevelopmentItemHours,
   calculateEstimate,
@@ -19,24 +20,20 @@ export function LiveEstimationTable() {
   const summary = useMemo(() => calculateEstimate(project), [project])
 
   return (
-    <section
-      className="preview-card live-table-panel"
-      aria-labelledby="live-table-title"
-    >
-      <div className="preview-card__heading live-table-panel__heading">
-        <div>
-          <p className="preview-eyebrow">Consolidated estimate</p>
-          <h2 id="live-table-title">Live estimation table</h2>
+    <Panel className="live-table-panel" aria-labelledby="live-table-title">
+      <PanelHeader
+        className="live-table-panel__heading"
+        eyebrow="Consolidated estimate"
+        title="Live estimation table"
+        titleId="live-table-title"
+        step="04"
+        titleDetail={
           <p className="live-table-project-name">
             {project.name || 'Untitled Estimate'}
           </p>
-          <p className="wbs-heading-description">
-            Review every main item, sub-item, QA total, and final estimate in one
-            place.
-          </p>
-        </div>
-        <span className="preview-step">04</span>
-      </div>
+        }
+        description="Review every main item, sub-item, QA total, and final estimate in one place."
+      />
 
       <div
         className="live-table-scroll"
@@ -109,6 +106,6 @@ export function LiveEstimationTable() {
           </tfoot>
         </table>
       </div>
-    </section>
+    </Panel>
   )
 }

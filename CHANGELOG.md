@@ -13,6 +13,7 @@ All notable user-visible changes are documented here. The format follows [Keep a
 - The six legacy QA activities as defaults for every new project.
 - GitHub Pages deployment with a smoke test against the published application.
 - Playwright coverage for critical workflows in Chromium, Firefox, and WebKit.
+- Shared panel, header, empty-state, button, and expansion primitives backed by centralized design tokens.
 
 ### Fixed
 

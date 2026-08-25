@@ -1,7 +1,11 @@
+@import './styles/tokens.css';
+@import './components/ui/ui.css';
+
 :root {
+  color-scheme: light;
   font-family: Inter, "Segoe UI", Arial, sans-serif;
-  color: #172033;
-  background: #f5f7fb;
+  color: var(--color-text);
+  background: var(--color-canvas);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;

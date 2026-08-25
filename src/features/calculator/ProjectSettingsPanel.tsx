@@ -1,4 +1,5 @@
 import { useProjectStore } from '../../app/useProjectStore'
+import { Panel, PanelHeader } from '../../components/ui'
 import { NumberField } from './NumberField'
 
 export function ProjectSettingsPanel() {
@@ -7,14 +8,13 @@ export function ProjectSettingsPanel() {
   const actions = useProjectStore((state) => state.actions)
 
   return (
-    <section className="preview-card preview-settings" aria-labelledby="settings-title">
-      <div className="preview-card__heading">
-        <div>
-          <p className="preview-eyebrow">Estimate setup</p>
-          <h2 id="settings-title">Project settings</h2>
-        </div>
-        <span className="preview-step">01</span>
-      </div>
+    <Panel className="preview-settings" aria-labelledby="settings-title">
+      <PanelHeader
+        eyebrow="Estimate setup"
+        title="Project settings"
+        titleId="settings-title"
+        step="01"
+      />
 
       <div className="preview-field preview-field--wide">
         <label htmlFor="project-name">Project or release name</label>
@@ -83,6 +83,6 @@ export function ProjectSettingsPanel() {
           }
         />
       </div>
-    </section>
+    </Panel>
   )
 }

@@ -1,4 +1,5 @@
 import { useProjectStore } from '../../app/useProjectStore'
+import { Button } from '../../components/ui'
 import { calculateEstimationHours } from '../../domain/calculations'
 import type {
   EstimationActivity,
@@ -52,8 +53,8 @@ export function EstimationActivityRows({
                 }
               />
               <div className="wbs-row-actions">
-                <button
-                  type="button"
+                <Button
+                  size="small"
                   title="Duplicate activity"
                   aria-label={`Duplicate activity ${index + 1}`}
                   onClick={() =>
@@ -61,9 +62,10 @@ export function EstimationActivityRows({
                   }
                 >
                   Copy
-                </button>
-                <button
-                  type="button"
+                </Button>
+                <Button
+                  variant="danger"
+                  size="small"
                   className="wbs-danger-action"
                   title="Delete activity"
                   aria-label={`Delete activity ${index + 1}`}
@@ -72,20 +74,21 @@ export function EstimationActivityRows({
                   }
                 >
                   Delete
-                </button>
+                </Button>
               </div>
             </div>
           ))}
         </div>
       )}
       <div className="wbs-estimation-footer">
-        <button
-          type="button"
+        <Button
+          variant="dashed"
+          size="small"
           className="wbs-add-inline"
           onClick={() => actions.addEstimationActivity(owner)}
         >
           + Add estimation row
-        </button>
+        </Button>
         <strong>
           Form total: {calculateEstimationHours(activities).toLocaleString('en', {
             maximumFractionDigits: 2,

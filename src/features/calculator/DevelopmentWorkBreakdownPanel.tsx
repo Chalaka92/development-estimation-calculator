@@ -1,6 +1,13 @@
 import { useState } from 'react'
 import { useProjectStore } from '../../app/useProjectStore'
 import {
+  Button,
+  EmptyState,
+  ExpandButton,
+  Panel,
+  PanelHeader,
+} from '../../components/ui'
+import {
   calculateDevelopmentItemHours,
   calculateEstimationHours,
 } from '../../domain/calculations'
@@ -28,16 +35,12 @@ function SubItemCard({ workItemId, subItem, index }: SubItemCardProps) {
   return (
     <article className="wbs-sub-item">
       <div className="wbs-item-header wbs-item-header--sub">
-        <button
-          type="button"
-          className="wbs-expand-button"
-          aria-expanded={expanded}
+        <ExpandButton
+          expanded={expanded}
           aria-controls={`sub-item-${subItem.id}`}
           aria-label={`${expanded ? 'Collapse' : 'Expand'} sub-item ${index + 1}`}
           onClick={() => setExpanded((current) => !current)}
-        >
-          {expanded ? '−' : '+'}
-        </button>
+        />
         <span className="wbs-item-number">{index + 1}</span>
         <input
           className="wbs-title-input"
@@ -51,21 +54,22 @@ function SubItemCard({ workItemId, subItem, index }: SubItemCardProps) {
           {formatHours(calculateEstimationHours(subItem.estimation))}
         </strong>
         <div className="wbs-item-actions">
-          <button
-            type="button"
+          <Button
+            size="small"
             aria-label={`Duplicate sub-item ${index + 1}`}
             onClick={() => actions.duplicateSubItem(workItemId, subItem.id)}
           >
             Duplicate
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            variant="danger"
+            size="small"
             className="wbs-danger-action"
             aria-label={`Delete sub-item ${index + 1}`}
             onClick={() => actions.deleteSubItem(workItemId, subItem.id)}
           >
             Delete
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -110,16 +114,12 @@ function WorkItemCard({ item, index }: WorkItemCardProps) {
   return (
     <article className="wbs-main-item">
       <div className="wbs-item-header">
-        <button
-          type="button"
-          className="wbs-expand-button"
-          aria-expanded={expanded}
+        <ExpandButton
+          expanded={expanded}
           aria-controls={`work-item-${item.id}`}
           aria-label={`${expanded ? 'Collapse' : 'Expand'} main item ${index + 1}`}
           onClick={() => setExpanded((current) => !current)}
-        >
-          {expanded ? '−' : '+'}
-        </button>
+        />
         <span className="wbs-item-number">{index + 1}</span>
         <input
           className="wbs-title-input"
@@ -133,21 +133,22 @@ function WorkItemCard({ item, index }: WorkItemCardProps) {
           {formatHours(calculateDevelopmentItemHours(item))}
         </strong>
         <div className="wbs-item-actions">
-          <button
-            type="button"
+          <Button
+            size="small"
             aria-label={`Duplicate main item ${index + 1}`}
             onClick={() => actions.duplicateDevelopmentItem(item.id)}
           >
             Duplicate
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            variant="danger"
+            size="small"
             className="wbs-danger-action"
             aria-label={`Delete main item ${index + 1}`}
             onClick={() => actions.deleteDevelopmentItem(item.id)}
           >
             Delete
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -173,14 +174,15 @@ function WorkItemCard({ item, index }: WorkItemCardProps) {
           )}
 
           <div className="wbs-add-actions">
-            <button
-              type="button"
+            <Button
+              variant="dashed"
+              size="small"
               className="wbs-add-inline"
               title="Add a sub-item"
               onClick={addSubItem}
             >
               + Add sub-item
-            </button>
+            </Button>
           </div>
           {!hasSubItems && item.directEstimation.length > 0 && (
             <p className="wbs-mode-hint">
@@ -201,30 +203,28 @@ export function DevelopmentWorkBreakdownPanel() {
   )
 
   return (
-    <section className="preview-card wbs-panel" aria-labelledby="wbs-title">
-      <div className="preview-card__heading wbs-panel__heading">
-        <div>
-          <p className="preview-eyebrow">Scope and effort</p>
-          <h2 id="wbs-title">Development work breakdown</h2>
-          <p className="wbs-heading-description">
-            Estimate main items directly or divide them into detailed sub-items.
-          </p>
-        </div>
-        <span className="preview-step">02</span>
-      </div>
+    <Panel className="wbs-panel" aria-labelledby="wbs-title">
+      <PanelHeader
+        className="wbs-panel__heading"
+        eyebrow="Scope and effort"
+        title="Development work breakdown"
+        titleId="wbs-title"
+        description="Estimate main items directly or divide them into detailed sub-items."
+        step="02"
+      />
 
       {items.length === 0 ? (
-        <div className="wbs-empty-state">
-          <span>0 items</span>
-          <h3>Build the estimate from clear work items.</h3>
-          <p>
-            Add the first development item, then enter activities and hours or
-            break it into sub-items.
-          </p>
-          <button type="button" onClick={() => addDevelopmentItem()}>
-            Add first main item
-          </button>
-        </div>
+        <EmptyState
+          className="wbs-empty-state"
+          badge="0 items"
+          title="Build the estimate from clear work items."
+          description="Add the first development item, then enter activities and hours or break it into sub-items."
+          action={
+            <Button variant="primary" onClick={() => addDevelopmentItem()}>
+              Add first main item
+            </Button>
+          }
+        />
       ) : (
         <div className="wbs-main-item-list">
           {items.map((item, index) => (
@@ -234,14 +234,15 @@ export function DevelopmentWorkBreakdownPanel() {
       )}
 
       {items.length > 0 && (
-        <button
-          type="button"
+        <Button
+          variant="dashed"
+          fullWidth
           className="wbs-add-main"
           onClick={() => addDevelopmentItem()}
         >
           + Add main item
-        </button>
+        </Button>
       )}
-    </section>
+    </Panel>
   )
 }

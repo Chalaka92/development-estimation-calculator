@@ -1,5 +1,6 @@
 import { useRef, useState, type ChangeEvent } from 'react'
 import { useProjectStore } from '../../app/useProjectStore'
+import { Button, Panel, PanelHeader } from '../../components/ui'
 import {
   createCsvSummary,
   createEditableProjectExport,
@@ -128,38 +129,36 @@ export function ExportImportPanel() {
   }
 
   return (
-    <section className="preview-card transfer-panel" aria-labelledby="transfer-title">
-      <div className="preview-card__heading transfer-panel__heading">
-        <div>
-          <p className="preview-eyebrow">Share and continue</p>
-          <h2 id="transfer-title">Export or import</h2>
-          <p className="wbs-heading-description">
-            Share summary-only files, or keep an editable validated project backup.
-          </p>
-        </div>
-        <span className="preview-step">05</span>
-      </div>
+    <Panel className="transfer-panel" aria-labelledby="transfer-title">
+      <PanelHeader
+        className="transfer-panel__heading"
+        eyebrow="Share and continue"
+        title="Export or import"
+        titleId="transfer-title"
+        description="Share summary-only files, or keep an editable validated project backup."
+        step="05"
+      />
 
       <div className="transfer-grid">
         <div className="transfer-group">
           <h3>Summary exports</h3>
           <p>Development table, QA estimate, totals, and delivery schedule.</p>
           <div className="transfer-actions">
-            <button type="button" onClick={exportMarkdown}>
+            <Button size="small" onClick={exportMarkdown}>
               Markdown
-            </button>
-            <button type="button" onClick={exportCsv}>
+            </Button>
+            <Button size="small" onClick={exportCsv}>
               CSV
-            </button>
-            <button type="button" disabled={creatingPdf} onClick={exportPdf}>
+            </Button>
+            <Button size="small" disabled={creatingPdf} onClick={exportPdf}>
               {creatingPdf ? 'Creating PDF…' : 'PDF'}
-            </button>
-            <button type="button" onClick={copySummary}>
+            </Button>
+            <Button size="small" onClick={copySummary}>
               Copy full summary
-            </button>
-            <button type="button" onClick={printCurrentPage}>
+            </Button>
+            <Button size="small" onClick={printCurrentPage}>
               Print report
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -167,16 +166,17 @@ export function ExportImportPanel() {
           <h3>Editable project</h3>
           <p>Validated JSON for backup, transfer, and future editing.</p>
           <div className="transfer-actions">
-            <button type="button" onClick={exportEditable}>
+            <Button size="small" onClick={exportEditable}>
               Export JSON
-            </button>
-            <button
-              type="button"
+            </Button>
+            <Button
+              variant="primary"
+              size="small"
               className="transfer-import-button"
               onClick={() => inputRef.current?.click()}
             >
               Import project
-            </button>
+            </Button>
           </div>
           <input
             ref={inputRef}
@@ -197,6 +197,6 @@ export function ExportImportPanel() {
           {message.text}
         </p>
       )}
-    </section>
+    </Panel>
   )
 }

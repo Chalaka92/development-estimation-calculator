@@ -1,0 +1,113 @@
+.ui-button {
+  border: 1px solid var(--color-border-control);
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.ui-button--small {
+  padding: 6px 8px;
+  font-size: 10px;
+}
+
+.ui-button--medium {
+  padding: 9px 12px;
+  font-size: 11px;
+}
+
+.ui-button--primary {
+  color: var(--color-surface);
+  border-color: var(--color-brand);
+  background: var(--color-brand);
+}
+
+.ui-button--secondary {
+  color: #4c566e;
+  background: var(--color-surface);
+}
+
+.ui-button--danger {
+  color: #566078;
+  background: var(--color-surface);
+}
+
+.ui-button--danger:hover {
+  border-color: #f2b8b5;
+  color: #c4322b;
+  background: #fff7f6;
+}
+
+.ui-button--dashed {
+  color: var(--color-brand);
+  border-style: dashed;
+  background: var(--color-brand-surface);
+}
+
+.ui-button--full-width {
+  width: 100%;
+}
+
+.ui-button:disabled {
+  cursor: wait;
+  opacity: 0.62;
+}
+
+.ui-panel {
+  padding: clamp(22px, 3vw, 34px);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+}
+
+.ui-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+
+.ui-step {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--color-brand-soft);
+  background: #f0f2ff;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.ui-empty-state {
+  display: grid;
+  justify-items: start;
+  border: 1px dashed #cbd1df;
+  background: var(--color-surface-subtle);
+  text-align: left;
+}
+
+.ui-empty-state__badge {
+  padding: 5px 8px;
+  border-radius: var(--radius-xs);
+  color: var(--color-brand-soft);
+  background: var(--color-brand-surface);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.ui-expand-button {
+  display: grid;
+  width: 26px;
+  height: 26px;
+  place-items: center;
+  padding: 0;
+  border-color: #d8ddea;
+  border-radius: 7px;
+  color: var(--color-brand-soft);
+  background: var(--color-surface);
+  font-size: 16px;
+}

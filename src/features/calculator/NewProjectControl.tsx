@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
 import { useProjectStore } from '../../app/useProjectStore'
+import { Button } from '../../components/ui'
 import { createEmptyEstimationProject } from '../../domain/factories'
 
 export function NewProjectControl() {
@@ -60,14 +61,14 @@ export function NewProjectControl() {
 
   return (
     <>
-      <button
+      <Button
         ref={triggerRef}
-        type="button"
+        variant="primary"
         className="preview-new-project"
         onClick={() => setOpen(true)}
       >
         New project
-      </button>
+      </Button>
 
       {open && (
         <div className="new-project-backdrop" role="presentation">
@@ -87,16 +88,16 @@ export function NewProjectControl() {
               editable JSON backup first if you need to keep the current work.
             </p>
             <div className="new-project-dialog__actions">
-              <button ref={cancelRef} type="button" onClick={closeDialog}>
+              <Button ref={cancelRef} onClick={closeDialog}>
                 Keep current project
-              </button>
-              <button
-                type="button"
+              </Button>
+              <Button
+                variant="primary"
                 className="new-project-dialog__confirm"
                 onClick={createProject}
               >
                 Start new project
-              </button>
+              </Button>
             </div>
           </div>
         </div>

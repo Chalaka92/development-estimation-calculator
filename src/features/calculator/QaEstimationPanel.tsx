@@ -1,5 +1,13 @@
 import { useState } from 'react'
 import { useProjectStore } from '../../app/useProjectStore'
+import {
+  Button,
+  EmptyState,
+  ExpandButton,
+  Panel,
+  PanelHeader,
+  StepBadge,
+} from '../../components/ui'
 import { calculateQaHours } from '../../domain/calculations'
 import { InlineNumberField } from './InlineNumberField'
 
@@ -14,44 +22,40 @@ export function QaEstimationPanel() {
   const totalHours = calculateQaHours(activities)
 
   return (
-    <section className="preview-card qa-panel" aria-labelledby="qa-title">
-      <div className="preview-card__heading qa-panel__heading">
-        <div>
-          <p className="preview-eyebrow">Verification effort</p>
-          <h2 id="qa-title">QA estimation</h2>
-          <p className="wbs-heading-description">
-            Add testing, review, regression, and release-verification activities.
-          </p>
-        </div>
-        <div className="qa-panel__summary">
-          <strong>{formatHours(totalHours)}</strong>
-          <span className="preview-step">03</span>
-          <button
-            type="button"
-            className="wbs-expand-button"
-            aria-expanded={expanded}
-            aria-controls="qa-estimation-body"
-            aria-label={`${expanded ? 'Collapse' : 'Expand'} QA estimation`}
-            onClick={() => setExpanded((current) => !current)}
-          >
-            {expanded ? '−' : '+'}
-          </button>
-        </div>
-      </div>
+    <Panel className="qa-panel" aria-labelledby="qa-title">
+      <PanelHeader
+        className="qa-panel__heading"
+        eyebrow="Verification effort"
+        title="QA estimation"
+        titleId="qa-title"
+        description="Add testing, review, regression, and release-verification activities."
+        actions={
+          <div className="qa-panel__summary">
+            <strong>{formatHours(totalHours)}</strong>
+            <StepBadge>03</StepBadge>
+            <ExpandButton
+              expanded={expanded}
+              aria-controls="qa-estimation-body"
+              aria-label={`${expanded ? 'Collapse' : 'Expand'} QA estimation`}
+              onClick={() => setExpanded((current) => !current)}
+            />
+          </div>
+        }
+      />
 
       {expanded && (
         <div id="qa-estimation-body">
           {activities.length === 0 ? (
-            <div className="qa-empty-state">
-              <h3>No QA activities yet.</h3>
-              <p>
-                Add the first activity to include quality assurance in the live
-                delivery estimate.
-              </p>
-              <button type="button" onClick={() => actions.addQaActivity()}>
-                Add first QA activity
-              </button>
-            </div>
+            <EmptyState
+              className="qa-empty-state"
+              title="No QA activities yet."
+              description="Add the first activity to include quality assurance in the live delivery estimate."
+              action={
+                <Button variant="primary" onClick={() => actions.addQaActivity()}>
+                  Add first QA activity
+                </Button>
+              }
+            />
           ) : (
             <div className="qa-activity-list">
               <div className="qa-activity-list__header" aria-hidden="true">
@@ -80,21 +84,22 @@ export function QaEstimationPanel() {
                     }
                   />
                   <div className="wbs-row-actions">
-                    <button
-                      type="button"
+                    <Button
+                      size="small"
                       aria-label={`Duplicate QA activity ${index + 1}`}
                       onClick={() => actions.duplicateQaActivity(activity.id)}
                     >
                       Copy
-                    </button>
-                    <button
-                      type="button"
+                    </Button>
+                    <Button
+                      variant="danger"
+                      size="small"
                       className="wbs-danger-action"
                       aria-label={`Delete QA activity ${index + 1}`}
                       onClick={() => actions.deleteQaActivity(activity.id)}
                     >
                       Delete
-                    </button>
+                    </Button>
                   </div>
                 </div>
               ))}
@@ -102,16 +107,16 @@ export function QaEstimationPanel() {
           )}
 
           {activities.length > 0 && (
-            <button
-              type="button"
+            <Button
+              variant="dashed"
               className="wbs-add-main qa-add-activity"
               onClick={() => actions.addQaActivity()}
             >
               + Add QA activity
-            </button>
+            </Button>
           )}
         </div>
       )}
-    </section>
+    </Panel>
   )
 }

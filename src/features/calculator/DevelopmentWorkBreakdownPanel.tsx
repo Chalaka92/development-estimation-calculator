@@ -6,6 +6,7 @@ import {
   ExpandButton,
   Panel,
   PanelHeader,
+  StepBadge,
 } from '../../components/ui'
 import {
   calculateDevelopmentItemHours,
@@ -16,6 +17,7 @@ import type {
   DevelopmentWorkItem,
 } from '../../domain/estimation'
 import { EstimationActivityRows } from './EstimationActivityRows'
+import { SectionResetButton } from './SectionResetButton'
 
 function formatHours(hours: number): string {
   return `${new Intl.NumberFormat('en', { maximumFractionDigits: 2 }).format(hours)} h`
@@ -201,6 +203,9 @@ export function DevelopmentWorkBreakdownPanel() {
   const addDevelopmentItem = useProjectStore(
     (state) => state.actions.addDevelopmentItem,
   )
+  const resetDevelopmentWork = useProjectStore(
+    (state) => state.actions.resetDevelopmentWork,
+  )
 
   return (
     <Panel className="wbs-panel" aria-labelledby="wbs-title">
@@ -210,7 +215,16 @@ export function DevelopmentWorkBreakdownPanel() {
         title="Development work breakdown"
         titleId="wbs-title"
         description="Estimate main items directly or divide them into detailed sub-items."
-        step="02"
+        actions={
+          <div className="ui-panel-header__actions">
+            <SectionResetButton
+              sectionName="development work breakdown"
+              confirmation="Reset the complete development work breakdown? All main items, sub-items, activities, and development hours will be removed."
+              onReset={() => resetDevelopmentWork()}
+            />
+            <StepBadge>02</StepBadge>
+          </div>
+        }
       />
 
       {items.length === 0 ? (

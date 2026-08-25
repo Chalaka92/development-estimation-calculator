@@ -1,6 +1,7 @@
 import { useProjectStore } from '../../app/useProjectStore'
-import { Panel, PanelHeader } from '../../components/ui'
+import { Panel, PanelHeader, StepBadge } from '../../components/ui'
 import { NumberField } from './NumberField'
+import { SectionResetButton } from './SectionResetButton'
 
 export function ProjectSettingsPanel() {
   const projectName = useProjectStore((state) => state.project.name)
@@ -13,7 +14,16 @@ export function ProjectSettingsPanel() {
         eyebrow="Estimate setup"
         title="Project settings"
         titleId="settings-title"
-        step="01"
+        actions={
+          <div className="ui-panel-header__actions">
+            <SectionResetButton
+              sectionName="project settings"
+              confirmation="Reset the project name and delivery settings to their defaults? Development and QA work will be kept."
+              onReset={() => actions.resetProjectSettings()}
+            />
+            <StepBadge>01</StepBadge>
+          </div>
+        }
       />
 
       <div className="preview-field preview-field--wide">

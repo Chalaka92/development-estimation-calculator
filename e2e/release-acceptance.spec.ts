@@ -1,6 +1,6 @@
-import { expect, test } from '@playwright/test'
+import { expect, test, type Page } from '@playwright/test'
 
-async function openWorkspaceTab(page: import('@playwright/test').Page, name: string) {
+async function openWorkspaceTab(page: Page, name: string) {
   await page.getByRole('tab', { name, exact: true }).click()
 }
 

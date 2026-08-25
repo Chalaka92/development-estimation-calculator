@@ -158,7 +158,7 @@ test('exports inspectable Markdown and PDF summaries', async ({ page }) => {
   const pdfPath = await pdfDownload.path()
   expect(pdfPath).not.toBeNull()
   const pdf = await import('node:fs/promises').then(({ readFile }) =>
-    readFile(pdfPath!, 'utf8'),
+    readFile(pdfPath!),
   )
   expect(pdf.subarray(0, 5).toString()).toBe('%PDF-')
   expect(pdf.length).toBeGreaterThan(1_000)

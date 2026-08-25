@@ -5,6 +5,8 @@ import {
   calculateEstimate,
   calculateEstimationHours,
   calculateQaHours,
+  calculateActivityHours,
+  calculateThreePointHours,
 } from './calculations'
 import type {
   DevelopmentWorkItem,
@@ -38,6 +40,22 @@ const defaultSchedule = {
 }
 
 describe('estimation totals', () => {
+  it('uses PERT expected hours for optional three-point estimates', () => {
+    const threePointEstimate = {
+      optimisticHours: 4,
+      mostLikelyHours: 10,
+      pessimisticHours: 16,
+    }
+    expect(calculateThreePointHours(threePointEstimate)).toBe(10)
+    expect(calculateActivityHours({ hours: 99, threePointEstimate })).toBe(10)
+    expect(
+      calculateEstimationHours([
+        activity('simple', 5),
+        { ...activity('pert', 99), threePointEstimate },
+      ]),
+    ).toBe(15)
+  })
+
   it('sums finite estimation and QA hours', () => {
     expect(
       calculateEstimationHours([

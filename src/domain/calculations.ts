@@ -5,6 +5,7 @@ import type {
   EstimationCalculationInput,
   EstimationSchedule,
   QaActivity,
+  ThreePointEstimate,
 } from './estimation'
 
 const DEFAULT_WORKING_HOURS_PER_PERSON_DAY = 8
@@ -18,6 +19,23 @@ function finiteNumberOrZero(value: number): number {
   return Number.isFinite(value) ? value : 0
 }
 
+export function calculateThreePointHours(
+  estimate: ThreePointEstimate,
+): number {
+  const optimistic = finiteNumberOrZero(estimate.optimisticHours)
+  const mostLikely = finiteNumberOrZero(estimate.mostLikelyHours)
+  const pessimistic = finiteNumberOrZero(estimate.pessimisticHours)
+  return (optimistic + 4 * mostLikely + pessimistic) / 6
+}
+
+export function calculateActivityHours(
+  activity: Pick<EstimationActivity, 'hours' | 'threePointEstimate'>,
+): number {
+  return activity.threePointEstimate
+    ? calculateThreePointHours(activity.threePointEstimate)
+    : finiteNumberOrZero(activity.hours)
+}
+
 function finiteNonZeroNumberOrDefault(value: number, fallback: number): number {
   return Number.isFinite(value) && value !== 0 ? value : fallback
 }
@@ -26,7 +44,7 @@ export function calculateEstimationHours(
   estimation: ReadonlyArray<EstimationActivity>,
 ): number {
   return estimation.reduce(
-    (total, activity) => total + finiteNumberOrZero(activity.hours),
+    (total, activity) => total + calculateActivityHours(activity),
     0,
   )
 }
@@ -57,7 +75,7 @@ export function calculateQaHours(
   activities: ReadonlyArray<QaActivity>,
 ): number {
   return activities.reduce(
-    (total, activity) => total + finiteNumberOrZero(activity.hours),
+    (total, activity) => total + calculateActivityHours(activity),
     0,
   )
 }

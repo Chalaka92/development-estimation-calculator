@@ -484,7 +484,7 @@
 .qa-activity-list__header,
 .qa-activity-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 96px 116px;
+  grid-template-columns: minmax(0, 1fr) 96px 178px;
   gap: 8px;
   align-items: center;
 }
@@ -504,7 +504,7 @@
 }
 
 .qa-activity-row {
-  grid-template-columns: 22px minmax(0, 1fr) 96px 116px;
+  grid-template-columns: 22px minmax(0, 1fr) 96px 178px;
   min-height: 42px;
   padding: 4px;
   border-radius: 8px;
@@ -1025,7 +1025,7 @@ button.wbs-danger-action:hover {
 .wbs-activity-list__header,
 .wbs-activity-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 96px 116px;
+  grid-template-columns: minmax(0, 1fr) 96px 178px;
   gap: 8px;
   align-items: center;
 }
@@ -1045,7 +1045,7 @@ button.wbs-danger-action:hover {
 }
 
 .wbs-activity-row {
-  grid-template-columns: 22px minmax(0, 1fr) 96px 116px;
+  grid-template-columns: 22px minmax(0, 1fr) 96px 178px;
   min-height: 42px;
   padding: 4px;
   border-radius: 8px;
@@ -1086,6 +1086,64 @@ button.wbs-danger-action:hover {
   font-size: 10px;
   pointer-events: none;
   transform: translateY(-50%);
+}
+
+.activity-estimate-cell {
+  min-width: 0;
+  color: #4055dc;
+  font-size: 11px;
+  text-align: right;
+}
+
+.three-point-fields {
+  display: grid;
+  grid-column: 2 / -1;
+  grid-template-columns: repeat(3, minmax(100px, 1fr)) minmax(120px, 1fr);
+  gap: 9px;
+  margin: 3px 0 7px;
+  padding: 12px;
+  border: 1px solid #dfe4f5;
+  border-radius: 9px;
+  background: #f8f9ff;
+}
+
+.three-point-fields legend {
+  padding: 0 5px;
+  color: #4055dc;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.three-point-fields label,
+.three-point-result {
+  display: grid;
+  align-content: start;
+  gap: 5px;
+}
+
+.three-point-fields label > span,
+.three-point-result > span,
+.three-point-result small {
+  color: var(--color-text-soft);
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.three-point-result {
+  align-content: center;
+  padding-left: 10px;
+  border-left: 1px solid #dfe4f5;
+}
+
+.three-point-result strong {
+  color: #4055dc;
+  font-size: 13px;
+}
+
+.three-point-result small {
+  font-weight: 500;
 }
 
 .wbs-empty-estimation {
@@ -1410,6 +1468,18 @@ button.wbs-danger-action:hover {
     justify-content: flex-end;
   }
 
+  .three-point-fields {
+    grid-column: 1 / -1;
+    grid-template-columns: 1fr;
+  }
+
+  .three-point-result {
+    padding-top: 9px;
+    padding-left: 0;
+    border-top: 1px solid #dfe4f5;
+    border-left: 0;
+  }
+
   .qa-panel__heading {
     gap: 16px;
   }
@@ -1568,4 +1638,3 @@ button.wbs-danger-action:hover {
     flex-direction: column;
   }
 }
-

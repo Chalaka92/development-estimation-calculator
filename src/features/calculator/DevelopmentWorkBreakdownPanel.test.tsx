@@ -131,6 +131,58 @@ describe('DevelopmentWorkBreakdownPanel', () => {
     expect(runtime.store.getState().project.developmentItems[0].subItems).toHaveLength(1)
   })
 
+  it('switches an activity between single-point and PERT estimation', async () => {
+    const user = userEvent.setup()
+    const runtime = renderEditor()
+    await user.click(screen.getByRole('button', { name: 'Add first main item' }))
+    await user.click(
+      screen.getByRole('button', {
+        name: 'Use three-point estimate for activity 1',
+      }),
+    )
+
+    const values = [
+      ['Activity 1 optimistic hours', '4'],
+      ['Activity 1 most likely hours', '10'],
+      ['Activity 1 pessimistic hours', '16'],
+    ] as const
+    for (const [name, value] of values) {
+      const input = screen.getByRole('spinbutton', { name })
+      await user.clear(input)
+      await user.type(input, value)
+      await user.tab()
+    }
+
+    expect(screen.getByText('PERT expected')).toBeTruthy()
+    expect(screen.getAllByText('10 h').length).toBeGreaterThan(1)
+    expect(
+      runtime.store.getState().project.developmentItems[0].directEstimation[0]
+        .threePointEstimate,
+    ).toEqual({
+      optimisticHours: 4,
+      mostLikelyHours: 10,
+      pessimisticHours: 16,
+    })
+
+    await user.click(
+      screen.getByRole('button', {
+        name: 'Use single-point estimate for activity 1',
+      }),
+    )
+    expect(
+      (screen.getByRole('spinbutton', {
+        name: 'Activity 1 hours',
+      }) as HTMLInputElement).value,
+    ).toBe('10')
+    expect(
+      runtime.store.getState().project.developmentItems[0].directEstimation[0],
+    ).toMatchObject({ hours: 10 })
+    expect(
+      runtime.store.getState().project.developmentItems[0].directEstimation[0]
+        .threePointEstimate,
+    ).toBeUndefined()
+  })
+
   it('confirms before replacing a direct form that contains hours', async () => {
     const user = userEvent.setup()
     const runtime = renderEditor()

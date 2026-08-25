@@ -3,10 +3,17 @@ export const CURRENT_ESTIMATION_SCHEMA_VERSION = 1 as const
 export type EntityId = string
 export type IsoDateTimeString = string
 
+export interface ThreePointEstimate {
+  optimisticHours: number
+  mostLikelyHours: number
+  pessimisticHours: number
+}
+
 export interface EstimationActivity {
   id: EntityId
   name: string
   hours: number
+  threePointEstimate?: ThreePointEstimate
 }
 
 export interface DevelopmentSubItem {
@@ -26,6 +33,7 @@ export interface QaActivity {
   id: EntityId
   name: string
   hours: number
+  threePointEstimate?: ThreePointEstimate
 }
 
 export interface EstimationSchedule {

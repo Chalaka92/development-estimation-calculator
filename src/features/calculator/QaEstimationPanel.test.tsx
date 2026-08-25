@@ -94,6 +94,33 @@ describe('QaEstimationPanel', () => {
     expect(runtime.store.getState().project.qaActivities).toHaveLength(6)
   })
 
+  it('calculates QA effort from an optional three-point estimate', async () => {
+    const user = userEvent.setup()
+    const runtime = renderEditor()
+    await user.click(
+      screen.getByRole('button', {
+        name: 'Use three-point estimate for QA activity 1',
+      }),
+    )
+    for (const [name, value] of [
+      ['QA activity 1 optimistic hours', '2'],
+      ['QA activity 1 most likely hours', '5'],
+      ['QA activity 1 pessimistic hours', '8'],
+    ] as const) {
+      const input = screen.getByRole('spinbutton', { name })
+      await user.clear(input)
+      await user.type(input, value)
+      await user.tab()
+    }
+
+    expect(screen.getAllByText('5 h').length).toBeGreaterThan(1)
+    expect(runtime.store.getState().project.qaActivities[0].threePointEstimate).toEqual({
+      optimisticHours: 2,
+      mostLikelyHours: 5,
+      pessimisticHours: 8,
+    })
+  })
+
   it('collapses and restores the QA editor', async () => {
     const user = userEvent.setup()
     renderEditor()

@@ -159,26 +159,32 @@ export function createProjectSnapshot(
 }
 
 function createTemplateSource(project: EstimationProject): EstimationProject {
+  const resetActivity = <T extends EstimationProject['qaActivities'][number]>(
+    activity: T,
+  ): T => ({
+    ...activity,
+    hours: 0,
+    ...(activity.threePointEstimate
+      ? {
+          threePointEstimate: {
+            optimisticHours: 0,
+            mostLikelyHours: 0,
+            pessimisticHours: 0,
+          },
+        }
+      : {}),
+  })
   return {
     ...cloneProject(project),
     developmentItems: project.developmentItems.map((item) => ({
       ...item,
-      directEstimation: item.directEstimation.map((activity) => ({
-        ...activity,
-        hours: 0,
-      })),
+      directEstimation: item.directEstimation.map(resetActivity),
       subItems: item.subItems.map((subItem) => ({
         ...subItem,
-        estimation: subItem.estimation.map((activity) => ({
-          ...activity,
-          hours: 0,
-        })),
+        estimation: subItem.estimation.map(resetActivity),
       })),
     })),
-    qaActivities: project.qaActivities.map((activity) => ({
-      ...activity,
-      hours: 0,
-    })),
+    qaActivities: project.qaActivities.map(resetActivity),
   }
 }
 
@@ -225,6 +231,15 @@ export function instantiateProjectTemplate(
     ...activity,
     id: dependencies.createId(),
     hours: 0,
+    ...(activity.threePointEstimate
+      ? {
+          threePointEstimate: {
+            optimisticHours: 0,
+            mostLikelyHours: 0,
+            pessimisticHours: 0,
+          },
+        }
+      : {}),
   }))
 
   return {

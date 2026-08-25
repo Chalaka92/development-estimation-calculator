@@ -1,6 +1,7 @@
 import { jsPDF } from 'jspdf'
 import { calculateEstimate } from '../domain/calculations'
 import type { EstimationProject } from '../domain/estimation'
+import { calculateActivityHours } from '../domain/calculations'
 import {
   createLiveEstimateRows,
   formatExportNumber,
@@ -87,7 +88,7 @@ export function createProjectPdf(project: EstimationProject): ArrayBuffer {
       document.text(String(index + 1), margin, y)
       document.text(activityLines, margin + 38, y)
       document.text(
-        `${formatExportNumber(activity.hours)} h`,
+        `${formatExportNumber(calculateActivityHours(activity))} h`,
         pageWidth - margin,
         y,
         { align: 'right' },

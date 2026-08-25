@@ -79,7 +79,7 @@ export function loadProjectWorkspace(storage: KeyValueStorage): LoadWorkspaceRes
   } catch (error) {
     return {
       status: 'invalid',
-      error: \`Invalid project workspace: \${errorMessage(error)}\`,
+      error: `Invalid project workspace: ${errorMessage(error)}`,
     }
   }
 }
@@ -229,7 +229,7 @@ export function duplicateWorkspaceProject(
   if (loaded.workspace.projects.length >= MAX_WORKSPACE_PROJECTS) {
     return {
       status: 'invalid',
-      error: \`A maximum of \${MAX_WORKSPACE_PROJECTS} projects can be saved.\`,
+      error: `A maximum of ${MAX_WORKSPACE_PROJECTS} projects can be saved.`,
     }
   }
   const source = loaded.workspace.projects.find(
@@ -242,7 +242,7 @@ export function duplicateWorkspaceProject(
   const copy: WorkspaceProject = {
     project: cloneWithFreshIds(
       source.project,
-      \`\${source.project.name} (Copy)\`,
+      `${source.project.name} (Copy)`,
       dependencies,
     ),
     archived: false,

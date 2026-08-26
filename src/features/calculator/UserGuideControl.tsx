@@ -11,12 +11,19 @@ type GuideTopicId =
   | 'history'
   | 'reset'
 
+interface GuideImage {
+  fileName: string
+  alt: string
+  caption: string
+}
+
 interface GuideTopic {
   id: GuideTopicId
   title: string
   description: string
   steps: readonly string[]
   tip?: string
+  image?: GuideImage
 }
 
 const GUIDE_TOPICS: readonly GuideTopic[] = [
@@ -44,6 +51,11 @@ const GUIDE_TOPICS: readonly GuideTopic[] = [
       'Use the project workspace controls when you need to manage multiple estimates.',
     ],
     tip: 'Changing manpower affects estimated business duration, not the underlying effort hours.',
+    image: {
+      fileName: 'project-setup.png',
+      alt: 'Project settings area of the development estimation calculator',
+      caption: 'Project settings and delivery assumptions.',
+    },
   },
   {
     id: 'development',
@@ -56,6 +68,11 @@ const GUIDE_TOPICS: readonly GuideTopic[] = [
       'Add delivery role, risk, confidence, dependencies, and notes when they improve planning quality.',
       'Collapse completed items to keep large estimates manageable.',
     ],
+    image: {
+      fileName: 'development-work.png',
+      alt: 'Development work breakdown area with a main item and estimation activities',
+      caption: 'Development work breakdown with the standard activity template.',
+    },
   },
   {
     id: 'qa',
@@ -79,6 +96,11 @@ const GUIDE_TOPICS: readonly GuideTopic[] = [
       'Confirm the business duration and manpower shown in the summary panel.',
     ],
     tip: 'Health findings are advisory. They do not change the calculated hours.',
+    image: {
+      fileName: 'review-estimate.png',
+      alt: 'Review area showing estimation health and the live estimation table',
+      caption: 'Review combines estimation health findings with the complete live estimate.',
+    },
   },
   {
     id: 'export',
@@ -116,6 +138,10 @@ const GUIDE_TOPICS: readonly GuideTopic[] = [
     tip: 'Reset all is intentionally separate from this Help button to reduce accidental destructive actions.',
   },
 ]
+
+function getGuideImageUrl(fileName: string) {
+  return `${import.meta.env.BASE_URL}user-guide/${fileName}`
+}
 
 export function UserGuideControl() {
   const [open, setOpen] = useState(false)
@@ -241,6 +267,16 @@ export function UserGuideControl() {
                 <p className="user-guide-eyebrow">Guide topic</p>
                 <h3>{activeTopic.title}</h3>
                 <p className="user-guide-summary">{activeTopic.description}</p>
+                {activeTopic.image && (
+                  <figure className="user-guide-figure">
+                    <img
+                      src={getGuideImageUrl(activeTopic.image.fileName)}
+                      alt={activeTopic.image.alt}
+                      loading="lazy"
+                    />
+                    <figcaption>{activeTopic.image.caption}</figcaption>
+                  </figure>
+                )}
                 <ol>
                   {activeTopic.steps.map((step) => (
                     <li key={step}>{step}</li>

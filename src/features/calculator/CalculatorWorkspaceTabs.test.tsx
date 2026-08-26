@@ -59,6 +59,7 @@ describe('CalculatorWorkspaceTabs', () => {
     expect(projectTab.getAttribute('aria-selected')).toBe('true')
     expect(projectPanel.hidden).toBe(false)
     expect(developmentPanel.hidden).toBe(true)
+    expect(screen.queryByRole('tab', { name: 'User Guide' })).toBeNull()
 
     await user.click(developmentTab)
 
@@ -85,19 +86,6 @@ describe('CalculatorWorkspaceTabs', () => {
     })).toBeTruthy()
   })
 
-  it('provides a built-in user guide for the complete workflow', async () => {
-    const user = userEvent.setup()
-    renderTabs()
-
-    await user.click(screen.getByRole('tab', { name: 'User Guide' }))
-
-    expect(screen.getByRole('heading', { name: 'User guide' })).toBeTruthy()
-    expect(screen.getByRole('heading', { name: 'Quick start' })).toBeTruthy()
-    expect(screen.getByText('Recommended workflow')).toBeTruthy()
-    expect(screen.getByRole('link', { name: 'Estimation basics' })).toBeTruthy()
-    expect(screen.getByText('Autosave and data safety')).toBeTruthy()
-  })
-
   it('supports arrow, Home, and End keyboard navigation', async () => {
     const user = userEvent.setup()
     renderTabs()
@@ -110,9 +98,9 @@ describe('CalculatorWorkspaceTabs', () => {
     )
 
     await user.keyboard('{End}')
-    const guide = screen.getByRole('tab', { name: 'User Guide' })
-    expect(document.activeElement).toBe(guide)
-    expect(guide.getAttribute('aria-selected')).toBe('true')
+    const history = screen.getByRole('tab', { name: 'History' })
+    expect(document.activeElement).toBe(history)
+    expect(history.getAttribute('aria-selected')).toBe('true')
 
     await user.keyboard('{Home}')
     expect(document.activeElement).toBe(project)

@@ -35,7 +35,7 @@ Stage C is explicitly out of scope for v2.1. The v16 schemas, import readers, br
 - [x] Normalize the remaining preview-era stylesheet, CSS selector, and browser-test selector namespace without changing the visual design or workflow behavior.
 - [x] Add an explicit compatibility guard that fails if the retained v16 reader contracts are accidentally removed during v2.1 cleanup.
 - [x] Review browser-storage/versioning boundaries and document the forward-migration contract before introducing another persistence schema (ADR 0009).
-- [ ] Select the next frontend-safe user-facing capability after the post-legacy cleanup is complete.
+- [x] Select and implement a frontend-only estimation health review that derives review prompts from existing effort, role, risk, confidence, QA, and buffer data without changing persistence.
 
 ## Future capabilities
 

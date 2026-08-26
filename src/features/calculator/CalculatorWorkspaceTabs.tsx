@@ -6,6 +6,7 @@ import {
 } from 'react'
 import type { KeyValueStorage } from '../../persistence/projectPersistence'
 import { DevelopmentWorkBreakdownPanel } from './DevelopmentWorkBreakdownPanel'
+import { EstimationHealthPanel } from './EstimationHealthPanel'
 import { ExportImportPanel } from './ExportImportPanel'
 import { LiveEstimationTable } from './LiveEstimationTable'
 import { ProjectHistoryPanel } from './ProjectHistoryPanel'
@@ -59,7 +60,12 @@ export function CalculatorWorkspaceTabs({
     {
       id: 'review',
       label: 'Review',
-      content: <LiveEstimationTable />,
+      content: (
+        <>
+          <EstimationHealthPanel />
+          <LiveEstimationTable />
+        </>
+      ),
     },
     {
       id: 'export',

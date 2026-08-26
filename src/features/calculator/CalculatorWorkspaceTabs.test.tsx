@@ -70,6 +70,21 @@ describe('CalculatorWorkspaceTabs', () => {
     })).toBeTruthy()
   })
 
+  it('shows estimation health before the consolidated table in Review', async () => {
+    const user = userEvent.setup()
+    renderTabs()
+
+    await user.click(screen.getByRole('tab', { name: 'Review' }))
+
+    expect(screen.getByRole('heading', {
+      name: 'Estimation health review',
+    })).toBeTruthy()
+    expect(screen.getByText('Needs review')).toBeTruthy()
+    expect(screen.getByRole('heading', {
+      name: 'Live estimation table',
+    })).toBeTruthy()
+  })
+
   it('supports arrow, Home, and End keyboard navigation', async () => {
     const user = userEvent.setup()
     renderTabs()

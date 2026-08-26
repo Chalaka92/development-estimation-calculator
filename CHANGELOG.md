@@ -8,6 +8,7 @@ All notable user-visible changes are documented here. The format follows [Keep a
 
 - Add a CI-enforced Stage C compatibility guard that pins the retained v16 schemas, editable-export reader, `developmentEstimationV4` storage key, and non-destructive browser-storage migration path.
 - Document the browser-storage forward-migration contract in ADR 0009 and pin the current project, archive, and workspace `.v1` storage identities in CI so future schema changes require explicit coordinated migration work.
+- Add a frontend-only estimation health review that highlights QA gaps, high-risk work, low confidence, incomplete delivery roles, planning metadata, and missing risk-buffer coverage without changing persisted project data.
 
 ### Changed
 

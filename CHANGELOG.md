@@ -7,6 +7,11 @@ All notable user-visible changes are documented here. The format follows [Keep a
 ### Added
 
 - Add a built-in User Guide workspace covering quick start, estimation concepts, Development and QA workflow, Review, exports/Jira, history/recovery, and browser data safety.
+- Add real in-app visual references for Project setup, Development work, and Review inside the header User Guide modal.
+
+### Fixed
+
+- Keep the header User Guide modal fully inside short browser viewports and scroll the guide navigation/content internally instead of allowing the dialog top to move off-screen.
 
 ## [2.1.0] - 2026-08-26
 

@@ -6,7 +6,7 @@ All notable user-visible changes are documented here. The format follows [Keep a
 
 ### Added
 
-- Add a header Help icon after `Reset all` that opens an accessible, topic-based user guide modal covering project setup, development, QA, review, export and Jira, history, and reset/recovery workflows.
+- Add a built-in User Guide workspace covering quick start, estimation concepts, Development and QA workflow, Review, exports/Jira, history/recovery, and browser data safety.
 
 ## [2.1.0] - 2026-08-26
 

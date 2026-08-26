@@ -4,24 +4,27 @@ test.beforeEach(async ({ page }) => {
   await page.goto('./')
 })
 
-test('opens the user guide from the header after Reset all', async ({ page }) => {
-  const headerButtons = page.locator('.calculator-header__actions > button')
-  await expect(headerButtons).toHaveCount(2)
-  await expect(headerButtons.nth(0)).toHaveText('Reset all')
-  await expect(headerButtons.nth(1)).toHaveAccessibleName('Open user guide')
+test('opens the built-in user guide and exposes the core workflow topics', async ({
+  page,
+}) => {
+  await page.getByRole('tab', { name: 'User Guide', exact: true }).click()
 
-  const help = page.getByRole('button', { name: 'Open user guide' })
-  await help.click()
+  await expect(
+    page.getByRole('heading', { name: 'User guide', exact: true }),
+  ).toBeVisible()
+  await expect(
+    page.getByRole('heading', { name: 'Quick start', exact: true }),
+  ).toBeVisible()
+  await expect(page.getByText('Recommended workflow', { exact: true })).toBeVisible()
+  await expect(
+    page.getByRole('link', { name: 'Estimation basics', exact: true }),
+  ).toBeVisible()
+  await expect(
+    page.getByRole('link', { name: 'Data safety', exact: true }),
+  ).toBeVisible()
 
-  const dialog = page.getByRole('dialog', { name: 'User guide' })
-  await expect(dialog).toBeVisible()
-  await expect(dialog.getByRole('heading', { name: 'Getting started' })).toBeVisible()
-
-  await dialog.getByRole('button', { name: 'Review the estimate' }).click()
-  await expect(dialog.getByRole('heading', { name: 'Review the estimate' })).toBeVisible()
-  await expect(dialog.getByText(/Health findings are advisory/i)).toBeVisible()
-
-  await page.keyboard.press('Escape')
-  await expect(dialog).toBeHidden()
-  await expect(help).toBeFocused()
+  await page.getByText('Export, backups, and Jira', { exact: true }).click()
+  await expect(
+    page.getByText('Direct Jira authentication and server-backed issue creation'),
+  ).toBeVisible()
 })

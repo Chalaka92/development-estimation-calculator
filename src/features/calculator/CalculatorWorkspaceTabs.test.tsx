@@ -94,7 +94,7 @@ describe('CalculatorWorkspaceTabs', () => {
     expect(screen.getByRole('heading', { name: 'User guide' })).toBeTruthy()
     expect(screen.getByRole('heading', { name: 'Quick start' })).toBeTruthy()
     expect(screen.getByText('Recommended workflow')).toBeTruthy()
-    expect(screen.getByText('Estimation basics')).toBeTruthy()
+    expect(screen.getByRole('link', { name: 'Estimation basics' })).toBeTruthy()
     expect(screen.getByText('Autosave and data safety')).toBeTruthy()
   })
 

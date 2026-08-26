@@ -41,9 +41,22 @@ test('keeps the header guide modal inside a short viewport and loads its visual 
 
   await help.click()
 
+  const backdrop = page.locator('.user-guide-backdrop')
   const dialog = page.getByRole('dialog', { name: 'User guide' })
+  await expect(backdrop).toBeVisible()
   await expect(dialog).toBeVisible()
   await expect(page.getByRole('button', { name: 'Close user guide' })).toBeVisible()
+
+  expect(
+    await backdrop.evaluate((element) => element.parentElement === document.body),
+  ).toBe(true)
+
+  const backdropBox = await backdrop.boundingBox()
+  expect(backdropBox).not.toBeNull()
+  expect(backdropBox!.x).toBe(0)
+  expect(backdropBox!.y).toBe(0)
+  expect(backdropBox!.width).toBe(1072)
+  expect(backdropBox!.height).toBe(410)
 
   const box = await dialog.boundingBox()
   expect(box).not.toBeNull()

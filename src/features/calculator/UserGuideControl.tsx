@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type KeyboardEvent, type MouseEvent } from 'react'
+import { createPortal } from 'react-dom'
 import './UserGuideControl.css'
 
 type GuideTopicId =
@@ -197,20 +198,8 @@ export function UserGuideControl() {
     if (event.target === event.currentTarget) closeDialog()
   }
 
-  return (
-    <>
-      <button
-        ref={triggerRef}
-        type="button"
-        className="calculator-help-button"
-        aria-label="Open user guide"
-        title="User guide"
-        onClick={() => setOpen(true)}
-      >
-        <span aria-hidden="true">?</span>
-      </button>
-
-      {open && (
+  const dialog = open
+    ? createPortal(
         <div
           className="user-guide-backdrop"
           role="presentation"
@@ -291,8 +280,24 @@ export function UserGuideControl() {
               </article>
             </div>
           </div>
-        </div>
-      )}
+        </div>,
+        document.body,
+      )
+    : null
+
+  return (
+    <>
+      <button
+        ref={triggerRef}
+        type="button"
+        className="calculator-help-button"
+        aria-label="Open user guide"
+        title="User guide"
+        onClick={() => setOpen(true)}
+      >
+        <span aria-hidden="true">?</span>
+      </button>
+      {dialog}
     </>
   )
 }

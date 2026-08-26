@@ -1,0 +1,77 @@
+name: Prepare v2.1.0
+
+on:
+  push:
+    branches: [release/v2.1.0]
+
+permissions:
+  contents: write
+
+jobs:
+  prepare:
+    if: ${{ github.actor != 'github-actions[bot]' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out release branch
+        uses: actions/checkout@v7
+        with:
+          ref: release/v2.1.0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Prepare version metadata
+        shell: bash
+        run: |
+          npm version 2.1.0 --no-git-tag-version
+          node <<'NODE'
+          const fs = require('node:fs')
+
+          const changelogPath = 'CHANGELOG.md'
+          let changelog = fs.readFileSync(changelogPath, 'utf8')
+          const unreleased = '## [Unreleased]\n\n'
+          const nextRelease = '## [2.0.1] - 2026-08-25'
+          const start = changelog.indexOf(unreleased)
+          const end = changelog.indexOf(nextRelease)
+          if (start < 0 || end < 0 || end <= start) {
+            throw new Error('Could not locate Unreleased or 2.0.1 changelog boundaries')
+          }
+          const entriesStart = start + unreleased.length
+          const entries = changelog.slice(entriesStart, end).trim()
+          changelog =
+            changelog.slice(0, entriesStart) +
+            `## [2.1.0] - 2026-08-26\n\n${entries}\n\n` +
+            changelog.slice(end)
+          fs.writeFileSync(changelogPath, changelog)
+
+          const readmePath = 'README.md'
+          let readme = fs.readFileSync(readmePath, 'utf8')
+          readme = readme.replace(
+            '- Current package version: `2.0.1`',
+            '- Current package version: `2.1.0`',
+          )
+          if (!readme.includes('Estimation health review')) {
+            readme = readme.replace(
+              '- Full live estimation table, copyable summary, and print-ready report\n',
+              '- Full live estimation table, copyable summary, and print-ready report\n- Estimation health review for QA gaps, high-risk work, low confidence, delivery-role coverage, planning metadata, and risk-buffer gaps\n',
+            )
+          }
+          fs.writeFileSync(readmePath, readme)
+          NODE
+
+      - name: Verify release metadata
+        run: npm run version:check
+
+      - name: Remove one-time workflow and commit
+        shell: bash
+        run: |
+          rm .github/workflows/prepare-v2.1.0.yml
+          git config user.name "Chalaka92"
+          git config user.email "39949831+Chalaka92@users.noreply.github.com"
+          git add package.json package-lock.json CHANGELOG.md README.md .github/workflows/prepare-v2.1.0.yml
+          git commit -m "Prepare v2.1.0 release"
+          git push origin HEAD:release/v2.1.0

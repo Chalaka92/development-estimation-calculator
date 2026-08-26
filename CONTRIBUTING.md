@@ -2,6 +2,8 @@
 
 Thank you for improving the Development Estimation Calculator.
 
+Before making implementation changes, read [docs/developer-guide.md](docs/developer-guide.md). It explains the application architecture, technology responsibilities, state and persistence boundaries, testing strategy, compatibility rules, CI/build workflow, and the change surfaces that developers must consider when extending the calculator.
+
 ## Before starting
 
 1. Search existing issues and pull requests.

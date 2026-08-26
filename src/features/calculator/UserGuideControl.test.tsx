@@ -8,7 +8,7 @@ import { UserGuideControl } from './UserGuideControl'
 afterEach(cleanup)
 
 describe('UserGuideControl', () => {
-  it('opens from the help icon and switches guide topics', async () => {
+  it('opens one authoritative guide drawer and switches topics', async () => {
     const user = userEvent.setup()
     render(<UserGuideControl />)
 
@@ -17,10 +17,13 @@ describe('UserGuideControl', () => {
     expect(screen.getByRole('dialog', { name: 'User guide' })).toBeTruthy()
     expect(screen.getByRole('heading', { name: 'Getting started' })).toBeTruthy()
 
-    await user.click(screen.getByRole('button', { name: 'QA estimation' }))
+    await user.click(screen.getByRole('button', { name: 'Estimation basics' }))
+    expect(screen.getByRole('heading', { name: 'Estimation basics' })).toBeTruthy()
+    expect(screen.getByText(/PERT expected-hours formula/i)).toBeTruthy()
 
-    expect(screen.getByRole('heading', { name: 'QA estimation' })).toBeTruthy()
-    expect(screen.getByText(/default QA activities/i)).toBeTruthy()
+    await user.click(screen.getByRole('button', { name: 'Data safety' }))
+    expect(screen.getByRole('heading', { name: 'Data safety' })).toBeTruthy()
+    expect(screen.getByText(/Historical v16 editable exports/i)).toBeTruthy()
   })
 
   it('shows the relevant in-app screenshot for visual guide topics', async () => {

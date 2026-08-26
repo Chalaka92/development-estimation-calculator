@@ -4,32 +4,26 @@ test.beforeEach(async ({ page }) => {
   await page.goto('./')
 })
 
-test('opens the built-in user guide and exposes the core workflow topics', async ({
+test('uses the header Help drawer as the single user guide entry point', async ({
   page,
 }) => {
-  await page.getByRole('tab', { name: 'User Guide', exact: true }).click()
+  await expect(page.getByRole('tab', { name: 'User Guide', exact: true })).toHaveCount(0)
 
-  await expect(
-    page.getByRole('heading', { name: 'User guide', exact: true }),
-  ).toBeVisible()
-  await expect(
-    page.getByRole('heading', { name: 'Quick start', exact: true }),
-  ).toBeVisible()
-  await expect(page.getByText('Recommended workflow', { exact: true })).toBeVisible()
-  await expect(
-    page.getByRole('link', { name: 'Estimation basics', exact: true }),
-  ).toBeVisible()
-  await expect(
-    page.getByRole('link', { name: 'Data safety', exact: true }),
-  ).toBeVisible()
+  const help = page.getByRole('button', { name: 'Open user guide' })
+  await help.click()
 
-  await page.getByText('Export, backups, and Jira', { exact: true }).click()
-  await expect(
-    page.getByText('Direct Jira authentication and server-backed issue creation'),
-  ).toBeVisible()
+  const drawer = page.getByRole('dialog', { name: 'User guide' })
+  await expect(drawer).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Getting started' })).toBeVisible()
+
+  await page.getByRole('button', { name: 'Estimation basics' }).click()
+  await expect(page.getByText(/PERT expected-hours formula/i)).toBeVisible()
+
+  await page.getByRole('button', { name: 'Data safety' }).click()
+  await expect(page.getByText(/Historical v16 editable exports/i)).toBeVisible()
 })
 
-test('keeps the header guide modal inside a short viewport and loads its visual reference', async ({
+test('keeps the right-side guide drawer inside a short viewport and loads its visual reference', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1072, height: 410 })
@@ -42,9 +36,9 @@ test('keeps the header guide modal inside a short viewport and loads its visual 
   await help.click()
 
   const backdrop = page.locator('.user-guide-backdrop')
-  const dialog = page.getByRole('dialog', { name: 'User guide' })
+  const drawer = page.getByRole('dialog', { name: 'User guide' })
   await expect(backdrop).toBeVisible()
-  await expect(dialog).toBeVisible()
+  await expect(drawer).toBeVisible()
   await expect(page.getByRole('button', { name: 'Close user guide' })).toBeVisible()
 
   expect(
@@ -58,10 +52,16 @@ test('keeps the header guide modal inside a short viewport and loads its visual 
   expect(backdropBox!.width).toBe(1072)
   expect(backdropBox!.height).toBe(410)
 
-  const box = await dialog.boundingBox()
-  expect(box).not.toBeNull()
-  expect(box!.y).toBeGreaterThanOrEqual(0)
-  expect(box!.y + box!.height).toBeLessThanOrEqual(410)
+  await drawer.evaluate(async (element) => {
+    await Promise.all(element.getAnimations().map((animation) => animation.finished))
+  })
+
+  const drawerBox = await drawer.boundingBox()
+  expect(drawerBox).not.toBeNull()
+  expect(drawerBox!.y).toBe(0)
+  expect(drawerBox!.height).toBe(410)
+  expect(Math.abs(drawerBox!.x + drawerBox!.width - 1072)).toBeLessThan(1)
+  expect(drawerBox!.x).toBeGreaterThan(0)
 
   await page.getByRole('button', { name: 'Project setup' }).click()
   const guideImage = page.getByRole('img', {
@@ -73,6 +73,6 @@ test('keeps the header guide modal inside a short viewport and loads its visual 
   ).toBeGreaterThan(0)
 
   await page.keyboard.press('Escape')
-  await expect(dialog).toBeHidden()
+  await expect(drawer).toBeHidden()
   await expect(help).toBeFocused()
 })

@@ -13,7 +13,6 @@ import { ProjectHistoryPanel } from './ProjectHistoryPanel'
 import { ProjectSettingsPanel } from './ProjectSettingsPanel'
 import { ProjectWorkspacePanel } from './ProjectWorkspacePanel'
 import { QaEstimationPanel } from './QaEstimationPanel'
-import { UserGuidePanel } from './UserGuidePanel'
 import { WorkItemGenerationPanel } from './WorkItemGenerationPanel'
 
 const TAB_IDS = [
@@ -23,7 +22,6 @@ const TAB_IDS = [
   'review',
   'export',
   'history',
-  'guide',
 ] as const
 
 type WorkspaceTabId = (typeof TAB_IDS)[number]
@@ -84,12 +82,6 @@ export function CalculatorWorkspaceTabs({
       id: 'history',
       label: 'History',
       content: <ProjectHistoryPanel storage={storage} />,
-    },
-    {
-      id: 'guide',
-      label: 'User Guide',
-      shortLabel: 'Guide',
-      content: <UserGuidePanel />,
     },
   ]
 

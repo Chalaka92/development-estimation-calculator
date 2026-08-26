@@ -1,0 +1,101 @@
+name: Capture user guide screenshots
+
+on:
+  push:
+    branches:
+      - fix/user-guide-modal-viewport
+    paths:
+      - .github/workflows/capture-user-guide-screenshots.yml
+
+permissions:
+  contents: write
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Start calculator
+        shell: bash
+        run: |
+          npm run dev -- --host 127.0.0.1 > /tmp/user-guide-vite.log 2>&1 &
+          for attempt in {1..60}; do
+            if curl --fail --silent http://127.0.0.1:5173/ > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/user-guide-vite.log
+          exit 1
+
+      - name: Capture guide screenshots
+        shell: bash
+        run: |
+          mkdir -p public/user-guide
+          node --input-type=module <<'NODE'
+          import { chromium } from '@playwright/test'
+
+          const browser = await chromium.launch()
+          const page = await browser.newPage({
+            viewport: { width: 1440, height: 1000 },
+            deviceScaleFactor: 1,
+          })
+
+          await page.goto('http://127.0.0.1:5173/')
+          await page.evaluate(() => localStorage.clear())
+          await page.reload()
+          await page.getByRole('heading', { name: 'Build a clear, defensible estimate.' }).waitFor()
+
+          const capturePanel = async (selector, path, maxHeight = 520) => {
+            const panel = page.locator(selector)
+            await panel.scrollIntoViewIfNeeded()
+            const box = await panel.boundingBox()
+            if (!box) throw new Error(`Unable to locate ${selector}`)
+            await page.screenshot({
+              path,
+              clip: {
+                x: Math.max(0, box.x),
+                y: Math.max(0, box.y),
+                width: Math.min(box.width, 1380),
+                height: Math.min(box.height, maxHeight),
+              },
+            })
+          }
+
+          await page.getByLabel('Project or release name').fill('Sample Release')
+          await capturePanel('#workspace-panel-project', 'public/user-guide/project-setup.png', 500)
+
+          await page.getByRole('tab', { name: 'Development', exact: true }).click()
+          const addFirst = page.getByRole('button', { name: 'Add first main item' })
+          if (await addFirst.isVisible()) await addFirst.click()
+          await capturePanel('#workspace-panel-development', 'public/user-guide/development-work.png', 560)
+
+          await page.getByRole('tab', { name: 'Review', exact: true }).click()
+          await capturePanel('#workspace-panel-review', 'public/user-guide/review-estimate.png', 560)
+
+          await browser.close()
+          NODE
+
+      - name: Commit screenshots and remove capture workflow
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/capture-user-guide-screenshots.yml
+          git add public/user-guide/project-setup.png public/user-guide/development-work.png public/user-guide/review-estimate.png
+          git commit -m "Add user guide screenshots"
+          git push origin HEAD:${GITHUB_REF_NAME}

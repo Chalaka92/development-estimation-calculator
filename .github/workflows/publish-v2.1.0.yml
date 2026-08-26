@@ -1,0 +1,48 @@
+name: Publish v2.1.0
+
+on:
+  push:
+    branches:
+      - release/v2.1.0
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  publish:
+    if: github.event.head_commit.message != 'Remove one-time v2.1.0 publish workflow'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out release branch
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Create exact annotated release tag
+        env:
+          TARGET_SHA: 8b89ad44fe7669305b72c8d5932af9c97002d71d
+          TAG: v2.1.0
+        run: |
+          git fetch origin main --no-tags
+          git cat-file -e "$TARGET_SHA^{commit}"
+          git merge-base --is-ancestor "$TARGET_SHA" origin/main
+          if git ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null 2>&1; then
+            echo "Tag $TAG already exists; refusing to move or replace it."
+            exit 1
+          fi
+          git config user.name "Chalaka92"
+          git config user.email "39949831+Chalaka92@users.noreply.github.com"
+          git tag -a "$TAG" "$TARGET_SHA" -m "Release $TAG"
+          git push origin "refs/tags/$TAG"
+
+      - name: Dispatch verified Release workflow
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run release.yml --ref main -f tag=v2.1.0
+
+      - name: Remove one-time publish workflow
+        run: |
+          git rm .github/workflows/publish-v2.1.0.yml
+          git commit -m "Remove one-time v2.1.0 publish workflow"
+          git push origin HEAD:release/v2.1.0

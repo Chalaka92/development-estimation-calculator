@@ -6,12 +6,16 @@ All notable user-visible changes are documented here. The format follows [Keep a
 
 ### Added
 
-- Add a built-in User Guide workspace covering quick start, estimation concepts, Development and QA workflow, Review, exports/Jira, history/recovery, and browser data safety.
-- Add real in-app visual references for Project setup, Development work, and Review inside the header User Guide modal.
+- Add one authoritative built-in User Guide opened from the header Help control, covering quick start, estimation concepts, Project, Development, QA, Review, exports/Jira, history/recovery, reset, and browser data safety.
+- Add real in-app visual references for Project setup, Development work, and Review inside the User Guide drawer.
+
+### Changed
+
+- Replace the duplicate User Guide workspace tab and modal-style Help experience with a single right-side Help drawer backed by one shared guide-content model.
 
 ### Fixed
 
-- Keep the header User Guide modal fully inside short browser viewports and scroll the guide navigation/content internally instead of allowing the dialog top to move off-screen.
+- Render Help outside the sticky header through a portal and keep the right-side drawer fully inside the browser viewport, including short desktop windows.
 
 ## [2.1.0] - 2026-08-26
 

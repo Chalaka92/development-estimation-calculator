@@ -6,12 +6,13 @@ Live application: [https://chalaka92.github.io/development-estimation-calculator
 
 ## Features
 
-- Accessible tabbed workspace for Project, Development, QA, Review, Export and Jira, and History, with the live summary retained across sections
+- Accessible tabbed workspace for Project, Development, QA, Review, Export and Jira, History, and a built-in User Guide, with the live summary retained across sections
 - Hierarchical development work breakdown with legacy-aligned estimation templates for new main items and sub-items
 - Separate QA estimation prefilled with the six legacy QA activities
 - Live development, QA, risk-buffer, and delivery calculations
 - Full live estimation table, copyable summary, and print-ready report
 - Estimation health review for QA gaps, high-risk work, low confidence, delivery-role coverage, planning metadata, and risk-buffer gaps
+- Built-in versioned user guidance covering quick start, estimation concepts, Development and QA workflow, Review, exports/Jira, history/recovery, and browser data safety
 - Decimal manpower/FTE and decimal-hour support
 - Optional per-activity three-point estimation using the PERT expected-hours formula
 - Optional delivery role, risk, confidence, and notes for every development and QA activity
@@ -77,7 +78,7 @@ Run `npm run release:verify` before proposing a version tag. It validates versio
 
 Every successful push to `main` builds and deploys `dist/` through GitHub Pages. The deployment workflow then runs a Chromium smoke test against the published URL. In **Repository Settings → Pages**, the publishing source must be **GitHub Actions**.
 
-CI verifies the critical create, calculate, autosave/reload, sub-item, import/export, compatibility-migration, and mobile-layout workflows using:
+CI verifies the critical create, calculate, autosave/reload, sub-item, import/export, compatibility-migration, user-guide, and mobile-layout workflows using:
 
 - Chromium
 - Firefox

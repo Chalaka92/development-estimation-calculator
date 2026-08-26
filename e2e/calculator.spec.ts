@@ -99,7 +99,7 @@ test('calculates and restores an optional three-point estimate', async ({
     await page.getByLabel(name).press('Tab')
   }
 
-  await expect(page.getByText('PERT expected')).toBeVisible()
+  await expect(page.getByText('PERT expected', { exact: true })).toBeVisible()
   await expect(page.locator('.calculator-summary')).toContainText('11.5 h')
   await expect(page.locator('.calculator-save-status')).toContainText(
     'All changes saved',

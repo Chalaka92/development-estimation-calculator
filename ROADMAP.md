@@ -37,6 +37,13 @@ Stage C is explicitly out of scope for v2.1. The v16 schemas, import readers, br
 - [x] Review browser-storage/versioning boundaries and document the forward-migration contract before introducing another persistence schema (ADR 0009).
 - [x] Select and implement a frontend-only estimation health review that derives review prompts from existing effort, role, risk, confidence, QA, and buffer data without changing persistence.
 
+## v2.2 direction
+
+Stage C remains out of scope while v2.x continues to support historical v16 data migration.
+
+- [x] Add a built-in User Guide workspace that is versioned with the application and covers the end-to-end estimation workflow, key estimation concepts, export/Jira usage, history/recovery, and browser data safety.
+- [ ] Continue with the next user-facing v2.2 capability after the guide baseline is merged and deployed.
+
 ## Future capabilities
 
 - [x] Optional per-activity three-point estimation with PERT calculations and export parity.

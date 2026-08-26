@@ -4,6 +4,10 @@ All notable user-visible changes are documented here. The format follows [Keep a
 
 ## [Unreleased]
 
+### Added
+
+- Add a built-in User Guide workspace covering quick start, estimation concepts, Development and QA workflow, Review, exports/Jira, history/recovery, and browser data safety.
+
 ## [2.1.0] - 2026-08-26
 
 ### Added

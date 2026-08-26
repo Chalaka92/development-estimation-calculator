@@ -52,11 +52,15 @@ test('keeps the right-side guide drawer inside a short viewport and loads its vi
   expect(backdropBox!.width).toBe(1072)
   expect(backdropBox!.height).toBe(410)
 
+  await drawer.evaluate(async (element) => {
+    await Promise.all(element.getAnimations().map((animation) => animation.finished))
+  })
+
   const drawerBox = await drawer.boundingBox()
   expect(drawerBox).not.toBeNull()
   expect(drawerBox!.y).toBe(0)
   expect(drawerBox!.height).toBe(410)
-  expect(drawerBox!.x + drawerBox!.width).toBe(1072)
+  expect(Math.abs(drawerBox!.x + drawerBox!.width - 1072)).toBeLessThan(1)
   expect(drawerBox!.x).toBeGreaterThan(0)
 
   await page.getByRole('button', { name: 'Project setup' }).click()

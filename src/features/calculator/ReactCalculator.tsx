@@ -15,6 +15,7 @@ import { CalculatorWorkspaceTabs } from './CalculatorWorkspaceTabs'
 import { EstimateSummaryPanel } from './EstimateSummaryPanel'
 import { NewProjectControl } from './NewProjectControl'
 import { synchronizeWorkspaceProject } from '../../persistence/projectWorkspace'
+import { UserGuideControl } from './UserGuideControl'
 import './ReactCalculator.css'
 
 interface ReactCalculatorProps {
@@ -75,6 +76,7 @@ function CalculatorContent({
         <div className="calculator-header__actions">
           <SaveStatus result={saveResult} />
           <NewProjectControl storage={storage} />
+          <UserGuideControl />
         </div>
       </header>
 

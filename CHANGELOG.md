@@ -4,6 +4,8 @@ All notable user-visible changes are documented here. The format follows [Keep a
 
 ## [Unreleased]
 
+## [2.1.0] - 2026-08-26
+
 ### Added
 
 - Add a CI-enforced Stage C compatibility guard that pins the retained v16 schemas, editable-export reader, `developmentEstimationV4` storage key, and non-destructive browser-storage migration path.

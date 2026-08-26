@@ -11,6 +11,7 @@ Live application: [https://chalaka92.github.io/development-estimation-calculator
 - Separate QA estimation prefilled with the six legacy QA activities
 - Live development, QA, risk-buffer, and delivery calculations
 - Full live estimation table, copyable summary, and print-ready report
+- Estimation health review for QA gaps, high-risk work, low confidence, delivery-role coverage, planning metadata, and risk-buffer gaps
 - Decimal manpower/FTE and decimal-hour support
 - Optional per-activity three-point estimation using the PERT expected-hours formula
 - Optional delivery role, risk, confidence, and notes for every development and QA activity
@@ -134,7 +135,7 @@ Do not report sensitive vulnerabilities in a public issue. Follow [SECURITY.md](
 
 ## Releases and roadmap
 
-- Current package version: `2.0.1`
+- Current package version: `2.1.0`
 - Completed and upcoming work: [ROADMAP.md](ROADMAP.md)
 - User-visible history: [CHANGELOG.md](CHANGELOG.md)
 

@@ -319,10 +319,73 @@
   }
 
   .user-guide-header {
-    padding-block: 16px 14px;
+    padding: 14px 20px 12px;
+  }
+
+  .user-guide-header h2 {
+    margin-block: 3px 4px;
+    font-size: 20px;
+  }
+
+  .user-guide-header p {
+    font-size: 11px;
+    line-height: 1.4;
+  }
+
+  .user-guide-layout {
+    display: flex;
+    min-height: 0;
+    flex-direction: column;
+  }
+
+  .user-guide-nav {
+    display: flex;
+    flex: 0 0 auto;
+    gap: 6px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 8px 12px;
+    border-right: 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .user-guide-nav__item {
+    width: auto;
+    flex: 0 0 auto;
+    padding: 8px 10px;
+    white-space: nowrap;
   }
 
   .user-guide-content {
-    padding-block: 22px;
+    flex: 1 1 auto;
+    min-height: 0;
+    padding: 16px 22px 20px;
+  }
+
+  .user-guide-content h3 {
+    margin-block: 4px 6px;
+    font-size: 21px;
+  }
+
+  .user-guide-summary {
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .user-guide-figure {
+    margin-top: 14px;
+  }
+
+  .user-guide-figure img {
+    max-height: 170px;
+  }
+
+  .user-guide-content ol {
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .user-guide-tip {
+    margin-top: 16px;
   }
 }

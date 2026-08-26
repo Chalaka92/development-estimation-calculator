@@ -23,6 +23,20 @@ describe('UserGuideControl', () => {
     expect(screen.getByText(/default QA activities/i)).toBeTruthy()
   })
 
+  it('shows the relevant in-app screenshot for visual guide topics', async () => {
+    const user = userEvent.setup()
+    render(<UserGuideControl />)
+
+    await user.click(screen.getByRole('button', { name: 'Open user guide' }))
+    await user.click(screen.getByRole('button', { name: 'Project setup' }))
+
+    const image = screen.getByRole('img', {
+      name: 'Project settings area of the development estimation calculator',
+    })
+    expect(image.getAttribute('src')).toContain('user-guide/project-setup.png')
+    expect(screen.getByText('Project settings and delivery assumptions.')).toBeTruthy()
+  })
+
   it('closes with Escape and restores focus to the help icon', async () => {
     const user = userEvent.setup()
     render(<UserGuideControl />)

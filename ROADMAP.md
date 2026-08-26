@@ -41,7 +41,8 @@ Stage C is explicitly out of scope for v2.1. The v16 schemas, import readers, br
 
 Stage C remains out of scope while v2.x continues to support historical v16 data migration.
 
-- [x] Add a built-in User Guide workspace that is versioned with the application and covers the end-to-end estimation workflow, key estimation concepts, export/Jira usage, history/recovery, and browser data safety.
+- [x] Add versioned in-app user guidance covering the end-to-end estimation workflow, key estimation concepts, export/Jira usage, history/recovery, and browser data safety.
+- [x] Consolidate user guidance into one authoritative Help experience: remove the workspace User Guide tab and open the shared guide from a right-side header drawer with in-app screenshots.
 - [ ] Continue with the next user-facing v2.2 capability after the guide baseline is merged and deployed.
 
 ## Future capabilities
